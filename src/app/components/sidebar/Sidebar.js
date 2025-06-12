@@ -1,66 +1,65 @@
 import { motion } from 'framer-motion';
 import {
-  LayoutDashboard,
-  PencilRuler,
-  BrickWall,
-  CircleDollarSign,
-  Unplug,
-  BarChart3
+ LayoutDashboard,
+ PencilRuler,
+ BrickWall,
+ CircleDollarSign,
+ Unplug,
+ BarChart3
 } from 'lucide-react';
 
 function IconWithTooltip({ Icon, tooltipText, onClick, active }) {
-  return (
-    <div className="relative group">
-      <motion.div
-        className={`p-3 rounded-xl flex justify-center items-center cursor-pointer transition-all duration-200 ${
-          active 
-            ? 'bg-white border-2 border-blue-600 shadow-lg' 
-            : 'bg-white shadow-md hover:shadow-lg'
-        }`}
-        whileHover={{ scale: active ? 1.25 : 1.1, rotate: 3 }}
-        whileTap={{ scale: 0.9 }}
-        transition={{ type: 'spring', stiffness: 300 }}
-        animate={{ scale: active ? 1.15 : 1 }}
-        onClick={onClick}
-      >
-        <Icon size={24} color={active ? '#1565C0' : 'black'} />
-      </motion.div>
-      
-      {/* Tooltip */}
-      <div className="absolute left-full ml-3 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-        {tooltipText}
-        <div className="absolute right-full top-1/2 transform -translate-y-1/2 border-4 border-transparent border-r-gray-800"></div>
-      </div>
-    </div>
-  );
+ return (
+   <div className="relative group">
+     <motion.div
+       className={`p-3 rounded-xl flex justify-center items-center cursor-pointer transition-all duration-200 ${
+         active 
+           ? 'bg-white border-2 border-blue-600 shadow-lg' 
+           : 'bg-white shadow-md hover:shadow-lg'
+       }`}
+       whileHover={{ scale: active ? 1.25 : 1.1, rotate: 3 }}
+       whileTap={{ scale: 0.9 }}
+       transition={{ type: 'spring', stiffness: 300 }}
+       animate={{ scale: active ? 1.15 : 1 }}
+       onClick={onClick}
+     >
+       <Icon size={24} color={active ? '#1565C0' : 'black'} />
+     </motion.div>
+     
+     {/* Tooltip */}
+     <div className="absolute left-full ml-3 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+       {tooltipText}
+       <div className="absolute right-full top-1/2 transform -translate-y-1/2 border-4 border-transparent border-r-gray-800"></div>
+     </div>
+   </div>
+ );
 }
 
 export default function Sidebar({ activeSection, setActiveSection }) {
-  const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'dimensions', label: 'Dimensions', icon: PencilRuler },
-    { id: 'materials', label: 'Materials', icon: BrickWall },
-    { id: 'labour-cost', label: 'Labour Cost', icon: CircleDollarSign },
-    { id: 'other-cost', label: 'Other Cost', icon: Unplug },
-    { id: 'analysis', label: 'Analysis', icon: BarChart3 },
-  ];
+ const menuItems = [
+   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+   { id: 'dimensions', label: 'Dimensions', icon: PencilRuler },
+   { id: 'materials', label: 'Materials', icon: BrickWall },
+   { id: 'labour-cost', label: 'Labour Cost', icon: CircleDollarSign },
+   { id: 'other-cost', label: 'Other Cost', icon: Unplug },
+   { id: 'analysis', label: 'Analysis', icon: BarChart3 },
+ ];
 
-  return (
-    <div className="col-span-1 row-span-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
-      <h2 className="text-lg font-semibold mb-6 text-center">Menu</h2>
-      <nav>
-        <div className="flex flex-col items-center justify-center gap-8 h-full">
-          {menuItems.map((item) => (
-            <IconWithTooltip
-              key={item.id}
-              Icon={item.icon}
-              tooltipText={item.label}
-              active={activeSection === item.id}
-              onClick={() => setActiveSection(item.id)}
-            />
-          ))}
-        </div>
-      </nav>
-    </div>
-  );
+ return (
+   <div className="col-span-1 row-span-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
+     <nav className="h-full">
+       <div className="flex flex-col items-center justify-center gap-8 h-full">
+         {menuItems.map((item) => (
+           <IconWithTooltip
+             key={item.id}
+             Icon={item.icon}
+             tooltipText={item.label}
+             active={activeSection === item.id}
+             onClick={() => setActiveSection(item.id)}
+           />
+         ))}
+       </div>
+     </nav>
+   </div>
+ );
 }
