@@ -9,7 +9,7 @@ import {
     LogOut
 } from 'lucide-react';
 
-function IconWithTooltip({ Icon, tooltipText, onClick, active }) {
+function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor }) {
     return (
         <div className="relative group">
             <motion.div
@@ -23,7 +23,7 @@ function IconWithTooltip({ Icon, tooltipText, onClick, active }) {
                 animate={{ scale: active ? 1.15 : 1 }}
                 onClick={onClick}
             >
-                <Icon size={24} color={active ? '#1565C0' : 'black'} />
+                <Icon size={24} color={iconColor || (active ? '#1565C0' : 'black')} />
             </motion.div>
 
             {/* Tooltip */}
@@ -67,7 +67,7 @@ export default function Sidebar({ activeSection, setActiveSection }) {
                 </div>
 
                 {/* Divider */}
-                <div className="mx-auto w-12 h-px bg-gray-300 my-4"></div>
+                <div className="mx-auto w-20 h-px bg-gray-300 my-4"></div>
 
                 {/* Bottom section with logout and version */}
                 <div className="flex flex-col items-center gap-4 pb-4">
@@ -76,10 +76,11 @@ export default function Sidebar({ activeSection, setActiveSection }) {
                         tooltipText="Logout"
                         active={false}
                         onClick={handleLogout}
+                        iconColor="#EF4444"
                     />
                     
                     {/* Version */}
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-blue-500">
                         v1.0.0
                     </div>
                 </div>
