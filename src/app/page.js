@@ -9,7 +9,7 @@ export default function Home() {
   const [activeSection, setActiveSection] = useState('dashboard');
 
   return (
-    <div className="h-screen grid grid-cols-5 grid-rows-[auto_1fr] gap-2 p-2">
+    <div className="h-screen grid grid-cols-10 grid-rows-[auto_1fr] gap-2 p-2">
       <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} />
       <Header />
       <MainContent activeSection={activeSection} />

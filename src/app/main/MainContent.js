@@ -26,7 +26,7 @@ export default function MainContent({ activeSection }) {
   };
 
   return (
-    <div className="col-span-3 bg-white dark:bg-gray-900 rounded-lg p-6 overflow-auto">
+    <div className="col-span-7 bg-white dark:bg-gray-900 rounded-lg p-6 overflow-auto">
       {renderContent()}
     </div>
   );

@@ -1,6 +1,6 @@
 export default function Rightbar() {
     return (
-      <div className="bg-green-50 dark:bg-green-900 rounded-lg p-4">
+      <div className="col-span-2 bg-green-50 dark:bg-green-900 rounded-lg p-4">
         <h2 className="text-lg font-semibold mb-4">Quick Stats</h2>
         <div className="space-y-3">
           <div className="bg-white dark:bg-gray-800 p-3 rounded">
@@ -18,4 +18,4 @@ export default function Rightbar() {
         </div>
       </div>
     );
-  }
+}

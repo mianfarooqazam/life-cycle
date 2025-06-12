@@ -46,7 +46,7 @@ export default function Sidebar({ activeSection, setActiveSection }) {
   ];
 
   return (
-    <div className="row-span-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
+    <div className="col-span-1 row-span-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
       <h2 className="text-lg font-semibold mb-6 text-center">Menu</h2>
       <nav>
         <div className="flex flex-col items-center justify-center gap-8 h-full">
