@@ -1,15 +1,304 @@
-export default function Dashboard() {
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+    Filler
+  } from 'chart.js';
+  import { Line, Bar } from 'react-chartjs-2';
+  
+  // Register ChartJS components
+  ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+    Filler
+  );
+  
+  export default function Dashboard() {
+    // Dummy data for the dashboard
+    const projectStats = {
+      totalProjects: 12,
+      activeProjects: 8,
+      completedProjects: 4,
+      totalBudget: 2450000,
+    };
+  
+    const carbonData = {
+      totalEmissions: 1234.56,
+      saved: 456.78,
+      target: 1500,
+      trend: -12.5,
+    };
+  
+    const materials = [
+      { name: "Concrete", quantity: "2,450 m³", cost: "$245,000", carbon: "735 tons CO₂", carbonValue: 735 },
+      { name: "Steel", quantity: "180 tons", cost: "$162,000", carbon: "468 tons CO₂", carbonValue: 468 },
+      { name: "Timber", quantity: "850 m³", cost: "$68,000", carbon: "-425 tons CO₂", carbonValue: -425 },
+      { name: "Asphalt", quantity: "1,200 tons", cost: "$96,000", carbon: "120 tons CO₂", carbonValue: 120 },
+    ];
+  
+    const recentProjects = [
+      { name: "Highway Extension A12", progress: 78, budget: "$1.2M", status: "on-track" },
+      { name: "Bridge Reinforcement", progress: 45, budget: "$450K", status: "delayed" },
+      { name: "Urban Plaza Development", progress: 92, budget: "$800K", status: "on-track" },
+    ];
+  
+    // Chart data for monthly carbon footprint
+    const monthlyData = {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      datasets: [
+        {
+          label: 'Carbon Emissions (tons)',
+          data: [1450, 1380, 1420, 1350, 1290, 1234, 1180, 1150, 1100, 1050, 980, 950],
+          borderColor: 'rgb(239, 68, 68)',
+          backgroundColor: 'rgba(239, 68, 68, 0.1)',
+          tension: 0.4,
+          fill: true,
+        },
+        {
+          label: 'Carbon Target (tons)',
+          data: [1500, 1500, 1500, 1500, 1500, 1500, 1400, 1400, 1400, 1400, 1300, 1300],
+          borderColor: 'rgb(34, 197, 94)',
+          backgroundColor: 'rgba(34, 197, 94, 0.1)',
+          borderDash: [5, 5],
+        },
+      ],
+    };
+  
+    const lineChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        title: {
+          display: false,
+        },
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: {
+            color: 'rgba(156, 163, 175, 0.1)',
+          },
+        },
+        x: {
+          grid: {
+            color: 'rgba(156, 163, 175, 0.1)',
+          },
+        },
+      },
+    };
+  
+    // Material costs bar chart data
+    const materialCostData = {
+      labels: materials.map(m => m.name),
+      datasets: [
+        {
+          label: 'Cost (USD)',
+          data: [245000, 162000, 68000, 96000],
+          backgroundColor: [
+            'rgba(59, 130, 246, 0.8)',
+            'rgba(239, 68, 68, 0.8)',
+            'rgba(34, 197, 94, 0.8)',
+            'rgba(251, 146, 60, 0.8)',
+          ],
+          borderColor: [
+            'rgb(59, 130, 246)',
+            'rgb(239, 68, 68)',
+            'rgb(34, 197, 94)',
+            'rgb(251, 146, 60)',
+          ],
+          borderWidth: 1,
+        },
+      ],
+    };
+  
+    const barChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false,
+        },
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: {
+            color: 'rgba(156, 163, 175, 0.1)',
+          },
+          ticks: {
+            callback: function(value) {
+              return '$' + value.toLocaleString();
+            }
+          }
+        },
+        x: {
+          grid: {
+            display: false,
+          },
+        },
+      },
+    };
+  
     return (
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Dashboard</h2>
-        <div className="space-y-4">
-          <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-            <h3 className="font-medium mb-2">Overview</h3>
-            <p className="text-gray-600 dark:text-gray-300">Dashboard overview content...</p>
+      <div className="p-2">
+        <h2 className="text-2xl font-bold mb-6 text-center">Dashboard</h2>
+        
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Total Projects</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{projectStats.totalProjects}</p>
+              </div>
+              <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg">
+                <svg className="w-6 h-6 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              </div>
+            </div>
           </div>
-          <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-            <h3 className="font-medium mb-2">Recent Activities</h3>
-            <p className="text-gray-600 dark:text-gray-300">Recent activities...</p>
+  
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Total Budget</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">${(projectStats.totalBudget / 1000000).toFixed(1)}M</p>
+              </div>
+              <div className="bg-green-100 dark:bg-green-900 p-3 rounded-lg">
+                <svg className="w-6 h-6 text-green-600 dark:text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+  
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Carbon Emissions</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{carbonData.totalEmissions.toFixed(0)} tons</p>
+                <p className="text-xs text-red-500">↑ {Math.abs(carbonData.trend)}% vs last month</p>
+              </div>
+              <div className="bg-orange-100 dark:bg-orange-900 p-3 rounded-lg">
+                <svg className="w-6 h-6 text-orange-600 dark:text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+              </div>
+            </div>
+          </div>
+  
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Carbon Saved</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{carbonData.saved.toFixed(0)} tons</p>
+                <p className="text-xs text-green-500">↑ 23% vs last month</p>
+              </div>
+              <div className="bg-green-100 dark:bg-green-900 p-3 rounded-lg">
+                <svg className="w-6 h-6 text-green-600 dark:text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        {/* Project Progress - Moved to Top */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 mb-6">
+          <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Active Projects</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {recentProjects.map((project, index) => (
+              <div key={index} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div className="flex justify-between items-start mb-2">
+                  <h4 className="font-medium text-gray-900 dark:text-white">{project.name}</h4>
+                  <span className={`px-2 py-1 text-xs rounded-full ${
+                    project.status === 'on-track' 
+                      ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                      : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                  }`}>
+                    {project.status}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mb-2">
+                  <span>Budget: {project.budget}</span>
+                  <span>{project.progress}%</span>
+                </div>
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div 
+                    className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${project.progress}%` }}
+                  ></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+  
+        {/* Charts Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Monthly Carbon Footprint Chart */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Monthly Carbon Footprint Trend</h3>
+            <div className="h-64">
+              <Line data={monthlyData} options={lineChartOptions} />
+            </div>
+          </div>
+  
+          {/* Material Costs Bar Chart */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Material Costs Breakdown</h3>
+            <div className="h-64">
+              <Bar data={materialCostData} options={barChartOptions} />
+            </div>
+          </div>
+        </div>
+  
+        {/* Materials Calculator - Now full width */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+          <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Materials Calculator</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {materials.map((material, index) => (
+              <div key={index} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h4 className="font-medium text-gray-900 dark:text-white">{material.name}</h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Quantity: {material.quantity}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold text-gray-900 dark:text-white">{material.cost}</p>
+                    <p className={`text-sm ${material.carbon.startsWith('-') ? 'text-green-600' : 'text-orange-600'}`}>
+                      {material.carbon}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
+            <div className="flex justify-between">
+              <span className="font-semibold text-gray-900 dark:text-white">Total Cost:</span>
+              <span className="font-bold text-xl text-gray-900 dark:text-white">$571,000</span>
+            </div>
+            <div className="flex justify-between mt-2">
+              <span className="font-semibold text-gray-900 dark:text-white">Net Carbon:</span>
+              <span className="font-bold text-xl text-orange-600">898 tons CO₂</span>
+            </div>
           </div>
         </div>
       </div>
