@@ -5,7 +5,8 @@ import {
     BrickWall,
     CircleDollarSign,
     Unplug,
-    BarChart3
+    BarChart3,
+    LogOut
 } from 'lucide-react';
 
 function IconWithTooltip({ Icon, tooltipText, onClick, active }) {
@@ -44,20 +45,45 @@ export default function Sidebar({ activeSection, setActiveSection }) {
         { id: 'analysis', label: 'Analysis', icon: BarChart3 },
     ];
 
+    const handleLogout = () => {
+        // Add your logout logic here
+        console.log('Logging out...');
+    };
+
     return (
-        <div className="col-span-1 row-span-2 rounded-lg p-4" style={{ backgroundColor: '#f7f6fb' }}>     <nav className="h-full">
-            <div className="flex flex-col items-center justify-center gap-8 h-full">
-                {menuItems.map((item) => (
+        <div className="col-span-1 row-span-2 rounded-lg p-4" style={{ backgroundColor: '#f7f6fb' }}>
+            <nav className="h-full flex flex-col">
+                {/* Main menu items */}
+                <div className="flex flex-col items-center justify-center gap-8 flex-1">
+                    {menuItems.map((item) => (
+                        <IconWithTooltip
+                            key={item.id}
+                            Icon={item.icon}
+                            tooltipText={item.label}
+                            active={activeSection === item.id}
+                            onClick={() => setActiveSection(item.id)}
+                        />
+                    ))}
+                </div>
+
+                {/* Divider */}
+                <div className="mx-auto w-12 h-px bg-gray-300 my-4"></div>
+
+                {/* Bottom section with logout and version */}
+                <div className="flex flex-col items-center gap-4 pb-4">
                     <IconWithTooltip
-                        key={item.id}
-                        Icon={item.icon}
-                        tooltipText={item.label}
-                        active={activeSection === item.id}
-                        onClick={() => setActiveSection(item.id)}
+                        Icon={LogOut}
+                        tooltipText="Logout"
+                        active={false}
+                        onClick={handleLogout}
                     />
-                ))}
-            </div>
-        </nav>
+                    
+                    {/* Version */}
+                    <div className="text-xs text-gray-500">
+                        v1.0.0
+                    </div>
+                </div>
+            </nav>
         </div>
     );
 }
