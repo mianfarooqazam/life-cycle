@@ -6,14 +6,15 @@ import {
     CircleDollarSign,
     Unplug,
     BarChart3,
-    LogOut
+    LogOut,
+    HelpCircle
 } from 'lucide-react';
 
-function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor }) {
+function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor, size = 24, padding = 'p-3' }) {
     return (
         <div className="relative group">
             <motion.div
-                className={`p-3 rounded-xl flex justify-center items-center cursor-pointer transition-all duration-200 ${active
+                className={`${padding} rounded-xl flex justify-center items-center cursor-pointer transition-all duration-200 ${active
                         ? 'bg-white border-2 border-blue-600 shadow-lg'
                         : 'bg-white shadow-md hover:shadow-lg'
                     }`}
@@ -23,7 +24,7 @@ function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor }) {
                 animate={{ scale: active ? 1.15 : 1 }}
                 onClick={onClick}
             >
-                <Icon size={24} color={iconColor || (active ? '#1565C0' : 'black')} />
+                <Icon size={size} color={iconColor || (active ? '#1565C0' : 'black')} />
             </motion.div>
 
             {/* Tooltip */}
@@ -50,6 +51,11 @@ export default function Sidebar({ activeSection, setActiveSection }) {
         console.log('Logging out...');
     };
 
+    const handleHelp = () => {
+        // Add your help logic here
+        console.log('Opening help...');
+    };
+
     return (
         <div className="col-span-1 row-span-2 rounded-lg p-4" style={{ backgroundColor: '#f7f6fb' }}>
             <nav className="h-full flex flex-col">
@@ -69,14 +75,26 @@ export default function Sidebar({ activeSection, setActiveSection }) {
                 {/* Divider */}
                 <div className="mx-auto w-20 h-px bg-gray-300 my-4"></div>
 
-                {/* Bottom section with logout and version */}
-                <div className="flex flex-col items-center gap-4 pb-4">
+                {/* Bottom section with logout, help and version */}
+                <div className="flex flex-col items-center gap-3 pb-4">
+                   
                     <IconWithTooltip
+                        Icon={HelpCircle}
+                        tooltipText="Help"
+                        active={false}
+                        onClick={handleHelp}
+                        iconColor="#6B7280"
+                        size={18}
+                        padding="p-2"
+                    />
+                     <IconWithTooltip
                         Icon={LogOut}
                         tooltipText="Logout"
                         active={false}
                         onClick={handleLogout}
                         iconColor="#EF4444"
+                        size={18}
+                        padding="p-2"
                     />
                     
                     {/* Version */}
