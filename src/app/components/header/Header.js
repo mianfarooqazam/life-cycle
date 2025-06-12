@@ -1,11 +1,63 @@
+import { User, Settings, Bell } from 'lucide-react';
+import { Badge, Box } from '@mui/material';
+
 export default function Header() {
     return (
-      <div className="col-span-9 bg-blue-50 dark:bg-blue-900 rounded-lg p-4 flex items-center justify-between h-16">
-        <h1 className="text-2xl font-bold">Life Cycle Analysis</h1>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-600 dark:text-gray-300">Welcome back!</span>
-          <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
-        </div>
-      </div>
+        <Box
+            sx={{
+                backgroundColor: '#f7f6fb',
+                borderRadius: 2,
+                p: 2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+                height: 64,
+                gridColumn: 'span 9'
+            }}
+        >
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Badge>
+                    <Box sx={{
+                        cursor: 'pointer',
+                        color: 'black',
+                        boxShadow: '0px 4px 6px rgba(0,0,0,0.1)',
+                        padding: '10px',
+                        borderRadius: '15px',
+                        backgroundColor: 'white',
+                        transition: 'color 0.2s'
+                    }}>
+                        <User size={24} />
+                    </Box>
+                </Badge>
+
+                <Badge >
+                    <Box sx={{
+                        cursor: 'pointer',
+                        color: 'black',
+                        boxShadow: '0px 4px 6px rgba(0,0,0,0.1)',
+                        padding: '10px',
+                        borderRadius: '15px',
+                        backgroundColor: 'white',
+                        transition: 'color 0.2s'
+                    }}>
+                        <Settings size={24} />
+                    </Box>
+                </Badge>
+
+                <Badge badgeContent={5} color="primary">
+                    <Box sx={{
+                        cursor: 'pointer',
+                        color: 'black',
+                        boxShadow: '0px 4px 6px rgba(0,0,0,0.1)',
+                        padding: '10px',
+                        borderRadius: '15px',
+                        backgroundColor: 'white',
+                        transition: 'color 0.2s'
+                    }}>
+                        <Bell size={24} />
+                    </Box>
+                </Badge>
+            </Box>
+        </Box>
     );
 }
