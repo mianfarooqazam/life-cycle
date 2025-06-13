@@ -1,59 +1,120 @@
 'use client';
 
 import { useState } from 'react';
-import { Building2, Home, Shield, Droplets } from 'lucide-react';
+import { 
+  Droplets, 
+  Layers, 
+  Layers2, 
+  BoxIcon, 
+  Waves, 
+  FoldVertical, 
+  FoldHorizontal, 
+  BrickWall, 
+  DoorClosed, 
+  Grid2X2, 
+  Cuboid 
+} from 'lucide-react';
+import { 
+  Box, 
+  Tabs, 
+  Tab, 
+  Paper,
+  Typography 
+} from '@mui/material';
 import BuildingFloor from '@/app/tabs/BuildingFloor';
 import MumtyWalls from '@/app/tabs/MumtyWalls';
 import ParapetWalls from '@/app/tabs/ParapetWalls';
 import SepticTank from '@/app/tabs/SepticTank';
-import TitleHeader from '@/app/components/header/TitleHeader'; 
+import TitleHeader from '@/app/components/header/TitleHeader';
+import BasementDetails from '../tabs/BasementDetails';
+import WaterTank from '../tabs/WaterTank';
+import ColumnDetails from '../tabs/ColumnDetails';
+import BeamDetails from '../tabs/BeamDetails';
+import InsulatedWallDetails from '../tabs/InsulatedWallDetails';
+import DoorDetails from '../tabs/DoorDetails';
+import WindowDetails from '../tabs/WindowDetails';
 
 export default function Dimensions() {
-  const [activeTab, setActiveTab] = useState('buildingFloor');
+  const [activeTab, setActiveTab] = useState(0);
 
   const tabs = [
-    { id: 'buildingFloor', name: 'Building Floor', component: BuildingFloor, icon: Building2 },
-    { id: 'mumtyWalls', name: 'Mumty Walls', component: MumtyWalls, icon: Home },
-    { id: 'parapetWalls', name: 'Parapet Walls', component: ParapetWalls, icon: Shield },
+    { id: 'basement', name: 'Basement', component: BasementDetails, icon: Layers2 },
+    { id: 'buildingFloor', name: 'Building Floor', component: BuildingFloor, icon: Layers },
+    { id: 'mumtyWalls', name: 'Mumty Walls', component: MumtyWalls, icon: BoxIcon },
+    { id: 'parapetWalls', name: 'Parapet Walls', component: ParapetWalls, icon: Cuboid },
     { id: 'septicTank', name: 'Septic Tank', component: SepticTank, icon: Droplets },
+    { id: 'waterTank', name: 'Water Tank', component: WaterTank, icon: Waves },
+    { id: 'columnDetails', name: 'Column', component: ColumnDetails, icon: FoldHorizontal },
+    { id: 'beamDetails', name: 'Beam', component: BeamDetails, icon: FoldVertical },
+    { id: 'insulatedWallDetails', name: 'Insulated Wall', component: InsulatedWallDetails, icon: BrickWall },
+    { id: 'door', name: 'Door', component: DoorDetails, icon: DoorClosed },
+    { id: 'window', name: 'Window', component: WindowDetails, icon: Grid2X2 },
   ];
 
-  const ActiveComponent = tabs.find(tab => tab.id === activeTab)?.component || BuildingFloor;
+  const handleChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
+
+  const ActiveComponent = tabs[activeTab]?.component || BuildingFloor;
 
   return (
-    <div className="p-2">
+    <Box sx={{ p: 2 }}>
       <TitleHeader>Building Dimensions</TitleHeader>
-      
+
       {/* Tabs Navigation */}
-      <div className="border-b border-gray-200 mb-6" style={{ backgroundColor: '#f7f6fb' }}>
-        <nav className="flex space-x-8" aria-label="Tabs">
-          {tabs.map((tab) => {
+      <Paper 
+        elevation={0} 
+        sx={{ 
+          backgroundColor: '#f7f6fb',
+          borderBottom: 1,
+          borderColor: 'divider',
+          mb: 3
+        }}
+      >
+        <Tabs
+          value={activeTab}
+          onChange={handleChange}
+          variant="scrollable"
+          scrollButtons="auto"
+          sx={{
+            '& .MuiTabs-indicator': {
+              backgroundColor: '#1976d2',
+            },
+          }}
+        >
+          {tabs.map((tab, index) => {
             const Icon = tab.icon;
             return (
-              <button
+              <Tab
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`
-                  py-2 px-1 border-b-2 font-medium text-sm transition-colors
-                  flex flex-col items-center gap-1
-                  ${activeTab === tab.id
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }
-                `}
-              >
-                <Icon className="w-5 h-5" />
-                <span>{tab.name}</span>
-              </button>
+                label={
+                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}>
+                    <Icon size={20} />
+                    <Typography variant="caption">{tab.name}</Typography>
+                  </Box>
+                }
+                sx={{
+                  textTransform: 'none',
+                  minHeight: 'auto',
+                  py: 1.5,
+                  px: 2,
+                  '&.Mui-selected': {
+                    color: '#1976d2',
+                  },
+                  '&:hover': {
+                    color: '#1565c0',
+                  },
+                }}
+              />
             );
           })}
-        </nav>
-      </div>
+        </Tabs>
+      </Paper>
 
       {/* Tab Content */}
-      <div className="mt-6">
+      <Box sx={{ mt: 3 }}>
         <ActiveComponent />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }
