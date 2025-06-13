@@ -41,7 +41,7 @@ export default function Sidebar({ activeSection, setActiveSection }) {
     const menuItems = [
         { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { id: 'building-plan', label: 'Building Plan', icon: Landmark },
-        { id: 'dimensions', label: 'Dimensions', icon: PencilRuler },
+        { id: 'dimensions', label: 'Building Dimensions', icon: PencilRuler },
         { id: 'materials', label: 'Materials', icon: BrickWall },
         { id: 'labour-cost', label: 'Labour Cost', icon: CircleDollarSign },
         { id: 'other-cost', label: 'Other Cost', icon: Unplug },
