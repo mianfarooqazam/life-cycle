@@ -25,7 +25,7 @@ function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor, size =
                 animate={{ scale: active ? 1.15 : 1 }}
                 onClick={onClick}
             >
-                <Icon size={size} color={iconColor || (active ? '#1565C0' : 'black')} />
+                <Icon size={size} color={iconColor || (active ? '#2663EB' : 'black')} />
             </motion.div>
 
             {/* Tooltip */}
