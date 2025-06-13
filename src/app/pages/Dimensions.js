@@ -1,25 +1,24 @@
 'use client';
 
 import { useState } from 'react';
-import { 
-  Droplets, 
-  Layers, 
-  Layers2, 
-  BoxIcon, 
-  Waves, 
-  FoldVertical, 
-  FoldHorizontal, 
-  BrickWall, 
-  DoorClosed, 
-  Grid2X2, 
-  Cuboid 
+import {
+  Droplets,
+  Layers,
+  Layers2,
+  BoxIcon,
+  Waves,
+  FoldVertical,
+  FoldHorizontal,
+  BrickWall,
+  DoorClosed,
+  Grid2X2,
+  Cuboid
 } from 'lucide-react';
-import { 
-  Box, 
-  Tabs, 
-  Tab, 
-  Paper,
-  Typography 
+import {
+  Box,
+  Tabs,
+  Tab,
+  Typography
 } from '@mui/material';
 import BuildingFloor from '@/app/tabs/BuildingFloor';
 import MumtyWalls from '@/app/tabs/MumtyWalls';
@@ -62,13 +61,9 @@ export default function Dimensions() {
       <TitleHeader>Building Dimensions</TitleHeader>
 
       {/* Tabs Navigation */}
-      <Paper 
-        elevation={0} 
-        sx={{ 
+      <Box
+        sx={{
           backgroundColor: '#f7f6fb',
-          borderBottom: 1,
-          borderColor: 'divider',
-          mb: 3
         }}
       >
         <Tabs
@@ -84,13 +79,23 @@ export default function Dimensions() {
         >
           {tabs.map((tab, index) => {
             const Icon = tab.icon;
+            const isSelected = activeTab === index;
+            
             return (
               <Tab
                 key={tab.id}
                 label={
                   <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}>
                     <Icon size={20} />
-                    <Typography variant="caption">{tab.name}</Typography>
+                    <Typography 
+                      variant="caption" 
+                      sx={{ 
+                        fontWeight:"bold",
+                        color: isSelected ? '#1976d2' : 'black'
+                      }}
+                    >
+                      {tab.name}
+                    </Typography>
                   </Box>
                 }
                 sx={{
@@ -98,6 +103,7 @@ export default function Dimensions() {
                   minHeight: 'auto',
                   py: 1.5,
                   px: 2,
+                  color: 'black',
                   '&.Mui-selected': {
                     color: '#1976d2',
                   },
@@ -109,7 +115,7 @@ export default function Dimensions() {
             );
           })}
         </Tabs>
-      </Paper>
+      </Box>
 
       {/* Tab Content */}
       <Box sx={{ mt: 3 }}>
