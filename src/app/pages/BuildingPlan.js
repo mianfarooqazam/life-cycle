@@ -75,7 +75,7 @@ export default function BuildingPlan() {
         </div>
 
         {formData.plotSize && (
-          <div className="mt-6 p-4 bg-gray-50 rounded-md">
+          <div className="mt-6 p-4  rounded-md" style={{backgroundColor:"#f7f6fb"}}>
             <p className="text-lg font-medium text-gray-800">
               Plot Area: <span className="text-blue-600">{plotArea.toLocaleString()} ft²</span>
             </p>
