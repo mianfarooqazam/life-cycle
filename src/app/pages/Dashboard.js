@@ -10,6 +10,8 @@ import {
   Legend,
   Filler
 } from 'chart.js';
+import TitleHeader from '@/app/components/header/TitleHeader'; 
+
 import { Bar } from 'react-chartjs-2';
 
 // Register ChartJS components
@@ -111,12 +113,7 @@ export default function Dashboard() {
 
   return (
     <div className="p-2">
-      <h2 className="text-2xl font-bold mb-6 text-center" style={{
-                backgroundColor: "#2663eb",
-                padding: "12px 20px",
-                borderRadius: 5,
-                color: "#fff"
-            }}>Dashboard</h2>
+      <TitleHeader>Dashboard</TitleHeader>
       
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
