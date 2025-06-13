@@ -7,7 +7,8 @@ import {
     Unplug,
     BarChart3,
     LogOut,
-    HelpCircle
+    HelpCircle,
+    Landmark,
 } from 'lucide-react';
 
 function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor, size = 24, padding = 'p-3' }) {
@@ -39,6 +40,7 @@ function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor, size =
 export default function Sidebar({ activeSection, setActiveSection }) {
     const menuItems = [
         { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+        { id: 'building-plan', label: 'Building Plan', icon: Landmark },
         { id: 'dimensions', label: 'Dimensions', icon: PencilRuler },
         { id: 'materials', label: 'Materials', icon: BrickWall },
         { id: 'labour-cost', label: 'Labour Cost', icon: CircleDollarSign },

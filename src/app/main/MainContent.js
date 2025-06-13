@@ -4,12 +4,15 @@ import Materials from "@/app/pages/Materials";
 import LabourCost from "@/app/pages/LabourCost";
 import OtherCost from "@/app/pages/OtherCost";
 import Analysis from "@/app/pages/Analysis";
+import BuildingPlan from "@/app/pages/BuildingPlan";
 
 export default function MainContent({ activeSection }) {
   const renderContent = () => {
     switch (activeSection) {
       case 'dashboard':
         return <Dashboard />;
+        case 'building-plan':
+        return <BuildingPlan />;
       case 'dimensions':
         return <Dimensions />;
       case 'materials':
