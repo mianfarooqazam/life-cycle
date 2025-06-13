@@ -1,18 +1,36 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { calculatePlotArea } from '@/app/utils/buildingPlanCalc';
 import SaveButton from '@/app/components/button/SaveButton';
 import TextInput from '@/app/components/input/TextInput';
 import { Toaster } from 'react-hot-toast';
+import { useBuildingPlanStore } from '@/app/store/buildingPlanStore';
 
 export default function BuildingPlan() {
+  const { 
+    projectName, 
+    address, 
+    plotSize, 
+    marlaSize, 
+    updateBuildingPlan 
+  } = useBuildingPlanStore();
+
   const [formData, setFormData] = useState({
-    projectName: '',
-    address: '',
-    plotSize: '',
-    marlaSize: 272
+    projectName,
+    address,
+    plotSize,
+    marlaSize: marlaSize || '' 
   });
+
+  useEffect(() => {
+    setFormData({
+      projectName,
+      address,
+      plotSize,
+      marlaSize: marlaSize || ''
+    });
+  }, [projectName, address, plotSize, marlaSize]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -20,14 +38,27 @@ export default function BuildingPlan() {
   };
 
   const handleSave = () => {
-    // Your save logic here
-    console.log('Saving:', formData);
+    if (!formData.plotSize || !formData.marlaSize) {
+      return false; // Return false for error
+    }
+
+    const plotArea = calculatePlotArea(parseFloat(formData.plotSize), parseInt(formData.marlaSize));
+    
+    updateBuildingPlan({
+      ...formData,
+      marlaSize: parseInt(formData.marlaSize),
+      plotArea
+    });
+
+    return true; // Return true for success
   };
 
-  const plotArea = calculatePlotArea(parseFloat(formData.plotSize) || 0, formData.marlaSize);
+  const plotArea = formData.plotSize && formData.marlaSize 
+    ? calculatePlotArea(parseFloat(formData.plotSize), parseInt(formData.marlaSize))
+    : 0;
 
   return (
-    <div className="p-6">
+    <div className="p-2">
       <Toaster />
       <h2 className="text-2xl font-bold mb-6 text-center">Building Plan</h2>
       
@@ -74,8 +105,8 @@ export default function BuildingPlan() {
           </div>
         </div>
 
-        {formData.plotSize && (
-          <div className="mt-6 p-4  rounded-md" style={{backgroundColor:"#f7f6fb"}}>
+        {formData.plotSize && formData.marlaSize && (
+          <div className="mt-6 p-4 rounded-md" style={{backgroundColor:"#f7f6fb"}}>
             <p className="text-lg font-medium text-gray-800">
               Plot Area: <span className="text-blue-600">{plotArea.toLocaleString()} ft²</span>
             </p>
@@ -84,8 +115,9 @@ export default function BuildingPlan() {
 
         <div className="mt-6 flex justify-end">
           <SaveButton 
-            onClick={handleSave} 
-            toastMessage="Building Plan Saved Successfully" 
+            onClick={handleSave}
+            successMessage="Building Plan Saved Successfully"
+            errorMessage="Plot size and marla size are required!"
           />
         </div>
       </div>

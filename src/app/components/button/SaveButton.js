@@ -2,16 +2,27 @@ import toast from 'react-hot-toast';
 
 export default function SaveButton({ 
   onClick, 
-  toastMessage = 'Saved Successfully',
+  successMessage = 'Saved Successfully',
+  errorMessage = '',
   className = '' 
 }) {
   const handleClick = () => {
-    if (onClick) onClick();
-    
-    toast.success(toastMessage, {
-      duration: 3000,
-      position: 'top-center',
-    });
+    if (onClick) {
+      const result = onClick();
+      
+      // Only show success toast if onClick returns true
+      if (result === true) {
+        toast.success(successMessage, {
+          duration: 3000,
+          position: 'top-center',
+        });
+      } else if (result === false && errorMessage) {
+        toast.error(errorMessage, {
+          duration: 3000,
+          position: 'top-center',
+        });
+      }
+    }
   };
 
   return (
