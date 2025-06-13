@@ -10,7 +10,7 @@ import {
   Legend,
   Filler
 } from 'chart.js';
-import { Line, Bar } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 
 // Register ChartJS components
 ChartJS.register(
@@ -54,53 +54,8 @@ export default function Dashboard() {
     { name: "Urban Plaza Development", progress: 92, budget: "$800K", status: "on-track" },
   ];
 
-  // Chart data for monthly carbon footprint
-  const monthlyData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-    datasets: [
-      {
-        label: 'Carbon Emissions (tons)',
-        data: [1450, 1380, 1420, 1350, 1290, 1234, 1180, 1150, 1100, 1050, 980, 950],
-        borderColor: 'rgb(239, 68, 68)',
-        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-        tension: 0.4,
-        fill: true,
-      },
-      {
-        label: 'Carbon Target (tons)',
-        data: [1500, 1500, 1500, 1500, 1500, 1500, 1400, 1400, 1400, 1400, 1300, 1300],
-        borderColor: 'rgb(34, 197, 94)',
-        backgroundColor: 'rgba(34, 197, 94, 0.1)',
-        borderDash: [5, 5],
-      },
-    ],
-  };
-
-  const lineChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'top',
-      },
-      title: {
-        display: false,
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        grid: {
-          color: 'rgba(156, 163, 175, 0.1)',
-        },
-      },
-      x: {
-        grid: {
-          color: 'rgba(156, 163, 175, 0.1)',
-        },
-      },
-    },
-  };
+  
+  
 
   // Material costs bar chart data
   const materialCostData = {
@@ -156,7 +111,12 @@ export default function Dashboard() {
 
   return (
     <div className="p-2">
-      <h2 className="text-2xl font-bold mb-6 text-center">Dashboard</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center" style={{
+                backgroundColor: "#2663eb",
+                padding: "12px 20px",
+                borderRadius: 5,
+                color: "#fff"
+            }}>Dashboard</h2>
       
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">

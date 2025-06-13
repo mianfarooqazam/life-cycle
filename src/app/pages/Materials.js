@@ -1,7 +1,9 @@
+import TitleHeader from '@/app/components/header/TitleHeader'; 
+
 export default function Materials() {
     return (
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Dashboard</h2>
+      <div className="p-2">
+         <TitleHeader>Materials</TitleHeader>
         <div className="space-y-4">
           <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
             <h3 className="font-medium mb-2">Overview</h3>

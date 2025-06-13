@@ -1,7 +1,9 @@
+import TitleHeader from '@/app/components/header/TitleHeader'; 
+
 export default function OtherCost() {
     return (
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Carbon, Cost & Quantity Analysis</h2>
+      <div className="p-2">
+         <TitleHeader>Other Cost</TitleHeader>
         <div className="space-y-4">
           <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
             <h3 className="font-medium mb-2">Carbon Footprint</h3>

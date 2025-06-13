@@ -6,6 +6,7 @@ import SaveButton from '@/app/components/button/SaveButton';
 import TextInput from '@/app/components/input/TextInput';
 import { Toaster } from 'react-hot-toast';
 import { useBuildingPlanStore } from '@/app/store/buildingPlanStore';
+import TitleHeader from '@/app/components/header/TitleHeader'; 
 
 export default function BuildingPlan() {
     const {
@@ -91,12 +92,7 @@ export default function BuildingPlan() {
     return (
         <div className="p-2">
             <Toaster />
-            <h2 className="text-2xl font-bold mb-6 text-center" style={{
-                backgroundColor: "#2663eb",
-                padding: "12px 20px",
-                borderRadius: 5,
-                color: "#fff"
-            }}>Building Plan</h2>
+            <TitleHeader>Building Plan</TitleHeader>
 
             <div className="">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

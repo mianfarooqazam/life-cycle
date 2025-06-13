@@ -6,6 +6,7 @@ import BuildingFloor from '@/app/tabs/BuildingFloor';
 import MumtyWalls from '@/app/tabs/MumtyWalls';
 import ParapetWalls from '@/app/tabs/ParapetWalls';
 import SepticTank from '@/app/tabs/SepticTank';
+import TitleHeader from '@/app/components/header/TitleHeader'; 
 
 export default function Dimensions() {
   const [activeTab, setActiveTab] = useState('buildingFloor');
@@ -21,7 +22,7 @@ export default function Dimensions() {
 
   return (
     <div className="p-2">
-      <h2 className="text-2xl font-bold mb-6 text-center">Building Dimensions</h2>
+      <TitleHeader>Building Dimensions</TitleHeader>
       
       {/* Tabs Navigation */}
       <div className="border-b border-gray-200 mb-6" style={{ backgroundColor: '#f7f6fb' }}>
