@@ -32,6 +32,7 @@ import BeamDetails from '../tabs/BeamDetails';
 import InsulatedWallDetails from '../tabs/InsulatedWallDetails';
 import DoorDetails from '../tabs/DoorDetails';
 import WindowDetails from '../tabs/WindowDetails';
+import { Toaster } from 'react-hot-toast';
 
 export default function Dimensions() {
   const [activeTab, setActiveTab] = useState(0);
@@ -57,9 +58,9 @@ export default function Dimensions() {
   const ActiveComponent = tabs[activeTab]?.component || BuildingFloor;
 
   return (
-    <Box sx={{ p: 2 }}>
-      <TitleHeader>Building Dimensions</TitleHeader>
-
+    <div className="grid grid-cols-1 p-2">
+      <Toaster />
+      <TitleHeader>Building Plan</TitleHeader>
       {/* Tabs Navigation */}
       <Box
         sx={{
@@ -80,17 +81,17 @@ export default function Dimensions() {
           {tabs.map((tab, index) => {
             const Icon = tab.icon;
             const isSelected = activeTab === index;
-            
+
             return (
               <Tab
                 key={tab.id}
                 label={
                   <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}>
                     <Icon size={20} />
-                    <Typography 
-                      variant="caption" 
-                      sx={{ 
-                        fontWeight:"bold",
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        // fontWeight:"bold",
                         color: isSelected ? '#1976d2' : 'black'
                       }}
                     >
@@ -121,6 +122,6 @@ export default function Dimensions() {
       <Box sx={{ mt: 3 }}>
         <ActiveComponent />
       </Box>
-    </Box>
+    </div>
   );
 }
