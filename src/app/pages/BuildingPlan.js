@@ -83,6 +83,11 @@ export default function BuildingPlan() {
         { value: 252, label: '252 sq ft' },
         { value: 272, label: '272 sq ft' }
     ];
+    const excavatorOptions = [
+        {
+            value: "Crawler Excavation", label: "Crawler Excavation"
+        }
+    ]
 
     return (
         <div className="grid grid-cols-1 gap-6 p-2">
@@ -126,7 +131,7 @@ export default function BuildingPlan() {
             {formData.plotSize && formData.marlaSize && (
                 <div className="grid grid-cols-1">
                     <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
-                        <p className="text-lg font-medium text-gray-800">
+                        <p className="text-lg font-bold text-gray-800">
                             Plot Area: <span className="text-blue-600">{plotArea.toLocaleString()} ft²</span>
                         </p>
                     </div>
@@ -168,12 +173,14 @@ export default function BuildingPlan() {
 
             {/* Excavator Type */}
             <div className="grid grid-cols-1">
+           
                 <TextInput
                     label="Excavator Type"
                     name="excavatorType"
                     value={formData.excavatorType}
                     onChange={handleInputChange}
-                    disabled
+                    options={excavatorOptions}
+
                 />
             </div>
 
