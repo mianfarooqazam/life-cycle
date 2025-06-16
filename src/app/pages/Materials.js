@@ -192,9 +192,9 @@ export default function Materials() {
       <TableContainer>
         <Table>
           <TableHead>
-            <TableRow sx={{ backgroundColor: "#2663eb" }}>
-              <TableCell sx={{ fontWeight: "bold", color: "#fff" }}>Materials</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#fff" }}>Quantity</TableCell>
+            <TableRow sx={{ backgroundColor: "#f7f6fb" }}>
+              <TableCell sx={{ fontWeight: "bold", color: "#000" }}>Materials</TableCell>
+              <TableCell sx={{ fontWeight: "bold", color: "#000" }}>Quantity</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -202,9 +202,9 @@ export default function Materials() {
               <TableRow 
                 key={index}
                 sx={{ 
-                  backgroundColor: index % 2 === 0 ? "#f8f9fa" : "#ffffff",
+                  backgroundColor: "#ffffff",
                   '&:hover': {
-                    backgroundColor: "#e3f2fd"
+                    backgroundColor: "#f7f6fb"
                   }
                 }}
               >
