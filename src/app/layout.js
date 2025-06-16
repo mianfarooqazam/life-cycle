@@ -15,7 +15,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${numans.variable} antialiased`}>
+      <body className={`${numans.variable} antialiased`} suppressHydrationWarning={true}>
         {children}
       </body>
     </html>
