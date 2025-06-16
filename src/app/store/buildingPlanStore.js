@@ -12,10 +12,6 @@ export const useBuildingPlanStore = create(
       isBasementUsed: 'no',
       foundationType: '',
       excavatorType: 'Crawler Excavation',
-      numberOfRooms: 0,
-      numberOfKitchens: 0,
-      numberOfLounges: 0,
-      numberOfWashrooms: 0,
       
       updateBuildingPlan: (data) => set(data),
     }),

@@ -3,10 +3,20 @@
 import { useState, useEffect } from 'react';
 import { calculatePlotArea } from '@/app/utils/buildingPlanCalc';
 import SaveButton from '@/app/components/button/SaveButton';
-import TextInput from '@/app/components/input/TextInput';
 import { Toaster } from 'react-hot-toast';
 import { useBuildingPlanStore } from '@/app/store/buildingPlanStore';
-import TitleHeader from '@/app/components/header/TitleHeader'; 
+import TitleHeader from '@/app/components/header/TitleHeader';
+import { 
+    TextField, 
+    FormControl, 
+    InputLabel, 
+    Select, 
+    MenuItem, 
+    RadioGroup, 
+    FormControlLabel, 
+    Radio, 
+    FormLabel 
+} from '@mui/material';
 
 export default function BuildingPlan() {
     const {
@@ -17,42 +27,30 @@ export default function BuildingPlan() {
         isBasementUsed,
         foundationType,
         excavatorType,
-        numberOfRooms,
-        numberOfKitchens,
-        numberOfLounges,
-        numberOfWashrooms,
         updateBuildingPlan
     } = useBuildingPlanStore();
 
     const [formData, setFormData] = useState({
-        projectName,
-        address,
-        plotSize,
+        projectName: projectName || '',
+        address: address || '',
+        plotSize: plotSize || '',
         marlaSize: marlaSize || 272,
         isBasementUsed: isBasementUsed || 'no',
         foundationType: foundationType || '',
-        excavatorType: excavatorType || 'Crawler Excavation',
-        numberOfRooms: numberOfRooms || '',
-        numberOfKitchens: numberOfKitchens || '',
-        numberOfLounges: numberOfLounges || '',
-        numberOfWashrooms: numberOfWashrooms || ''
+        excavatorType: excavatorType || 'Crawler Excavation'
     });
 
     useEffect(() => {
         setFormData({
-            projectName,
-            address,
-            plotSize,
+            projectName: projectName || '',
+            address: address || '',
+            plotSize: plotSize || '',
             marlaSize: marlaSize || 272,
             isBasementUsed: isBasementUsed || 'no',
             foundationType: foundationType || '',
-            excavatorType: excavatorType || 'Crawler Excavation',
-            numberOfRooms: numberOfRooms || '',
-            numberOfKitchens: numberOfKitchens || '',
-            numberOfLounges: numberOfLounges || '',
-            numberOfWashrooms: numberOfWashrooms || ''
+            excavatorType: excavatorType || 'Crawler Excavation'
         });
-    }, [projectName, address, plotSize, marlaSize, isBasementUsed, foundationType, excavatorType, numberOfRooms, numberOfKitchens, numberOfLounges, numberOfWashrooms]);
+    }, [projectName, address, plotSize, marlaSize, isBasementUsed, foundationType, excavatorType]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -60,14 +58,13 @@ export default function BuildingPlan() {
     };
 
     const handleSave = () => {
-        // Check required fields
+        // Validation
         if (!formData.plotSize || !formData.marlaSize || !formData.isBasementUsed) {
-            return false; // Return false for error
+            return false;
         }
 
-        // If basement is used, foundation type is also required
         if (formData.isBasementUsed === 'yes' && !formData.foundationType) {
-            return false; // Return false for error
+            return false;
         }
 
         const plotArea = calculatePlotArea(parseFloat(formData.plotSize), parseInt(formData.marlaSize));
@@ -75,14 +72,10 @@ export default function BuildingPlan() {
         updateBuildingPlan({
             ...formData,
             marlaSize: parseInt(formData.marlaSize),
-            plotArea,
-            numberOfRooms: formData.numberOfRooms ? parseInt(formData.numberOfRooms) : 0,
-            numberOfKitchens: formData.numberOfKitchens ? parseInt(formData.numberOfKitchens) : 0,
-            numberOfLounges: formData.numberOfLounges ? parseInt(formData.numberOfLounges) : 0,
-            numberOfWashrooms: formData.numberOfWashrooms ? parseInt(formData.numberOfWashrooms) : 0
+            plotArea
         });
 
-        return true; // Return true for success
+        return true;
     };
 
     const plotArea = formData.plotSize && formData.marlaSize
@@ -94,186 +87,123 @@ export default function BuildingPlan() {
             <Toaster />
             <TitleHeader>Building Plan</TitleHeader>
 
-            <div className="">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <TextInput
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Project Name */}
+                <FormControl fullWidth variant="outlined">
+                    <TextField
                         label="Project Name"
                         name="projectName"
                         value={formData.projectName}
                         onChange={handleInputChange}
-                        placeholder="Enter project name"
+                        variant="outlined"
                     />
+                </FormControl>
 
-                    <TextInput
+                {/* Address */}
+                <FormControl fullWidth variant="outlined">
+                    <TextField
                         label="Address"
                         name="address"
                         value={formData.address}
                         onChange={handleInputChange}
-                        placeholder="Enter address"
+                        variant="outlined"
                     />
+                </FormControl>
 
-                    <TextInput
+                {/* Plot Size */}
+                <FormControl fullWidth variant="outlined">
+                    <TextField
                         label="Plot Size"
                         name="plotSize"
                         type="number"
                         value={formData.plotSize}
                         onChange={handleInputChange}
-                        placeholder="Enter plot size"
+                        variant="outlined"
                     />
+                </FormControl>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Select Marla Size
-                        </label>
-                        <select
-                            name="marlaSize"
-                            value={formData.marlaSize}
-                            onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                            <option value={252}>252 sq ft</option>
-                            <option value={272}>272 sq ft</option>
-                        </select>
-                    </div>
+                {/* Marla Size */}
+                <FormControl fullWidth variant="outlined">
+                    <InputLabel>Marla Size</InputLabel>
+                    <Select
+                        name="marlaSize"
+                        value={formData.marlaSize}
+                        onChange={handleInputChange}
+                        label="Marla Size"
+                    >
+                        <MenuItem value={252}>252 sq ft</MenuItem>
+                        <MenuItem value={272}>272 sq ft</MenuItem>
+                    </Select>
+                </FormControl>
+            </div>
+
+            {/* Plot Area Display */}
+            {formData.plotSize && formData.marlaSize && (
+                <div className="mt-6 p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
+                    <p className="text-lg font-medium text-gray-800">
+                        Plot Area: <span className="text-blue-600">{plotArea.toLocaleString()} ft²</span>
+                    </p>
                 </div>
+            )}
 
-                {formData.plotSize && formData.marlaSize && (
-                    <div className="mt-6 p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
-                        <p className="text-lg font-medium text-gray-800">
-                            Plot Area: <span className="text-blue-600 ">{plotArea.toLocaleString()} ft²</span>
-                        </p>
-                    </div>
-                )}
+            {/* Basement and Foundation Options */}
+            {formData.plotSize && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    {/* Basement Question */}
+                    <FormControl component="fieldset">
+                        <FormLabel component="legend">Is basement used?</FormLabel>
+                        <RadioGroup
+                            row
+                            name="isBasementUsed"
+                            value={formData.isBasementUsed}
+                            onChange={handleInputChange}
+                        >
+                            <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+                            <FormControlLabel value="no" control={<Radio />} label="No" />
+                        </RadioGroup>
+                    </FormControl>
 
-                {/* Basement and Foundation Type - Side by side */}
-                {formData.plotSize && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                        {/* Basement Question */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Is basement used?
-                            </label>
-                            <div className="flex gap-4">
-                                <label className="flex items-center">
-                                    <input
-                                        type="radio"
-                                        name="isBasementUsed"
-                                        value="yes"
-                                        checked={formData.isBasementUsed === 'yes'}
-                                        onChange={handleInputChange}
-                                        className="mr-2"
-                                    />
-                                    Yes
-                                </label>
-                                <label className="flex items-center">
-                                    <input
-                                        type="radio"
-                                        name="isBasementUsed"
-                                        value="no"
-                                        checked={formData.isBasementUsed === 'no'}
-                                        onChange={handleInputChange}
-                                        className="mr-2"
-                                    />
-                                    No
-                                </label>
-                            </div>
-                        </div>
+                    {/* Foundation Type */}
+                    {formData.isBasementUsed === 'yes' && (
+                        <FormControl component="fieldset">
+                            <FormLabel component="legend">Foundation Type</FormLabel>
+                            <RadioGroup
+                                row
+                                name="foundationType"
+                                value={formData.foundationType}
+                                onChange={handleInputChange}
+                            >
+                                <FormControlLabel value="raft" control={<Radio />} label="Raft" />
+                                <FormControlLabel value="strip" control={<Radio />} label="Strip" />
+                            </RadioGroup>
+                        </FormControl>
+                    )}
+                </div>
+            )}
 
-                        {/* Foundation Type - Only show if basement is used */}
-                        {formData.isBasementUsed === 'yes' && (
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Foundation type
-                                </label>
-                                <div className="flex gap-4">
-                                    <label className="flex items-center">
-                                        <input
-                                            type="radio"
-                                            name="foundationType"
-                                            value="raft"
-                                            checked={formData.foundationType === 'raft'}
-                                            onChange={handleInputChange}
-                                            className="mr-2"
-                                        />
-                                        Raft
-                                    </label>
-                                    <label className="flex items-center">
-                                        <input
-                                            type="radio"
-                                            name="foundationType"
-                                            value="strip"
-                                            checked={formData.foundationType === 'strip'}
-                                            onChange={handleInputChange}
-                                            className="mr-2"
-                                        />
-                                        Strip
-                                    </label>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                {/* Excavator Type */}
-                <div className="mt-6">
-                    <TextInput
+            {/* Excavator Type */}
+            <div className="mt-6">
+                <FormControl fullWidth variant="outlined">
+                    <TextField
                         label="Excavator Type"
                         name="excavatorType"
                         value={formData.excavatorType}
                         onChange={handleInputChange}
-                        placeholder="Crawler Excavation"
-                        disabled={true}
+                        disabled
+                        variant="outlined"
                     />
-                </div>
+                </FormControl>
+            </div>
 
-                {/* Room Details */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                    <TextInput
-                        label="No. of Rooms"
-                        name="numberOfRooms"
-                        type="number"
-                        value={formData.numberOfRooms}
-                        onChange={handleInputChange}
-                        placeholder="Enter number of rooms"
-                    />
-
-                    <TextInput
-                        label="No. of Kitchens"
-                        name="numberOfKitchens"
-                        type="number"
-                        value={formData.numberOfKitchens}
-                        onChange={handleInputChange}
-                        placeholder="Enter number of kitchens"
-                    />
-
-                    <TextInput
-                        label="No. of Lounges"
-                        name="numberOfLounges"
-                        type="number"
-                        value={formData.numberOfLounges}
-                        onChange={handleInputChange}
-                        placeholder="Enter number of lounges"
-                    />
-
-                    <TextInput
-                        label="No. of Washrooms"
-                        name="numberOfWashrooms"
-                        type="number"
-                        value={formData.numberOfWashrooms}
-                        onChange={handleInputChange}
-                        placeholder="Enter number of washrooms"
-                    />
-                </div>
-
-                <div className="mt-6 flex justify-end">
-                    <SaveButton
-                        onClick={handleSave}
-                        successMessage="Building Plan Saved Successfully"
-                        errorMessage={formData.isBasementUsed === 'yes' && !formData.foundationType
-                            ? "Foundation type is required when basement is used!"
-                            : "Plot size, marla size, and basement options are required!"}
-                    />
-                </div>
+            {/* Save Button */}
+            <div className="mt-6 flex justify-end">
+                <SaveButton
+                    onClick={handleSave}
+                    successMessage="Building Plan Saved Successfully"
+                    errorMessage={formData.isBasementUsed === 'yes' && !formData.foundationType
+                        ? "Foundation type is required when basement is used!"
+                        : "Plot size, marla size, and basement options are required!"}
+                />
             </div>
         </div>
     );
