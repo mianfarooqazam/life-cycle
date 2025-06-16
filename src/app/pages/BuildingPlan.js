@@ -24,6 +24,11 @@ export default function BuildingPlan() {
         isBasementUsed,
         foundationType,
         excavatorType,
+        numberOfFloors,
+        numberOfRooms,
+        numberOfKitchens,
+        numberOfWashrooms,
+        numberOfLounges,
         updateBuildingPlan
     } = useBuildingPlanStore();
 
@@ -34,7 +39,12 @@ export default function BuildingPlan() {
         marlaSize: marlaSize || 272,
         isBasementUsed: isBasementUsed || 'no',
         foundationType: foundationType || '',
-        excavatorType: excavatorType || 'Crawler Excavation'
+        excavatorType: excavatorType || 'Crawler Excavation',
+        numberOfFloors: numberOfFloors || '',
+        numberOfRooms: numberOfRooms || '',
+        numberOfKitchens: numberOfKitchens || '',
+        numberOfWashrooms: numberOfWashrooms || '',
+        numberOfLounges: numberOfLounges || ''
     });
 
     useEffect(() => {
@@ -45,22 +55,67 @@ export default function BuildingPlan() {
             marlaSize: marlaSize || 272,
             isBasementUsed: isBasementUsed || 'no',
             foundationType: foundationType || '',
-            excavatorType: excavatorType || 'Crawler Excavation'
+            excavatorType: excavatorType || 'Crawler Excavation',
+            numberOfFloors: numberOfFloors || '',
+            numberOfRooms: numberOfRooms || '',
+            numberOfKitchens: numberOfKitchens || '',
+            numberOfWashrooms: numberOfWashrooms || '',
+            numberOfLounges: numberOfLounges || ''
         });
-    }, [projectName, address, plotSize, marlaSize, isBasementUsed, foundationType, excavatorType]);
+    }, [projectName, address, plotSize, marlaSize, isBasementUsed, foundationType, excavatorType,
+        numberOfFloors, numberOfRooms, numberOfKitchens, numberOfWashrooms, numberOfLounges]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+    const getFloorsHelperText = (numberOfFloors) => {
+        const floors = parseInt(numberOfFloors);
+        if (!floors || floors <= 0) return '';
+        
+        const floorNames = [];
+        
+        floorNames.push('Ground Floor');
+        
+        if (floors <= 3) {
+            for (let i = 1; i < floors; i++) {
+                const suffix = i === 1 ? 'st' : i === 2 ? 'nd' : i === 3 ? 'rd' : 'th';
+                floorNames.push(`${i}${suffix} Floor`);
+            }
+            return `(${floorNames.join(', ')})`;
+        } else {
+            const lastFloorIndex = floors - 1;
+            const suffix = lastFloorIndex === 1 ? 'st' : 
+                          lastFloorIndex === 2 ? 'nd' : 
+                          lastFloorIndex === 3 ? 'rd' : 'th';
+            
+            return `(Ground Floor --- ${lastFloorIndex}${suffix} Floor)`;
+        }
+    };
+
+    const validateBuildingDetails = () => {
+        // Check if all building details are filled
+        return formData.numberOfFloors && 
+               formData.numberOfRooms && 
+               formData.numberOfKitchens && 
+               formData.numberOfWashrooms && 
+               formData.numberOfLounges;
+    };
+
     const handleSave = () => {
-        // Validation
+        // Basic validation
         if (!formData.plotSize || !formData.marlaSize || !formData.isBasementUsed) {
             return false;
         }
 
+        // Foundation type validation
         if (formData.isBasementUsed === 'yes' && !formData.foundationType) {
+            return false;
+        }
+
+        // Building details validation
+        if (!validateBuildingDetails()) {
             return false;
         }
 
@@ -69,10 +124,31 @@ export default function BuildingPlan() {
         updateBuildingPlan({
             ...formData,
             marlaSize: parseInt(formData.marlaSize),
+            numberOfFloors: formData.numberOfFloors ? parseInt(formData.numberOfFloors) : 0,
+            numberOfRooms: formData.numberOfRooms ? parseInt(formData.numberOfRooms) : 0,
+            numberOfKitchens: formData.numberOfKitchens ? parseInt(formData.numberOfKitchens) : 0,
+            numberOfWashrooms: formData.numberOfWashrooms ? parseInt(formData.numberOfWashrooms) : 0,
+            numberOfLounges: formData.numberOfLounges ? parseInt(formData.numberOfLounges) : 0,
             plotArea
         });
 
         return true;
+    };
+
+    const getErrorMessage = () => {
+        if (!formData.plotSize || !formData.marlaSize || !formData.isBasementUsed) {
+            return "Plot size, marla size, and basement options are required!";
+        }
+        
+        if (formData.isBasementUsed === 'yes' && !formData.foundationType) {
+            return "Foundation type is required when basement is used!";
+        }
+        
+        if (!validateBuildingDetails()) {
+            return "floors, rooms, kitchens, washrooms and lounges are required!";
+        }
+        
+        return "Please fill all required fields!";
     };
 
     const plotArea = formData.plotSize && formData.marlaSize
@@ -83,11 +159,12 @@ export default function BuildingPlan() {
         { value: 252, label: '252 sq ft' },
         { value: 272, label: '272 sq ft' }
     ];
+
     const excavatorOptions = [
         {
             value: "Crawler Excavation", label: "Crawler Excavation"
         }
-    ]
+    ];
 
     return (
         <div className="grid grid-cols-1 gap-6 p-2">
@@ -116,6 +193,7 @@ export default function BuildingPlan() {
                     type="number"
                     value={formData.plotSize}
                     onChange={handleInputChange}
+                    required
                 />
 
                 <TextInput
@@ -124,6 +202,7 @@ export default function BuildingPlan() {
                     value={formData.marlaSize}
                     onChange={handleInputChange}
                     options={marlaOptions}
+                    required
                 />
             </div>
 
@@ -173,14 +252,62 @@ export default function BuildingPlan() {
 
             {/* Excavator Type */}
             <div className="grid grid-cols-1">
-           
                 <TextInput
                     label="Excavator Type"
                     name="excavatorType"
                     value={formData.excavatorType}
                     onChange={handleInputChange}
                     options={excavatorOptions}
+                />
+            </div>
 
+            {/* Building Details Section */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <TextInput
+                    label="Floors"
+                    name="numberOfFloors"
+                    type="number"
+                    value={formData.numberOfFloors}
+                    onChange={handleInputChange}
+                    placeholder="excluding basement"
+                    helperText={getFloorsHelperText(formData.numberOfFloors)}
+                    required
+                />
+
+                <TextInput
+                    label="Rooms"
+                    name="numberOfRooms"
+                    type="number"
+                    value={formData.numberOfRooms}
+                    onChange={handleInputChange}
+                    required
+                />
+
+                <TextInput
+                    label="Kitchens"
+                    name="numberOfKitchens"
+                    type="number"
+                    value={formData.numberOfKitchens}
+                    onChange={handleInputChange}
+                    required
+                />
+
+                <TextInput
+                    label="Washrooms"
+                    name="numberOfWashrooms"
+                    type="number"
+                    value={formData.numberOfWashrooms}
+                    onChange={handleInputChange}
+                    required
+                />
+
+                <TextInput
+                    label="Lounges"
+                    name="numberOfLounges"
+                    type="number"
+                    value={formData.numberOfLounges}
+                    onChange={handleInputChange}
+                    required
                 />
             </div>
 
@@ -189,9 +316,7 @@ export default function BuildingPlan() {
                 <SaveButton
                     onClick={handleSave}
                     successMessage="Building Plan Saved Successfully"
-                    errorMessage={formData.isBasementUsed === 'yes' && !formData.foundationType
-                        ? "Foundation type is required when basement is used!"
-                        : "Plot size, marla size, and basement options are required!"}
+                    errorMessage={getErrorMessage()}
                 />
             </div>
         </div>
