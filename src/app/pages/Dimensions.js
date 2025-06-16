@@ -60,7 +60,7 @@ export default function Dimensions() {
   return (
     <div className="grid grid-cols-1 p-2">
       <Toaster />
-      <TitleHeader>Building Plan</TitleHeader>
+      <TitleHeader>Building Dimensions</TitleHeader>
       {/* Tabs Navigation */}
       <Box
         sx={{
