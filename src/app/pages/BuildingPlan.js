@@ -281,6 +281,8 @@ export default function BuildingPlan() {
                     value={formData.numberOfRooms}
                     onChange={handleInputChange}
                     required
+                    placeholder="applies to each floor equally"
+
                 />
 
                 <TextInput
@@ -290,6 +292,8 @@ export default function BuildingPlan() {
                     value={formData.numberOfKitchens}
                     onChange={handleInputChange}
                     required
+                    placeholder="applies to each floor equally"
+
                 />
 
                 <TextInput
@@ -299,6 +303,8 @@ export default function BuildingPlan() {
                     value={formData.numberOfWashrooms}
                     onChange={handleInputChange}
                     required
+                    placeholder="applies to each floor equally"
+
                 />
 
                 <TextInput
@@ -308,6 +314,8 @@ export default function BuildingPlan() {
                     value={formData.numberOfLounges}
                     onChange={handleInputChange}
                     required
+                    placeholder="applies to each floor equally"
+
                 />
             </div>
 
