@@ -9,10 +9,10 @@ export default function Rightbar() {
     marlaSize,
     isBasementUsed,
     foundationType,
-    numBedrooms,
-    numBathrooms,
-    numKitchens,
-    numLivingRooms,
+    numberOfRooms,
+    numberOfWashrooms,
+    numberOfKitchens,
+    numberOfLounges,
   } = useBuildingPlanStore();
 
   const plotDimensions = plotSize && marlaSize ? {
@@ -152,7 +152,7 @@ export default function Rightbar() {
             </g>
           )}
 
-          {/* Room Labels with Counts */}
+          {/* Room Labels with Correct Counts */}
           <text
             x={padding + viewWidth * 0.3}
             y={padding + viewHeight * 0.3}
@@ -160,7 +160,7 @@ export default function Rightbar() {
             fill="#374151"
             fontSize="10"
           >
-            Living ({numLivingRooms || 1})
+            Lounge ({numberOfLounges || 1})
           </text>
           <text
             x={padding + viewWidth * 0.7}
@@ -169,7 +169,7 @@ export default function Rightbar() {
             fill="#374151"
             fontSize="10"
           >
-            Kitchen ({numKitchens || 1})
+            Kitchen ({numberOfKitchens || 1})
           </text>
           <text
             x={padding + viewWidth * 0.7}
@@ -178,7 +178,7 @@ export default function Rightbar() {
             fill="#374151"
             fontSize="10"
           >
-            Bedroom ({numBedrooms || 1})
+            Bedroom ({numberOfRooms || 1})
           </text>
           <text
             x={padding + viewWidth * 0.2}
@@ -187,7 +187,7 @@ export default function Rightbar() {
             fill="#374151"
             fontSize="10"
           >
-            Bath ({numBathrooms || 1})
+            Bath ({numberOfWashrooms || 1})
           </text>
           <text
             x={padding + viewWidth * 0.6}
@@ -228,12 +228,12 @@ export default function Rightbar() {
     <div className="col-span-2 rounded-lg p-4" style={{ backgroundColor: '#f7f6fb' }}>
       <TitleHeader>Info Panel</TitleHeader>
       <div className="mb-4">
-        <h3 className="text-md font-semibold  text-center text-black">
+        <h3 className="text-md font-semibold text-center text-black">
           2D Floor Plan
         </h3>
+        
         {renderArchitecturePlan()}
       </div>
-
     </div>
   );
 }
