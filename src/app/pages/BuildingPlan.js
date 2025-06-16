@@ -6,12 +6,9 @@ import SaveButton from '@/app/components/button/SaveButton';
 import { Toaster } from 'react-hot-toast';
 import { useBuildingPlanStore } from '@/app/store/buildingPlanStore';
 import TitleHeader from '@/app/components/header/TitleHeader';
+import TextInput from '@/app/components/input/TextInput';
 import {
-    TextField,
     FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
     RadioGroup,
     FormControlLabel,
     Radio,
@@ -82,6 +79,11 @@ export default function BuildingPlan() {
         ? calculatePlotArea(parseFloat(formData.plotSize), parseInt(formData.marlaSize))
         : 0;
 
+    const marlaOptions = [
+        { value: 252, label: '252 sq ft' },
+        { value: 272, label: '272 sq ft' }
+    ];
+
     return (
         <div className="grid grid-cols-1 gap-6 p-2">
             <Toaster />
@@ -89,51 +91,35 @@ export default function BuildingPlan() {
 
             {/* Basic Information Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormControl fullWidth variant="outlined">
-                    <FormLabel>Project Name</FormLabel>
-                    <TextField
-                        name="projectName"
-                        value={formData.projectName}
-                        onChange={handleInputChange}
-                        variant="outlined"
-                    />
-                </FormControl>
+                <TextInput
+                    label="Project Name"
+                    name="projectName"
+                    value={formData.projectName}
+                    onChange={handleInputChange}
+                />
 
-                <FormControl fullWidth variant="outlined">
-                    <FormLabel>Address</FormLabel>
+                <TextInput
+                    label="Address"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleInputChange}
+                />
 
-                    <TextField
-                        name="address"
-                        value={formData.address}
-                        onChange={handleInputChange}
-                        variant="outlined"
-                    />
-                </FormControl>
+                <TextInput
+                    label="Plot Size"
+                    name="plotSize"
+                    type="number"
+                    value={formData.plotSize}
+                    onChange={handleInputChange}
+                />
 
-                <FormControl fullWidth variant="outlined">
-                    <FormLabel>Project Name</FormLabel>
-
-                    <TextField
-                        name="plotSize"
-                        type="number"
-                        value={formData.plotSize}
-                        onChange={handleInputChange}
-                        variant="outlined"
-                    />
-                </FormControl>
-
-                <FormControl fullWidth variant="outlined">
-                    <FormLabel>Marla Size</FormLabel>
-                    <Select
-                        name="marlaSize"
-                        value={formData.marlaSize}
-                        onChange={handleInputChange}
-                        label="Marla Size"
-                    >
-                        <MenuItem value={252}>252 sq ft</MenuItem>
-                        <MenuItem value={272}>272 sq ft</MenuItem>
-                    </Select>
-                </FormControl>
+                <TextInput
+                    label="Marla Size"
+                    name="marlaSize"
+                    value={formData.marlaSize}
+                    onChange={handleInputChange}
+                    options={marlaOptions}
+                />
             </div>
 
             {/* Plot Area Display */}
@@ -182,16 +168,13 @@ export default function BuildingPlan() {
 
             {/* Excavator Type */}
             <div className="grid grid-cols-1">
-                <FormControl fullWidth variant="outlined">
-                    <TextField
-                        label="Excavator Type"
-                        name="excavatorType"
-                        value={formData.excavatorType}
-                        onChange={handleInputChange}
-                        disabled
-                        variant="outlined"
-                    />
-                </FormControl>
+                <TextInput
+                    label="Excavator Type"
+                    name="excavatorType"
+                    value={formData.excavatorType}
+                    onChange={handleInputChange}
+                    disabled
+                />
             </div>
 
             {/* Save Button */}
