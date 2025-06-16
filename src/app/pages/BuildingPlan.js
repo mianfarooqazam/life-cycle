@@ -6,16 +6,16 @@ import SaveButton from '@/app/components/button/SaveButton';
 import { Toaster } from 'react-hot-toast';
 import { useBuildingPlanStore } from '@/app/store/buildingPlanStore';
 import TitleHeader from '@/app/components/header/TitleHeader';
-import { 
-    TextField, 
-    FormControl, 
-    InputLabel, 
-    Select, 
-    MenuItem, 
-    RadioGroup, 
-    FormControlLabel, 
-    Radio, 
-    FormLabel 
+import {
+    TextField,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    RadioGroup,
+    FormControlLabel,
+    Radio,
+    FormLabel
 } from '@mui/material';
 
 export default function BuildingPlan() {
@@ -83,15 +83,15 @@ export default function BuildingPlan() {
         : 0;
 
     return (
-        <div className="p-2">
+        <div className="grid grid-cols-1 gap-6 p-2">
             <Toaster />
             <TitleHeader>Building Plan</TitleHeader>
 
+            {/* Basic Information Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Project Name */}
                 <FormControl fullWidth variant="outlined">
+                    <FormLabel>Project Name</FormLabel>
                     <TextField
-                        label="Project Name"
                         name="projectName"
                         value={formData.projectName}
                         onChange={handleInputChange}
@@ -99,10 +99,10 @@ export default function BuildingPlan() {
                     />
                 </FormControl>
 
-                {/* Address */}
                 <FormControl fullWidth variant="outlined">
+                    <FormLabel>Address</FormLabel>
+
                     <TextField
-                        label="Address"
                         name="address"
                         value={formData.address}
                         onChange={handleInputChange}
@@ -110,10 +110,10 @@ export default function BuildingPlan() {
                     />
                 </FormControl>
 
-                {/* Plot Size */}
                 <FormControl fullWidth variant="outlined">
+                    <FormLabel>Project Name</FormLabel>
+
                     <TextField
-                        label="Plot Size"
                         name="plotSize"
                         type="number"
                         value={formData.plotSize}
@@ -122,9 +122,8 @@ export default function BuildingPlan() {
                     />
                 </FormControl>
 
-                {/* Marla Size */}
                 <FormControl fullWidth variant="outlined">
-                    <InputLabel>Marla Size</InputLabel>
+                    <FormLabel>Marla Size</FormLabel>
                     <Select
                         name="marlaSize"
                         value={formData.marlaSize}
@@ -139,17 +138,18 @@ export default function BuildingPlan() {
 
             {/* Plot Area Display */}
             {formData.plotSize && formData.marlaSize && (
-                <div className="mt-6 p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
-                    <p className="text-lg font-medium text-gray-800">
-                        Plot Area: <span className="text-blue-600">{plotArea.toLocaleString()} ft²</span>
-                    </p>
+                <div className="grid grid-cols-1">
+                    <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
+                        <p className="text-lg font-medium text-gray-800">
+                            Plot Area: <span className="text-blue-600">{plotArea.toLocaleString()} ft²</span>
+                        </p>
+                    </div>
                 </div>
             )}
 
             {/* Basement and Foundation Options */}
             {formData.plotSize && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                    {/* Basement Question */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormControl component="fieldset">
                         <FormLabel component="legend">Is basement used?</FormLabel>
                         <RadioGroup
@@ -163,7 +163,6 @@ export default function BuildingPlan() {
                         </RadioGroup>
                     </FormControl>
 
-                    {/* Foundation Type */}
                     {formData.isBasementUsed === 'yes' && (
                         <FormControl component="fieldset">
                             <FormLabel component="legend">Foundation Type</FormLabel>
@@ -182,7 +181,7 @@ export default function BuildingPlan() {
             )}
 
             {/* Excavator Type */}
-            <div className="mt-6">
+            <div className="grid grid-cols-1">
                 <FormControl fullWidth variant="outlined">
                     <TextField
                         label="Excavator Type"
@@ -196,7 +195,7 @@ export default function BuildingPlan() {
             </div>
 
             {/* Save Button */}
-            <div className="mt-6 flex justify-end">
+            <div className="grid grid-cols-1 justify-items-end">
                 <SaveButton
                     onClick={handleSave}
                     successMessage="Building Plan Saved Successfully"
