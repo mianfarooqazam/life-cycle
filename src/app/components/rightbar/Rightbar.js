@@ -228,9 +228,13 @@ export default function Rightbar() {
     <div className="col-span-2 rounded-lg p-4" style={{ backgroundColor: '#f7f6fb' }}>
       <TitleHeader>Info Panel</TitleHeader>
       <div className="mb-4">
-        <h3 className="text-md font-semibold mb-2 text-center text-black">2D Floor Plan</h3>
+        <h3 className="text-md font-semibold  text-center text-black">
+          2D Floor Plan
+        </h3>
+        <p className="text-[10px] text-center text-gray-500 mb-2">( same for every floor )</p>
         {renderArchitecturePlan()}
       </div>
+
     </div>
   );
 }
