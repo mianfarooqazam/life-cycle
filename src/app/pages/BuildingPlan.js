@@ -171,6 +171,7 @@ export default function BuildingPlan() {
             <Toaster />
             <TitleHeader>Building Plan</TitleHeader>
 
+
             {/* Basic Information Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <TextInput
@@ -262,7 +263,9 @@ export default function BuildingPlan() {
             </div>
 
             {/* Building Details Section */}
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
                 <TextInput
                     label="Floors"
                     name="numberOfFloors"
