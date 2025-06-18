@@ -23,11 +23,13 @@ export default function WallTable({
     fontWeight: 'medium',
     textAlign: 'center',
     padding: '12px 8px',
+    whiteSpace: 'nowrap',
   };
 
   const totalCellStyle = {
     fontWeight: 'bold',
     textAlign: 'center',
+    whiteSpace: 'nowrap',
   };
 
   const handleAction = (action, id) => {
@@ -50,6 +52,7 @@ export default function WallTable({
                 textAlign: 'center',
                 padding: '16px 8px',
                 minWidth: 120,
+                whiteSpace: 'nowrap',
               }}>
                 {header}
               </TableCell>
