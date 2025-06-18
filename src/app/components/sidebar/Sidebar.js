@@ -19,7 +19,7 @@ function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor, size =
         <div className="relative group">
             <motion.div
                 className={`${padding} rounded-xl flex justify-center items-center cursor-pointer transition-all duration-200 ${active
-                        ? 'bg-white border-2 border-blue-600 shadow-lg'
+                        ? 'bg-white border-2 border-[#5BB045] shadow-lg'
                         : 'bg-white shadow-md hover:shadow-lg'
                     }`}
                 whileHover={{ scale: active ? 1.25 : 1.1, rotate: 3 }}
@@ -28,7 +28,7 @@ function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor, size =
                 animate={{ scale: active ? 1.15 : 1 }}
                 onClick={onClick}
             >
-                <Icon size={size} color={iconColor || (active ? '#2663EB' : 'black')} />
+                <Icon size={size} color={iconColor || (active ? '#5BB045' : 'black')} />
             </motion.div>
 
             {/* Tooltip */}
@@ -110,7 +110,7 @@ export default function Sidebar({ activeSection, setActiveSection }) {
                     />
                     
                     {/* Version */}
-                    <div className="text-xs text-blue-500">
+                    <div className="text-xs font-bold text-[#5BB045]">
                         v1.0.0
                     </div>
                 </div>

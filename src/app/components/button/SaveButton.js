@@ -4,10 +4,11 @@ export default function SaveButton({
   onClick, 
   successMessage = 'Saved Successfully',
   errorMessage = '',
-  className = '' 
+  className = '',
+  disabled = false
 }) {
   const handleClick = () => {
-    if (onClick) {
+    if (onClick && !disabled) {
       const result = onClick();
       
       // Only show success toast if onClick returns true
@@ -28,7 +29,27 @@ export default function SaveButton({
   return (
     <button
       onClick={handleClick}
-      className={`px-6 py-2 bg-[#3b83f6] text-white font-medium rounded-md hover:bg-[#2563eb] focus:outline-none focus:ring-2 focus:ring-[#3b83f6] focus:ring-offset-2 transition-colors ${className}`}
+      disabled={disabled}
+      className={`
+        px-6 py-3 
+        bg-[#5BB045] text-white 
+        font-semibold 
+        rounded-lg 
+        shadow-md shadow-[#5BB045]/30 
+        transition-all duration-300 ease-in-out
+        hover:bg-[#4a9537] 
+        hover:text-white 
+        hover:-translate-y-0.5 
+        hover:shadow-lg hover:shadow-[#5BB045]/40
+        active:translate-y-0 
+        active:shadow-md active:shadow-[#5BB045]/30
+        disabled:bg-gray-300 
+        disabled:text-gray-500 
+        disabled:shadow-none 
+        disabled:transform-none 
+        disabled:cursor-not-allowed
+        ${className}
+      `}
     >
       Save
     </button>

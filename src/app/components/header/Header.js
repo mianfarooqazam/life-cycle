@@ -31,9 +31,9 @@ export default function Header() {
             >
                 {/* Logos on the left */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                    <Image 
-                        src="/lca-logo.png" 
-                        alt="LCA Logo" 
+                    <Image
+                        src="/lca-logo.png"
+                        alt="LCA Logo"
                         width={69}
                         height={69}
                         style={{
@@ -42,14 +42,14 @@ export default function Header() {
                         }}
                     />
                     <Typography variant="h6" sx={{ fontWeight: "bold", color: '#5BB045' }}>
-                       Life Cycle Analysis
+                        Life Cycle Analysis
                     </Typography>
                 </Box>
 
                 {/* Icons on the right */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <Badge>
-                        <Box 
+                        <Box
                             onClick={handleProfileClick}
                             sx={{
                                 cursor: 'pointer',
@@ -81,7 +81,15 @@ export default function Header() {
                             <Settings size={24} />
                         </Box>
                     </Badge>
-                    <Badge badgeContent={5} color="primary">
+                    <Badge
+                        badgeContent={5}
+                        sx={{
+                            '& .MuiBadge-badge': {
+                                backgroundColor: '#5BB045',
+                                color: 'white'
+                            }
+                        }}
+                    >
                         <Box sx={{
                             cursor: 'pointer',
                             color: 'black',
@@ -98,9 +106,9 @@ export default function Header() {
             </Box>
 
             {/* Profile Modal */}
-            <ProfileModal 
-                open={profileModalOpen} 
-                onClose={handleCloseModal} 
+            <ProfileModal
+                open={profileModalOpen}
+                onClose={handleCloseModal}
             />
         </>
     );
