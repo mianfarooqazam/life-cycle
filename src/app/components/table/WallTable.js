@@ -80,6 +80,7 @@ export default function WallTable({
               <TableCell sx={cellStyle}>{row.wallArea}</TableCell>
               <TableCell sx={cellStyle}>{row.wallVolume.toLocaleString()}</TableCell>
               <TableCell sx={cellStyle}>{row.tilesArea}</TableCell>
+              <TableCell sx={cellStyle}>{row.wallInsulationThickness || '-'}</TableCell>
               <TableCell sx={cellStyle}>{row.doors} / {row.windows}</TableCell>
               <TableCell sx={cellStyle}>
                 <IconButton 
@@ -115,6 +116,7 @@ export default function WallTable({
               <TableCell sx={totalCellStyle}>
                 {totalCalculations.totalWallVolumeNoCurtain.toLocaleString()} (no curtain)
               </TableCell>
+              <TableCell sx={totalCellStyle}></TableCell>
               <TableCell sx={totalCellStyle}></TableCell>
               <TableCell sx={totalCellStyle}></TableCell>
               <TableCell sx={totalCellStyle}></TableCell>
