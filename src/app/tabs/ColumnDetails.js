@@ -1,60 +1,31 @@
 "use client";
-import { useState } from 'react';
 import SaveButton from '@/app/components/button/SaveButton';
 import TextInput from '@/app/components/input/TextInput';
 import ColumnTable from '@/app/components/table/ColumnTable';
+import { useColumnDetailsStore } from '@/app/store/columnDetailsStore';
 
 export default function ColumnDetails() {
-    // Form state
-    const [formData, setFormData] = useState({
-        numberOfColumns: '',
-        columnHeight: '',
-        columnLength: '',
-        columnWidth: ''
-    });
-
-    // Table data state
-    const [columnData, setColumnData] = useState([]);
-    const [editingId, setEditingId] = useState(null);
+    const {
+        formData,
+        columnData,
+        editingId,
+        updateFormData,
+        resetFormData,
+        addColumnData,
+        updateColumnData,
+        deleteColumnData,
+        setEditingId,
+        clearEditingId,
+        calculateVolume,
+        calculateTotalVolume,
+        validateForm,
+        getErrorMessage
+    } = useColumnDetailsStore();
 
     // Handle input changes
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
-
-    // Calculate column volume
-    const calculateVolume = () => {
-        const numberOfColumns = parseFloat(formData.numberOfColumns);
-        const columnHeight = parseFloat(formData.columnHeight);
-        const columnLength = parseFloat(formData.columnLength);
-        const columnWidth = parseFloat(formData.columnWidth);
-        
-        if (numberOfColumns && columnHeight && columnLength && columnWidth) {
-            // Convert length and width from inches to feet (divide by 12)
-            const lengthInFeet = columnLength / 12;
-            const widthInFeet = columnWidth / 12;
-            const volumePerColumn = columnHeight * lengthInFeet * widthInFeet;
-            const totalVolume = volumePerColumn * numberOfColumns;
-            return totalVolume.toFixed(2);
-        }
-        return '0.00';
-    };
-
-    // Validation function
-    const validateForm = () => {
-        if (!formData.numberOfColumns || !formData.columnHeight || !formData.columnLength || !formData.columnWidth) {
-            return false;
-        }
-        return true;
-    };
-
-    // Get error message
-    const getErrorMessage = () => {
-        if (!formData.numberOfColumns || !formData.columnHeight || !formData.columnLength || !formData.columnWidth) {
-            return 'Please fill in all required fields (number of columns, height, length, width)';
-        }
-        return 'Please fill all required fields!';
+        updateFormData({ [name]: value });
     };
 
     // Handle form submission
@@ -78,22 +49,15 @@ export default function ColumnDetails() {
 
             if (editingId) {
                 // Update existing entry
-                setColumnData(prev => prev.map(item => 
-                    item.id === editingId ? newColumnData : item
-                ));
-                setEditingId(null);
+                updateColumnData(editingId, newColumnData);
+                clearEditingId();
             } else {
                 // Add new entry
-                setColumnData(prev => [...prev, newColumnData]);
+                addColumnData(newColumnData);
             }
 
             // Reset form after successful save
-            setFormData({
-                numberOfColumns: '',
-                columnHeight: '',
-                columnLength: '',
-                columnWidth: ''
-            });
+            resetFormData();
 
             return true; // Return true for successful save
         } catch (error) {
@@ -106,7 +70,7 @@ export default function ColumnDetails() {
     const handleEdit = (id) => {
         const columnToEdit = columnData.find(item => item.id === id);
         if (columnToEdit) {
-            setFormData({
+            updateFormData({
                 numberOfColumns: columnToEdit.numberOfColumns,
                 columnHeight: columnToEdit.columnHeight,
                 columnLength: columnToEdit.columnLength,
@@ -118,30 +82,13 @@ export default function ColumnDetails() {
 
     // Handle delete
     const handleDelete = (id) => {
-        setColumnData(prev => {
-            const filteredData = prev.filter(item => item.id !== id);
-            // Update serial numbers
-            return filteredData.map((item, index) => ({
-                ...item,
-                srNo: index + 1
-            }));
-        });
+        deleteColumnData(id);
         
         // If we were editing the deleted item, reset the form
         if (editingId === id) {
-            setEditingId(null);
-            setFormData({
-                numberOfColumns: '',
-                columnHeight: '',
-                columnLength: '',
-                columnWidth: ''
-            });
+            clearEditingId();
+            resetFormData();
         }
-    };
-
-    // Calculate total volume
-    const calculateTotalVolume = () => {
-        return columnData.reduce((total, item) => total + parseFloat(item.columnVolume), 0).toFixed(2);
     };
 
     return (
