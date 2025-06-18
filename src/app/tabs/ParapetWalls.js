@@ -1,58 +1,51 @@
 "use client";
-import { useState } from 'react';
 import SaveButton from '@/app/components/button/SaveButton';
 import TextInput from '@/app/components/input/TextInput';
+import ParapetWallsTable from '@/app/components/table/ParapetWallsTable';
+import { useParapetWallsStore } from '@/app/store/parapetWallsStore';
 
 export default function ParapetWalls() {
-    // Form state
-    const [formData, setFormData] = useState({
-        length: '',
-        height: '',
-        thickness: ''
-    });
+    const {
+        formData,
+        parapetWallsData,
+        editingId,
+        updateFormData,
+        resetFormData,
+        addParapetWallData,
+        updateParapetWallData,
+        deleteParapetWallData,
+        setEditingId,
+        clearEditingId,
+        calculateArea,
+        calculateVolume,
+        calculateTotalArea,
+        calculateTotalVolume,
+        validateForm,
+        getErrorMessage
+    } = useParapetWallsStore();
 
     // Handle input changes
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        updateFormData({ [name]: value });
     };
 
-    // Calculate area and volume
-    const calculateArea = () => {
-        const length = parseFloat(formData.length);
-        const height = parseFloat(formData.height);
-        if (length && height) {
-            return (length * height).toFixed(2);
+    // Handle edit
+    const handleEdit = (id) => {
+        const itemToEdit = parapetWallsData.find(item => item.id === id);
+        if (itemToEdit) {
+            updateFormData({
+                length: itemToEdit.length,
+                height: itemToEdit.height,
+                thickness: itemToEdit.thickness
+            });
+            setEditingId(id);
         }
-        return '0.00';
     };
 
-    const calculateVolume = () => {
-        const length = parseFloat(formData.length);
-        const height = parseFloat(formData.height);
-        const thickness = parseFloat(formData.thickness);
-        if (length && height && thickness) {
-            // Convert thickness from inches to feet (divide by 12)
-            const thicknessInFeet = thickness / 12;
-            return (length * height * thicknessInFeet).toFixed(2);
-        }
-        return '0.00';
-    };
-
-    // Validation function
-    const validateForm = () => {
-        if (!formData.length || !formData.height || !formData.thickness) {
-            return false;
-        }
-        return true;
-    };
-
-    // Get error message
-    const getErrorMessage = () => {
-        if (!formData.length || !formData.height || !formData.thickness) {
-            return 'Please fill in all required fields (length, height, thickness)';
-        }
-        return 'Please fill all required fields!';
+    // Handle delete
+    const handleDelete = (id) => {
+        deleteParapetWallData(id);
     };
 
     // Handle form submission
@@ -63,28 +56,43 @@ export default function ParapetWalls() {
         }
 
         try {
-            // Here you would typically save the data to your backend
+            const area = calculateArea();
+            const volume = calculateVolume();
+            
             const dataToSave = {
-                ...formData,
-                area: calculateArea(),
-                volume: calculateVolume(),
+                id: editingId || Date.now().toString(),
+                srNo: editingId ? parapetWallsData.find(item => item.id === editingId)?.srNo : parapetWallsData.length + 1,
+                length: formData.length,
+                height: formData.height,
+                thickness: formData.thickness,
+                area: area,
+                volume: volume,
                 timestamp: new Date().toISOString()
             };
 
-            console.log('Saving parapet wall data:', dataToSave);
+            if (editingId) {
+                // Update existing data
+                updateParapetWallData(editingId, dataToSave);
+                clearEditingId();
+            } else {
+                // Add new data
+                addParapetWallData(dataToSave);
+            }
 
             // Reset form after successful save
-            setFormData({
-                length: '',
-                height: '',
-                thickness: ''
-            });
+            resetFormData();
 
             return true; // Return true for successful save
         } catch (error) {
             console.error('Error saving parapet wall data:', error);
             return false; // Return false for failed save
         }
+    };
+
+    // Calculate totals for display
+    const totalCalculations = {
+        totalArea: calculateTotalArea(),
+        totalVolume: calculateTotalVolume()
     };
 
     return (
@@ -144,10 +152,23 @@ export default function ParapetWalls() {
             <div className="grid grid-cols-1 justify-items-end">
                 <SaveButton
                     onClick={handleSave}
-                    successMessage="Parapet Wall Data Saved Successfully! 🎉"
+                    successMessage={editingId ? "Parapet Wall Data Updated Successfully! 🎉" : "Parapet Wall Data Saved Successfully! 🎉"}
                     errorMessage={getErrorMessage()}
                 />
             </div>
+
+            {/* Parapet Walls Table */}
+            {parapetWallsData.length > 0 && (
+                <div className="mt-8">
+                    <ParapetWallsTable
+                        data={parapetWallsData}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                        showTotals={true}
+                        totalCalculations={totalCalculations}
+                    />
+                </div>
+            )}
         </div>
     );
 }
