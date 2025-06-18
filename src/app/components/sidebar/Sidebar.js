@@ -1,4 +1,7 @@
+"use client";
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../../context/AuthContext'; 
 import {
     LayoutDashboard,
     PencilRuler,
@@ -38,6 +41,9 @@ function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor, size =
 }
 
 export default function Sidebar({ activeSection, setActiveSection }) {
+    const { logout } = useAuth();
+    const router = useRouter();
+
     const menuItems = [
         { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { id: 'building-plan', label: 'Building Plan', icon: Landmark },
@@ -48,9 +54,13 @@ export default function Sidebar({ activeSection, setActiveSection }) {
         { id: 'analysis', label: 'Analysis', icon: BarChart3 },
     ];
 
-    const handleLogout = () => {
-        // Add your logout logic here
-        console.log('Logging out...');
+    const handleLogout = async () => {
+        try {
+            await logout();
+            router.push('/auth/login');
+        } catch (error) {
+            console.error('Failed to log out:', error);
+        }
     };
 
     const handleHelp = () => {

@@ -1,5 +1,6 @@
 import { Numans } from "next/font/google";
 import "./globals.css";
+import ClientProvider from './context/ClientProvider';
 
 const numans = Numans({
   weight: ["400"],
@@ -16,7 +17,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${numans.variable} antialiased`} suppressHydrationWarning={true}>
-        {children}
+        <ClientProvider>
+          {children}
+        </ClientProvider>
       </body>
     </html>
   );
