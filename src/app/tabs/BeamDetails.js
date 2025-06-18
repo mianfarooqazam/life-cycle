@@ -213,7 +213,6 @@ export default function BeamDetails() {
             {/* Beam Table */}
             {beamData.length > 0 && (
                 <div className="mt-8">
-                    <h3 className="text-lg font-semibold mb-4 text-gray-800">Beam Data</h3>
                     <BeamTable
                         data={beamData}
                         onEdit={handleEdit}
