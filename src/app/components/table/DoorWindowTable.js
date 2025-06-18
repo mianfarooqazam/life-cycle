@@ -9,7 +9,7 @@ import {
   Alert
 } from '@mui/material';
 
-export default function InsWallTable({ 
+export default function DoorWindowTable({ 
   data, 
   headers, 
 }) {
@@ -20,6 +20,15 @@ export default function InsWallTable({
     whiteSpace: 'nowrap',
   };
 
+  const headerStyle = {
+    backgroundColor: "#f7f6fb", 
+    fontWeight: 'bold',
+    textAlign: 'center',
+    padding: '16px 10px',
+    minWidth: 120,
+    whiteSpace: 'nowrap',
+  };
+
   return (
     <>
       <TableContainer>
@@ -27,14 +36,10 @@ export default function InsWallTable({
           <TableHead>
             <TableRow>
               {headers.map((header, index) => (
-                <TableCell key={index} sx={{
-                  backgroundColor: "#f7f6fb", 
-                  fontWeight: 'bold',
-                  textAlign: 'center',
-                  padding: '16px 10px',
-                  minWidth: 120,
-                  whiteSpace: 'nowrap',
-                }}>
+                <TableCell 
+                  key={index} 
+                  sx={headerStyle}
+                >
                   {header}
                 </TableCell>
               ))}
@@ -53,11 +58,10 @@ export default function InsWallTable({
               >
                 <TableCell sx={cellStyle}>{row.srNo}</TableCell>
                 <TableCell sx={cellStyle}>{row.wallOrigin}</TableCell>
-                <TableCell sx={cellStyle}>{row.length}</TableCell>
-                <TableCell sx={cellStyle}>{row.height}</TableCell>
-                <TableCell sx={cellStyle}>{row.insulationThickness}</TableCell>
+                <TableCell sx={cellStyle}>{row.type}</TableCell>
                 <TableCell sx={cellStyle}>{row.area}</TableCell>
-                <TableCell sx={cellStyle}>{row.volume.toLocaleString()}</TableCell>
+                <TableCell sx={cellStyle}>Rs. {row.costPerUnit.toLocaleString()}</TableCell>
+                <TableCell sx={cellStyle}>Rs. {row.totalCost.toLocaleString()}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -67,7 +71,7 @@ export default function InsWallTable({
       {/* Note instead of total */}
       {data.length > 0 && (
         <Alert severity="info" sx={{ mt: 2 }}>
-          If you want to delete insulation wall, do it from respective tab.
+          If you want to delete door/window, do it from respective tab.
         </Alert>
       )}
     </>
