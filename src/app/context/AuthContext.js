@@ -4,7 +4,10 @@ import {
   onAuthStateChanged, 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword,
-  signOut
+  signOut,
+  updatePassword as firebaseUpdatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider
 } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 
@@ -31,6 +34,24 @@ export function AuthProvider({ children }) {
     return signOut(auth);
   }
 
+  // Add updatePassword function
+  async function updatePassword(currentPassword, newPassword) {
+    if (!currentUser) {
+      throw new Error('No user logged in');
+    }
+
+    try {
+      // Re-authenticate user with current password
+      const credential = EmailAuthProvider.credential(currentUser.email, currentPassword);
+      await reauthenticateWithCredential(currentUser, credential);
+      
+      // Update password
+      await firebaseUpdatePassword(currentUser, newPassword);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
@@ -44,7 +65,8 @@ export function AuthProvider({ children }) {
     currentUser,
     login,
     signup,
-    logout
+    logout,
+    updatePassword  // Add this to the context value
   };
 
   return (
