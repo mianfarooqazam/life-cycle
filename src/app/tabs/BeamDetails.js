@@ -1,60 +1,31 @@
 "use client";
-import { useState } from 'react';
 import SaveButton from '@/app/components/button/SaveButton';
 import TextInput from '@/app/components/input/TextInput';
 import BeamTable from '@/app/components/table/BeamTable';
+import { useBeamDetailsStore } from '@/app/store/beamDetailsStore';
 
 export default function BeamDetails() {
-    // Form state
-    const [formData, setFormData] = useState({
-        numberOfBeams: '',
-        beamLength: '',
-        beamWidth: '',
-        beamDepth: ''
-    });
-
-    // Table data state
-    const [beamData, setBeamData] = useState([]);
-    const [editingId, setEditingId] = useState(null);
+    const {
+        formData,
+        beamData,
+        editingId,
+        updateFormData,
+        resetFormData,
+        addBeamData,
+        updateBeamData,
+        deleteBeamData,
+        setEditingId,
+        clearEditingId,
+        calculateVolume,
+        calculateTotalVolume,
+        validateForm,
+        getErrorMessage
+    } = useBeamDetailsStore();
 
     // Handle input changes
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
-
-    // Calculate beam volume
-    const calculateVolume = () => {
-        const numberOfBeams = parseFloat(formData.numberOfBeams);
-        const beamLength = parseFloat(formData.beamLength);
-        const beamWidth = parseFloat(formData.beamWidth);
-        const beamDepth = parseFloat(formData.beamDepth);
-        
-        if (numberOfBeams && beamLength && beamWidth && beamDepth) {
-            // Convert width and depth from inches to feet (divide by 12)
-            const widthInFeet = beamWidth / 12;
-            const depthInFeet = beamDepth / 12;
-            const volumePerBeam = beamLength * widthInFeet * depthInFeet;
-            const totalVolume = volumePerBeam * numberOfBeams;
-            return totalVolume.toFixed(2);
-        }
-        return '0.00';
-    };
-
-    // Validation function
-    const validateForm = () => {
-        if (!formData.numberOfBeams || !formData.beamLength || !formData.beamWidth || !formData.beamDepth) {
-            return false;
-        }
-        return true;
-    };
-
-    // Get error message
-    const getErrorMessage = () => {
-        if (!formData.numberOfBeams || !formData.beamLength || !formData.beamWidth || !formData.beamDepth) {
-            return 'Please fill in all required fields (number of beams, length, width, depth)';
-        }
-        return 'Please fill all required fields!';
+        updateFormData({ [name]: value });
     };
 
     // Handle form submission
@@ -78,22 +49,15 @@ export default function BeamDetails() {
 
             if (editingId) {
                 // Update existing entry
-                setBeamData(prev => prev.map(item => 
-                    item.id === editingId ? newBeamData : item
-                ));
-                setEditingId(null);
+                updateBeamData(editingId, newBeamData);
+                clearEditingId();
             } else {
                 // Add new entry
-                setBeamData(prev => [...prev, newBeamData]);
+                addBeamData(newBeamData);
             }
 
             // Reset form after successful save
-            setFormData({
-                numberOfBeams: '',
-                beamLength: '',
-                beamWidth: '',
-                beamDepth: ''
-            });
+            resetFormData();
 
             return true; // Return true for successful save
         } catch (error) {
@@ -106,7 +70,7 @@ export default function BeamDetails() {
     const handleEdit = (id) => {
         const beamToEdit = beamData.find(item => item.id === id);
         if (beamToEdit) {
-            setFormData({
+            updateFormData({
                 numberOfBeams: beamToEdit.numberOfBeams,
                 beamLength: beamToEdit.beamLength,
                 beamWidth: beamToEdit.beamWidth,
@@ -118,30 +82,13 @@ export default function BeamDetails() {
 
     // Handle delete
     const handleDelete = (id) => {
-        setBeamData(prev => {
-            const filteredData = prev.filter(item => item.id !== id);
-            // Update serial numbers
-            return filteredData.map((item, index) => ({
-                ...item,
-                srNo: index + 1
-            }));
-        });
+        deleteBeamData(id);
         
         // If we were editing the deleted item, reset the form
         if (editingId === id) {
-            setEditingId(null);
-            setFormData({
-                numberOfBeams: '',
-                beamLength: '',
-                beamWidth: '',
-                beamDepth: ''
-            });
+            clearEditingId();
+            resetFormData();
         }
-    };
-
-    // Calculate total volume
-    const calculateTotalVolume = () => {
-        return beamData.reduce((total, item) => total + parseFloat(item.beamVolume), 0).toFixed(2);
     };
 
     return (
