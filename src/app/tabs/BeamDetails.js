@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import SaveButton from '@/app/components/button/SaveButton';
 import TextInput from '@/app/components/input/TextInput';
+import BeamTable from '@/app/components/table/BeamTable';
 
 export default function BeamDetails() {
     // Form state
@@ -11,6 +12,10 @@ export default function BeamDetails() {
         beamWidth: '',
         beamDepth: ''
     });
+
+    // Table data state
+    const [beamData, setBeamData] = useState([]);
+    const [editingId, setEditingId] = useState(null);
 
     // Handle input changes
     const handleInputChange = (e) => {
@@ -60,14 +65,27 @@ export default function BeamDetails() {
         }
 
         try {
-            // Here you would typically save the data to your backend
-            const dataToSave = {
-                ...formData,
-                volume: calculateVolume(),
+            const newBeamData = {
+                id: editingId || Date.now(),
+                srNo: editingId ? beamData.find(item => item.id === editingId)?.srNo : beamData.length + 1,
+                numberOfBeams: formData.numberOfBeams,
+                beamLength: formData.beamLength,
+                beamWidth: formData.beamWidth,
+                beamDepth: formData.beamDepth,
+                beamVolume: calculateVolume(),
                 timestamp: new Date().toISOString()
             };
 
-            console.log('Saving beam data:', dataToSave);
+            if (editingId) {
+                // Update existing entry
+                setBeamData(prev => prev.map(item => 
+                    item.id === editingId ? newBeamData : item
+                ));
+                setEditingId(null);
+            } else {
+                // Add new entry
+                setBeamData(prev => [...prev, newBeamData]);
+            }
 
             // Reset form after successful save
             setFormData({
@@ -82,6 +100,48 @@ export default function BeamDetails() {
             console.error('Error saving beam data:', error);
             return false; // Return false for failed save
         }
+    };
+
+    // Handle edit
+    const handleEdit = (id) => {
+        const beamToEdit = beamData.find(item => item.id === id);
+        if (beamToEdit) {
+            setFormData({
+                numberOfBeams: beamToEdit.numberOfBeams,
+                beamLength: beamToEdit.beamLength,
+                beamWidth: beamToEdit.beamWidth,
+                beamDepth: beamToEdit.beamDepth
+            });
+            setEditingId(id);
+        }
+    };
+
+    // Handle delete
+    const handleDelete = (id) => {
+        setBeamData(prev => {
+            const filteredData = prev.filter(item => item.id !== id);
+            // Update serial numbers
+            return filteredData.map((item, index) => ({
+                ...item,
+                srNo: index + 1
+            }));
+        });
+        
+        // If we were editing the deleted item, reset the form
+        if (editingId === id) {
+            setEditingId(null);
+            setFormData({
+                numberOfBeams: '',
+                beamLength: '',
+                beamWidth: '',
+                beamDepth: ''
+            });
+        }
+    };
+
+    // Calculate total volume
+    const calculateTotalVolume = () => {
+        return beamData.reduce((total, item) => total + parseFloat(item.beamVolume), 0).toFixed(2);
     };
 
     return (
@@ -145,10 +205,26 @@ export default function BeamDetails() {
             <div className="grid grid-cols-1 justify-items-end">
                 <SaveButton
                     onClick={handleSave}
-                    successMessage="Beam Data Saved Successfully! 🎉"
+                    successMessage={editingId ? "Beam Data Updated Successfully! 🎉" : "Beam Data Saved Successfully! 🎉"}
                     errorMessage={getErrorMessage()}
                 />
             </div>
+
+            {/* Beam Table */}
+            {beamData.length > 0 && (
+                <div className="mt-8">
+                    <h3 className="text-lg font-semibold mb-4 text-gray-800">Beam Data</h3>
+                    <BeamTable
+                        data={beamData}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                        showTotals={true}
+                        totalCalculations={{
+                            totalVolume: calculateTotalVolume()
+                        }}
+                    />
+                </div>
+            )}
         </div>
     );
 }
