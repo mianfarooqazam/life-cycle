@@ -1,6 +1,6 @@
 import { useBuildingPlanStore } from "../store/buildingPlanStore";
 import { useEffect } from "react";
-import { Button, Box, Typography } from "@mui/material";
+import { Box, Typography, FormControl, InputLabel, Select, MenuItem, Button } from "@mui/material";
 
 export default function BuildingFloor() {
   const numberOfFloors = useBuildingPlanStore((state) => state.numberOfFloors);
@@ -36,45 +36,61 @@ export default function BuildingFloor() {
 
   const heading = options.find((opt) => opt.value === selectedFloor)?.label || "Building Floor";
 
+  // Button labels
+  const buttonLabels = [
+    "Exterior Wall",
+    "Interior Wall",
+    "Floor Slab"
+  ];
+
   return (
     <div className="p-2">
-      <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-start', mb: 2 }}>
-        {options.map((opt) => (
+      <Box sx={{ maxWidth: 320, mb: 2 }}>
+        <FormControl fullWidth variant="outlined" size="medium">
+          <InputLabel id="floor-select-label">Select Floor</InputLabel>
+          <Select
+            labelId="floor-select-label"
+            id="floor-select"
+            value={selectedFloor !== '' && selectedFloor !== undefined ? selectedFloor : ''}
+            label="Select Floor"
+            onChange={(e) => setSelectedFloor(Number(e.target.value))}
+            sx={{ backgroundColor: '#fff', borderRadius: 2 }}
+          >
+            {options.map((opt) => (
+              <MenuItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
+      <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mb: 2 }}>
+        {buttonLabels.map((label) => (
           <Button
-            key={opt.value}
-            variant={selectedFloor === opt.value ? "contained" : "outlined"}
-            onClick={() => setSelectedFloor(opt.value)}
+            key={label}
+            variant="contained"
+            color="primary"
             sx={{
-              backgroundColor: selectedFloor === opt.value ? '#5BB045' : '#fff',
-              color: selectedFloor === opt.value ? '#fff' : '#5BB045',
+              backgroundColor: '#5BB045',
+              color: '#fff',
               fontWeight: 600,
-              py: 1.5,
-              px: 3,
+              py: 1.2,
+              px: 2.5,
               borderRadius: 2,
               textTransform: 'none',
-              border: '2px solid #5BB045',
-              boxShadow: selectedFloor === opt.value ? '0 2px 8px rgba(91, 176, 69, 0.3)' : 'none',
-              transition: 'all 0.3s ease',
+              boxShadow: '0 2px 8px rgba(91, 176, 69, 0.15)',
               '&:hover': {
-                backgroundColor: selectedFloor === opt.value ? '#4a9537' : '#e8f5e9',
-                color: '#5BB045',
-                transform: selectedFloor === opt.value ? 'translateY(-2px)' : 'none',
-                boxShadow: selectedFloor === opt.value ? '0 4px 16px rgba(91, 176, 69, 0.4)' : 'none',
+                backgroundColor: '#4a9537',
+                color: '#fff',
+                transform: 'translateY(-2px)',
+                boxShadow: '0 4px 16px rgba(91, 176, 69, 0.2)',
               },
             }}
           >
-            {opt.label}
+            {heading} {label}
           </Button>
         ))}
       </Box>
-      <Typography
-        variant="h5"
-        component="h2"
-        align="center"
-        sx={{ fontWeight: 700, mb: 3 }}
-      >
-        {heading}
-      </Typography>
     </div>
   );
 }
