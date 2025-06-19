@@ -58,6 +58,7 @@ export default function DoorWindowTable({
               >
                 <TableCell sx={cellStyle}>{row.srNo}</TableCell>
                 <TableCell sx={cellStyle}>{row.wallOrigin}</TableCell>
+                <TableCell sx={cellStyle}>{row.component}</TableCell>
                 <TableCell sx={cellStyle}>{row.type}</TableCell>
                 <TableCell sx={cellStyle}>{row.area}</TableCell>
                 <TableCell sx={cellStyle}>Rs. {row.costPerUnit.toLocaleString()}</TableCell>

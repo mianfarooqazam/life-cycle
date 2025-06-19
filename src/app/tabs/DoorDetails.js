@@ -6,7 +6,8 @@ export default function DoorDetails() {
   const headers = [
     'Sr No.',
     'Wall Origin',
-    'Door Type',
+    'Component',
+    'Type',
     'Area (ft²)',
     'Cost per Unit',
     'Total Cost'
@@ -17,6 +18,7 @@ export default function DoorDetails() {
       id: 1,
       srNo: 1,
       wallOrigin: 'Mumty Wall',
+      component: 'Door',
       type: 'UPvc Door',
       area: 21,
       costPerUnit: 15000,
@@ -26,6 +28,7 @@ export default function DoorDetails() {
       id: 2,
       srNo: 2,
       wallOrigin: 'Basement Wall',
+      component: 'Door',
       type: 'Wooden Door',
       area: 18,
       costPerUnit: 8000,
@@ -35,7 +38,6 @@ export default function DoorDetails() {
 
   return (
     <div className="p-2">
-      <h2 className="text-2xl font-bold mb-6 text-center">Door</h2>
       
       <DoorWindowTable 
         data={sampleData}
