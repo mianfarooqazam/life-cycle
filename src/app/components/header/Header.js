@@ -3,16 +3,36 @@ import { User, Settings, Bell } from 'lucide-react';
 import { Badge, Box, Typography } from '@mui/material';
 import Image from 'next/image';
 import ProfileModal from '../modal/ProfileModal';
+import NotificationModal from '../modal/NotificationModal';
+import SettingsModal from '../modal/SettingsModal';
 
 export default function Header() {
     const [profileModalOpen, setProfileModalOpen] = useState(false);
+    const [notificationModalOpen, setNotificationModalOpen] = useState(false);
+    const [settingsModalOpen, setSettingsModalOpen] = useState(false);
 
     const handleProfileClick = () => {
         setProfileModalOpen(true);
     };
 
+    const handleNotificationClick = () => {
+        setNotificationModalOpen(true);
+    };
+
+    const handleSettingsClick = () => {
+        setSettingsModalOpen(true);
+    };
+
     const handleCloseModal = () => {
         setProfileModalOpen(false);
+    };
+
+    const handleCloseNotificationModal = () => {
+        setNotificationModalOpen(false);
+    };
+
+    const handleCloseSettingsModal = () => {
+        setSettingsModalOpen(false);
     };
 
     return (
@@ -77,7 +97,9 @@ export default function Header() {
                             borderRadius: '15px',
                             backgroundColor: 'white',
                             transition: 'color 0.2s'
-                        }}>
+                        }}
+                        onClick={handleSettingsClick}
+                        >
                             <Settings size={24} />
                         </Box>
                     </Badge>
@@ -98,7 +120,9 @@ export default function Header() {
                             borderRadius: '15px',
                             backgroundColor: 'white',
                             transition: 'color 0.2s'
-                        }}>
+                        }}
+                        onClick={handleNotificationClick}
+                        >
                             <Bell size={24} />
                         </Box>
                     </Badge>
@@ -109,6 +133,16 @@ export default function Header() {
             <ProfileModal
                 open={profileModalOpen}
                 onClose={handleCloseModal}
+            />
+            {/* Notification Modal */}
+            <NotificationModal
+                open={notificationModalOpen}
+                onClose={handleCloseNotificationModal}
+            />
+            {/* Settings Modal */}
+            <SettingsModal
+                open={settingsModalOpen}
+                onClose={handleCloseSettingsModal}
             />
         </>
     );
