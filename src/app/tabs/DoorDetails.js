@@ -42,6 +42,7 @@ export default function DoorDetails() {
       <DoorWindowTable 
         data={sampleData}
         headers={headers}
+        showActions={false}
         minWidth={1400}
       />
     </div>

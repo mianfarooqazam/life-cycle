@@ -6,12 +6,17 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Alert
+  Alert,
+  IconButton
 } from '@mui/material';
+import { Edit, Trash2 } from 'lucide-react';
 
 export default function DoorWindowTable({ 
   data, 
-  headers, 
+  headers,
+  onEdit,
+  onDelete,
+  showActions = true
 }) {
   const cellStyle = {
     fontWeight: 'medium',
@@ -29,10 +34,18 @@ export default function DoorWindowTable({
     whiteSpace: 'nowrap',
   };
 
+  const handleAction = (action, id) => {
+    if (action === 'Edit' && onEdit) {
+      onEdit(id);
+    } else if (action === 'Delete' && onDelete) {
+      onDelete(id);
+    }
+  };
+
   return (
     <>
       <TableContainer>
-        <Table  stickyHeader>
+        <Table stickyHeader>
           <TableHead>
             <TableRow>
               {headers.map((header, index) => (
@@ -43,6 +56,11 @@ export default function DoorWindowTable({
                   {header}
                 </TableCell>
               ))}
+              {showActions && (
+                <TableCell sx={headerStyle}>
+                  Action
+                </TableCell>
+              )}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -63,6 +81,25 @@ export default function DoorWindowTable({
                 <TableCell sx={cellStyle}>{row.area}</TableCell>
                 <TableCell sx={cellStyle}>Rs. {row.costPerUnit.toLocaleString()}</TableCell>
                 <TableCell sx={cellStyle}>Rs. {row.totalCost.toLocaleString()}</TableCell>
+                {showActions && (
+                  <TableCell sx={cellStyle}>
+                    <IconButton 
+                      color="primary" 
+                      onClick={() => handleAction('Edit', row.id)} 
+                      size="small" 
+                      sx={{ mr: 1 }}
+                    >
+                      <Edit size={18} />
+                    </IconButton>
+                    <IconButton 
+                      color="error" 
+                      onClick={() => handleAction('Delete', row.id)} 
+                      size="small"
+                    >
+                      <Trash2 size={18} />
+                    </IconButton>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>
@@ -70,7 +107,7 @@ export default function DoorWindowTable({
       </TableContainer>
       
       {/* Note instead of total */}
-      {data.length > 0 && (
+      {data.length > 0 && !showActions && (
         <Alert severity="info" sx={{ mt: 2 }}>
           If you want to delete door/window, do it from respective tab.
         </Alert>
