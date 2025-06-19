@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     Modal,
     Box,
@@ -30,7 +30,7 @@ const modalStyle = {
     overflowY: 'auto'
 };
 
-export default function MaterialModal({ open, onClose }) {
+export default function MaterialModal({ open, onClose, onSave, editingMaterial }) {
     const [formData, setFormData] = useState({
         wallBrickBlock: '',
         wallBrickBlockCost: '',
@@ -43,6 +43,25 @@ export default function MaterialModal({ open, onClose }) {
         insulationThickness: ''
     });
     const [loading, setLoading] = useState(false);
+
+    // Initialize form data when editing
+    useEffect(() => {
+        if (editingMaterial) {
+            setFormData({
+                wallBrickBlock: editingMaterial.wallBrickBlock || '',
+                wallBrickBlockCost: editingMaterial.wallBrickBlockCost || '',
+                exteriorFinish: editingMaterial.exteriorFinish || '',
+                exteriorFinishCost: editingMaterial.exteriorFinishCost || '',
+                interiorFinish: editingMaterial.interiorFinish || '',
+                interiorFinishCost: editingMaterial.interiorFinishCost || '',
+                insulation: editingMaterial.insulation || '',
+                insulationCost: editingMaterial.insulationCost || '',
+                insulationThickness: editingMaterial.insulationThickness || ''
+            });
+        } else {
+            resetForm();
+        }
+    }, [editingMaterial, open]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -116,10 +135,12 @@ export default function MaterialModal({ open, onClose }) {
         try {
             setLoading(true);
 
-            // Here you would typically save the data
-            // await saveMaterialData(formData);
+            // Call the onSave function passed from parent
+            if (onSave) {
+                onSave(formData);
+            }
 
-            toast.success('Material details saved successfully! 🎉', {
+            toast.success(editingMaterial ? 'Material details updated successfully! 🎉' : 'Material details saved successfully! 🎉', {
                 duration: 3000,
                 style: {
                     background: '#5BB045',
@@ -166,7 +187,7 @@ export default function MaterialModal({ open, onClose }) {
                         sx={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1 }}
                     >
                         <Package size={24} color="#5BB045" />
-                        Material Selection
+                        {editingMaterial ? 'Edit Material Selection' : 'Material Selection'}
                     </Typography>
                     <IconButton
                         onClick={handleClose}
@@ -373,7 +394,7 @@ export default function MaterialModal({ open, onClose }) {
                                     }
                                 }}
                             >
-                                {loading ? 'Saving...' : 'Save Materials'}
+                                {loading ? 'Saving...' : (editingMaterial ? 'Update Materials' : 'Save Materials')}
                             </Button>
                         </Box>
                     </Box>
