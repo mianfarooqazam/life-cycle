@@ -6,6 +6,7 @@ import { Package, Plus } from 'lucide-react';
 import WallTable from '@/app/components/table/WallTable';
 import MaterialsTable from '@/app/components/table/MaterialsTable';
 import MaterialModal from '@/app/components/modal/MaterialModal';
+import TextInput from '@/app/components/input/TextInput';
 
 export default function BasementDetails() {
   const [basementData, setBasementData] = useState([
@@ -47,6 +48,27 @@ export default function BasementDetails() {
 
   const [materialModalOpen, setMaterialModalOpen] = useState(false);
   const [editingMaterial, setEditingMaterial] = useState(null);
+
+  // Add local state for basement excavation
+  const [excavation, setExcavation] = useState({
+    length: '',
+    width: '',
+    depth: ''
+  });
+
+  const handleExcavationChange = (e) => {
+    const { name, value } = e.target;
+    setExcavation((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const calculateExcavationVolume = () => {
+    const { length, width, depth } = excavation;
+    if (length && width && depth) {
+      const volume = parseFloat(length) * parseFloat(width) * parseFloat(depth);
+      return volume ? volume.toFixed(2) : '0.00';
+    }
+    return '0.00';
+  };
 
   const headers = [
     'Sr. No',
@@ -127,80 +149,20 @@ export default function BasementDetails() {
 
   return (
     <div className="p-2">
-      <h2 className="text-2xl font-bold mb-6 text-center">Basement Details</h2>
-      
-      {/* Wall Details Section */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: '#333' }}>
-          Wall Details
-        </Typography>
-        <WallTable
-          data={basementData}
-          headers={headers}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          showTotals={true}
-          totalCalculations={wallTotalCalculations}
-        />
-      </Box>
-
-      {/* Materials Section */}
-      <Box sx={{ mb: 4 }}>
-        <Box sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center', 
-          mb: 2 
-        }}>
-          <Typography variant="h6" sx={{ fontWeight: 600, color: '#333', display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Package size={20} color="#5BB045" />
-            Material Selections
-          </Typography>
-          <Button
-            variant="contained"
-            startIcon={<Plus size={18} />}
-            onClick={() => setMaterialModalOpen(true)}
-            sx={{
-              backgroundColor: '#5BB045',
-              color: '#fff',
-              fontWeight: 600,
-              py: 1,
-              px: 2,
-              borderRadius: 2,
-              textTransform: 'none',
-              boxShadow: '0 2px 8px rgba(91, 176, 69, 0.3)',
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                backgroundColor: '#4a9537',
-                color: '#fff',
-                transform: 'translateY(-2px)',
-                boxShadow: '0 4px 16px rgba(91, 176, 69, 0.4)',
-              },
-              '&:active': {
-                transform: 'translateY(0px)',
-                boxShadow: '0 2px 8px rgba(91, 176, 69, 0.3)',
-              }
-            }}
-          >
-            Add Material
-          </Button>
-        </Box>
-        <MaterialsTable
-          data={materialsData}
-          onEdit={handleMaterialEdit}
-          onDelete={handleMaterialDelete}
-          showTotals={true}
-          totalCalculations={materialTotalCalculations}
-        />
-      </Box>
-
-      {/* Material Modal */}
-      <MaterialModal
-        open={materialModalOpen}
-        onClose={handleMaterialModalClose}
-        onSave={handleMaterialSave}
-        editingMaterial={editingMaterial}
-      />
+      {/* Basement Excavation Section */}
+      <h2 className="text-lg font-bold mb-2 text-center">Basement Excavation</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+        <TextInput label="Excavation Length (ft)" name="length" type="number" value={excavation.length} onChange={handleExcavationChange} inputProps={{ min: '0', step: '0.1' }} />
+        <TextInput label="Excavation Width (ft)" name="width" type="number" value={excavation.width} onChange={handleExcavationChange} inputProps={{ min: '0', step: '0.1' }} />
+        <TextInput label="Excavation Depth (ft)" name="depth" type="number" value={excavation.depth} onChange={handleExcavationChange} inputProps={{ min: '0', step: '0.1' }} />
+      </div>
+      {(excavation.length && excavation.width && excavation.depth) && (
+        <div className="p-4 rounded-md mb-6" style={{ backgroundColor: '#f7f6fb' }}>
+          <p className="text-lg font-bold text-gray-800">
+            Basement excavation volume: <span className="text-[#5BB045]">{calculateExcavationVolume()} ft³</span>
+          </p>
+        </div>
+      )}
     </div>
   );
 }
