@@ -96,7 +96,7 @@ export default function WaterTank() {
   return (
     <div className="grid grid-cols-1 gap-6 p-2">
       {/* Water tank wall */}
-      <h2 className="text-xl font-bold mb-2 text-center">Water tank wall</h2>
+      <h2 className="text-lg font-bold mb-2 text-center">Water tank wall</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <TextInput label="Water tank wall length (ft)" name="wallLength" type="number" value={formData.wallLength} onChange={handleInputChange} inputProps={{ min: "0", step: "0.1" }} />
         <TextInput label="Water tank wall height (ft)" name="wallHeight" type="number" value={formData.wallHeight} onChange={handleInputChange} inputProps={{ min: "0", step: "0.1" }} />
@@ -111,7 +111,7 @@ export default function WaterTank() {
       )}
 
       {/* Water tank column */}
-      <h2 className="text-xl font-bold mb-2 text-center">Water tank column</h2>
+      <h2 className="text-lg font-bold mb-2 text-center">Water tank column</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <TextInput label="No of columns" name="numberOfColumns" type="number" value={formData.numberOfColumns} onChange={handleInputChange} inputProps={{ min: "0", step: "1" }} />
         <TextInput label="Column height (ft)" name="columnHeight" type="number" value={formData.columnHeight} onChange={handleInputChange} inputProps={{ min: "0", step: "0.1" }} />
@@ -127,7 +127,7 @@ export default function WaterTank() {
       )}
 
       {/* Water tank Top slab */}
-      <h2 className="text-xl font-bold mb-2 text-center">Water tank Top slab</h2>
+      <h2 className="text-lg font-bold mb-2 text-center">Water tank Top slab</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <TextInput label="Area (ft²)" name="topSlabArea" type="number" value={formData.topSlabArea} onChange={handleInputChange} inputProps={{ min: "0", step: "0.1" }} />
         <TextInput label="Thickness (inch)" name="topSlabThickness" type="number" value={formData.topSlabThickness} onChange={handleInputChange} inputProps={{ min: "0", step: "0.1" }} />
@@ -141,7 +141,7 @@ export default function WaterTank() {
       )}
 
       {/* Water tank Bottom slab */}
-      <h2 className="text-xl font-bold mb-2 text-center">Water tank bottom slab</h2>
+      <h2 className="text-lg font-bold mb-2 text-center">Water tank bottom slab</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <TextInput label="Area (ft²)" name="bottomSlabArea" type="number" value={formData.bottomSlabArea} onChange={handleInputChange} inputProps={{ min: "0", step: "0.1" }} />
         <TextInput label="Thickness (inch)" name="bottomSlabThickness" type="number" value={formData.bottomSlabThickness} onChange={handleInputChange} inputProps={{ min: "0", step: "0.1" }} />
@@ -169,7 +169,7 @@ export default function WaterTank() {
       {formData.isUnderground === 'yes' && (
         <>
           {/* Underground Water tank excavation */}
-          <h2 className="text-xl font-bold mb-2 text-center mt-6">Underground Water tank excavation</h2>
+          <h2 className="text-lg font-bold mb-2 text-center mt-6">Underground Water tank excavation</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <TextInput label="Length (ft)" name="undergroundLength" type="number" value={formData.undergroundLength} onChange={handleInputChange} inputProps={{ min: "0", step: "0.1" }} />
             <TextInput label="Width (ft)" name="undergroundWidth" type="number" value={formData.undergroundWidth} onChange={handleInputChange} inputProps={{ min: "0", step: "0.1" }} />
@@ -184,7 +184,7 @@ export default function WaterTank() {
           )}
 
           {/* Underground Water tank wall */}
-          <h2 className="text-xl font-bold mb-2 text-center">Underground Water tank wall</h2>
+          <h2 className="text-lg font-bold mb-2 text-center">Underground Water tank wall</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <TextInput label="Underground water tank wall length (ft)" name="undergroundWallLength" type="number" value={formData.undergroundWallLength} onChange={handleInputChange} inputProps={{ min: "0", step: "0.1" }} />
             <TextInput label="Underground water tank wall height (ft)" name="undergroundWallHeight" type="number" value={formData.undergroundWallHeight} onChange={handleInputChange} inputProps={{ min: "0", step: "0.1" }} />
@@ -199,7 +199,7 @@ export default function WaterTank() {
           )}
 
           {/* Underground Water tank Top slab */}
-          <h2 className="text-xl font-bold mb-2 text-center">Underground Water tank Top slab</h2>
+          <h2 className="text-lg font-bold mb-2 text-center">Underground Water tank Top slab</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <TextInput label="Area (ft²)" name="undergroundTopSlabArea" type="number" value={formData.undergroundTopSlabArea} onChange={handleInputChange} inputProps={{ min: "0", step: "0.1" }} />
             <TextInput label="Thickness (inch)" name="undergroundTopSlabThickness" type="number" value={formData.undergroundTopSlabThickness} onChange={handleInputChange} inputProps={{ min: "0", step: "0.1" }} />
@@ -213,7 +213,7 @@ export default function WaterTank() {
           )}
 
           {/* Underground Water tank bottom slab */}
-          <h2 className="text-xl font-bold mb-2 text-center">Underground Water tank bottom slab</h2>
+          <h2 className="text-lg font-bold mb-2 text-center">Underground Water tank bottom slab</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <TextInput label="Area (ft²)" name="undergroundBottomSlabArea" type="number" value={formData.undergroundBottomSlabArea} onChange={handleInputChange} inputProps={{ min: "0", step: "0.1" }} />
             <TextInput label="Thickness (inch)" name="undergroundBottomSlabThickness" type="number" value={formData.undergroundBottomSlabThickness} onChange={handleInputChange} inputProps={{ min: "0", step: "0.1" }} />

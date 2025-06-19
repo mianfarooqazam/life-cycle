@@ -81,7 +81,7 @@ export default function SepticTank() {
   return (
     <div className="grid grid-cols-1 gap-6 p-2">
       {/* Septic Tank Excavation */}
-      <h2 className="text-xl font-bold mb-2 text-center">Septic Tank Excavation</h2>
+      <h2 className="text-lg font-bold mb-2 text-center">Septic Tank Excavation</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <TextInput label="Excavation Length (ft)" name="excavationLength" type="number" value={formData.excavationLength} onChange={handleInputChange} inputProps={{ min: "0", step: "0.1" }} />
         <TextInput label="Excavation Width (ft)" name="excavationWidth" type="number" value={formData.excavationWidth} onChange={handleInputChange} inputProps={{ min: "0", step: "0.1" }} />
@@ -96,7 +96,7 @@ export default function SepticTank() {
       )}
 
       {/* Septic Tank Wall */}
-      <h2 className="text-xl font-bold mb-2 text-center">Septic Tank Wall</h2>
+      <h2 className="text-lg font-bold mb-2 text-center">Septic Tank Wall</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <TextInput label="Wall Length (ft)" name="wallLength" type="number" value={formData.wallLength} onChange={handleInputChange} inputProps={{ min: "0", step: "0.1" }} />
         <TextInput label="Wall Height (ft)" name="wallHeight" type="number" value={formData.wallHeight} onChange={handleInputChange} inputProps={{ min: "0", step: "0.1" }} />
@@ -111,7 +111,7 @@ export default function SepticTank() {
       )}
 
       {/* Septic Tank Top Slab */}
-      <h2 className="text-xl font-bold mb-2 text-center">Septic Tank Top Slab</h2>
+      <h2 className="text-lg font-bold mb-2 text-center">Septic Tank Top Slab</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <TextInput label="Area (ft²)" name="topSlabArea" type="number" value={formData.topSlabArea} onChange={handleInputChange} inputProps={{ min: "0", step: "0.1" }} />
         <TextInput label="Thickness (inch)" name="topSlabThickness" type="number" value={formData.topSlabThickness} onChange={handleInputChange} inputProps={{ min: "0", step: "0.1" }} />
@@ -125,7 +125,7 @@ export default function SepticTank() {
       )}
 
       {/* Septic Tank Bottom Slab */}
-      <h2 className="text-xl font-bold mb-2 text-center">Septic Tank Bottom Slab</h2>
+      <h2 className="text-lg font-bold mb-2 text-center">Septic Tank Bottom Slab</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <TextInput label="Area (ft²)" name="bottomSlabArea" type="number" value={formData.bottomSlabArea} onChange={handleInputChange} inputProps={{ min: "0", step: "0.1" }} />
         <TextInput label="Thickness (inch)" name="bottomSlabThickness" type="number" value={formData.bottomSlabThickness} onChange={handleInputChange} inputProps={{ min: "0", step: "0.1" }} />
