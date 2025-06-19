@@ -13,12 +13,14 @@ export const useBuildingPlanStore = create(
       foundationType: '',
       excavatorType: 'Crawler Excavation',
       numberOfFloors: '',
+      selectedFloor: '',
       numberOfRooms: '',
       numberOfKitchens: '',
       numberOfWashrooms: '',
       numberOfLounges: '',
       
       updateBuildingPlan: (data) => set(data),
+      setSelectedFloor: (floor) => set({ selectedFloor: floor }),
     }),
     {
       name: 'building-plan-storage'
