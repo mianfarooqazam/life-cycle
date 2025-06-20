@@ -185,44 +185,50 @@ export default function BuildingFloor() {
       />
       <BuildingFloorSlabModal open={slabModalOpen} onClose={() => setSlabModalOpen(false)} floor={selectedFloor} />
       {/* Exterior Wall Table */}
-      <div className="mt-8">
-        <h2 style={{ fontWeight: 700, fontSize: '1.25rem', marginBottom: '1rem', textAlign: 'center' }}>{heading} Exterior Wall Table</h2>
-        <ExteriorTable
-          data={filteredExteriors}
-          onEdit={(id) => {
-            const exterior = filteredExteriors.find((i) => i.id === id);
-            setEditingExterior(exterior);
-            setExteriorModalOpen(true);
-          }}
-          onDelete={deleteExterior}
-        />
-      </div>
+      {filteredExteriors.length > 0 && (
+        <div className="mt-8">
+          <h2 style={{ fontWeight: 700, fontSize: '1.25rem', marginBottom: '1rem', textAlign: 'center' }}>{heading} Exterior Wall Table</h2>
+          <ExteriorTable
+            data={filteredExteriors}
+            onEdit={(id) => {
+              const exterior = filteredExteriors.find((i) => i.id === id);
+              setEditingExterior(exterior);
+              setExteriorModalOpen(true);
+            }}
+            onDelete={deleteExterior}
+          />
+        </div>
+      )}
       {/* Interior Wall Table */}
-      <div className="mt-8">
-        <h2 style={{ fontWeight: 700, fontSize: '1.25rem', marginBottom: '1rem', textAlign: 'center' }}>{heading} Interior Wall Table</h2>
-        <InteriorTable
-          data={filteredInteriors}
-          onEdit={(id) => {
-            const interior = filteredInteriors.find((i) => i.id === id);
-            setEditingInterior(interior);
-            setInteriorModalOpen(true);
-          }}
-          onDelete={deleteInterior}
-        />
-      </div>
+      {filteredInteriors.length > 0 && (
+        <div className="mt-8">
+          <h2 style={{ fontWeight: 700, fontSize: '1.25rem', marginBottom: '1rem', textAlign: 'center' }}>{heading} Interior Wall Table</h2>
+          <InteriorTable
+            data={filteredInteriors}
+            onEdit={(id) => {
+              const interior = filteredInteriors.find((i) => i.id === id);
+              setEditingInterior(interior);
+              setInteriorModalOpen(true);
+            }}
+            onDelete={deleteInterior}
+          />
+        </div>
+      )}
       {/* Slab Table */}
-      <div className="mt-8">
-        <h2 style={{ fontWeight: 700, fontSize: '1.25rem', marginBottom: '1rem', textAlign: 'center' }}>{heading} Slab Table</h2>
-        <SlabTable
-          data={filteredSlabs}
-          onEdit={(id) => {
-            const slab = filteredSlabs.find((s) => s.id === id);
-            setEditingSlab(slab);
-            setSlabModalOpen(true);
-          }}
-          onDelete={deleteSlab}
-        />
-      </div>
+      {filteredSlabs.length > 0 && (
+        <div className="mt-8">
+          <h2 style={{ fontWeight: 700, fontSize: '1.25rem', marginBottom: '1rem', textAlign: 'center' }}>{heading} Slab Table</h2>
+          <SlabTable
+            data={filteredSlabs}
+            onEdit={(id) => {
+              const slab = filteredSlabs.find((s) => s.id === id);
+              setEditingSlab(slab);
+              setSlabModalOpen(true);
+            }}
+            onDelete={deleteSlab}
+          />
+        </div>
+      )}
     </div>
   );
 }
