@@ -1,13 +1,15 @@
 import { useBuildingPlanStore } from "../store/buildingPlanStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Box, Typography, FormControl, InputLabel, Select, MenuItem, Button } from "@mui/material";
+import BuildingFloorSlabModal from "../tabs-components/buildingfloorslab";
+import { useSlabStore } from "../store/tabs-components-store/slabstore";
+import SlabTable from "../components/table/tabs-components-table/SlabTable";
 
 export default function BuildingFloor() {
   const numberOfFloors = useBuildingPlanStore((state) => state.numberOfFloors);
   const selectedFloor = useBuildingPlanStore((state) => state.selectedFloor);
   const setSelectedFloor = useBuildingPlanStore((state) => state.setSelectedFloor);
 
-  // Generate floor options (Ground, First, Second, ...)
   const floorCount = parseInt(numberOfFloors) || 0;
   const floorNames = [
     "Ground Floor",
@@ -42,6 +44,13 @@ export default function BuildingFloor() {
     "Interior Wall",
     "Floor Slab"
   ];
+
+  // Modal state
+  const [slabModalOpen, setSlabModalOpen] = useState(false);
+
+  const slabs = useSlabStore((state) => state.slabs);
+  const setEditingSlab = useSlabStore((state) => state.setEditingSlab);
+  const deleteSlab = useSlabStore((state) => state.deleteSlab);
 
   return (
     <div className="p-2">
@@ -86,11 +95,25 @@ export default function BuildingFloor() {
                 boxShadow: '0 4px 16px rgba(91, 176, 69, 0.2)',
               },
             }}
+            onClick={label === "Floor Slab" ? () => setSlabModalOpen(true) : undefined}
           >
             {heading} {label}
           </Button>
         ))}
       </Box>
+      <BuildingFloorSlabModal open={slabModalOpen} onClose={() => setSlabModalOpen(false)} />
+      {/* Slab Table */}
+      <div className="mt-8">
+        <SlabTable
+          data={slabs}
+          onEdit={(id) => {
+            const slab = slabs.find((s) => s.id === id);
+            setEditingSlab(slab);
+            setSlabModalOpen(true);
+          }}
+          onDelete={deleteSlab}
+        />
+      </div>
     </div>
   );
 }
