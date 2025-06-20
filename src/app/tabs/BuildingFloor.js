@@ -7,6 +7,9 @@ import SlabTable from "../components/table/tabs-components-table/SlabTable";
 import BuildingInteriorModal from '../tabs-components/buildinginterior';
 import InteriorTable from '../components/table/tabs-components-table/interiortable';
 import { useInteriorStore } from '../store/tabs-components-store/interiorstore';
+import BuildingExteriorModal from '../tabs-components/buildingexterior';
+import ExteriorTable from '../components/table/tabs-components-table/exteriortable';
+import { useExteriorStore } from '../store/tabs-components-store/exteriorstore';
 
 export default function BuildingFloor() {
   const numberOfFloors = useBuildingPlanStore((state) => state.numberOfFloors);
@@ -51,6 +54,7 @@ export default function BuildingFloor() {
   // Modal state
   const [slabModalOpen, setSlabModalOpen] = useState(false);
   const [interiorModalOpen, setInteriorModalOpen] = useState(false);
+  const [exteriorModalOpen, setExteriorModalOpen] = useState(false);
 
   const slabs = useSlabStore((state) => state.slabs);
   const setEditingSlab = useSlabStore((state) => state.setEditingSlab);
@@ -61,9 +65,15 @@ export default function BuildingFloor() {
   const setEditingInterior = useInteriorStore((state) => state.setEditingInterior);
   const deleteInterior = useInteriorStore((state) => state.deleteInterior);
 
+  // Exterior wall store
+  const exteriors = useExteriorStore((state) => state.exteriors);
+  const setEditingExterior = useExteriorStore((state) => state.setEditingExterior);
+  const deleteExterior = useExteriorStore((state) => state.deleteExterior);
+
   // Filter slabs and interiors for the selected floor
   const filteredSlabs = slabs.filter((slab) => slab.floor === selectedFloor);
   const filteredInteriors = interiors.filter((interior) => interior.floor === selectedFloor);
+  const filteredExteriors = exteriors.filter((exterior) => exterior.floor === selectedFloor);
 
   return (
     <div className="p-2">
@@ -87,6 +97,29 @@ export default function BuildingFloor() {
         </FormControl>
       </Box>
       <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mb: 2 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{
+            backgroundColor: '#5BB045',
+            color: '#fff',
+            fontWeight: 600,
+            py: 1.2,
+            px: 2.5,
+            borderRadius: 2,
+            textTransform: 'none',
+            boxShadow: '0 2px 8px rgba(91, 176, 69, 0.15)',
+            '&:hover': {
+              backgroundColor: '#4a9537',
+              color: '#fff',
+              transform: 'translateY(-2px)',
+              boxShadow: '0 4px 16px rgba(91, 176, 69, 0.2)',
+            },
+          }}
+          onClick={() => setExteriorModalOpen(true)}
+        >
+          {heading} Exterior Wall
+        </Button>
         <Button
           variant="contained"
           color="primary"
@@ -134,6 +167,14 @@ export default function BuildingFloor() {
           {heading} Floor Slab
         </Button>
       </Box>
+      <BuildingExteriorModal
+        open={exteriorModalOpen}
+        onClose={() => {
+          setExteriorModalOpen(false);
+          setEditingExterior(null);
+        }}
+        floor={selectedFloor}
+      />
       <BuildingInteriorModal
         open={interiorModalOpen}
         onClose={() => {
@@ -143,6 +184,19 @@ export default function BuildingFloor() {
         floor={selectedFloor}
       />
       <BuildingFloorSlabModal open={slabModalOpen} onClose={() => setSlabModalOpen(false)} floor={selectedFloor} />
+      {/* Exterior Wall Table */}
+      <div className="mt-8">
+        <h2 style={{ fontWeight: 700, fontSize: '1.25rem', marginBottom: '1rem', textAlign: 'center' }}>{heading} Exterior Wall Table</h2>
+        <ExteriorTable
+          data={filteredExteriors}
+          onEdit={(id) => {
+            const exterior = filteredExteriors.find((i) => i.id === id);
+            setEditingExterior(exterior);
+            setExteriorModalOpen(true);
+          }}
+          onDelete={deleteExterior}
+        />
+      </div>
       {/* Interior Wall Table */}
       <div className="mt-8">
         <h2 style={{ fontWeight: 700, fontSize: '1.25rem', marginBottom: '1rem', textAlign: 'center' }}>{heading} Interior Wall Table</h2>
