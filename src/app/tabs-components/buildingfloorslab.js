@@ -31,7 +31,7 @@ const modalStyle = {
   overflowY: 'auto',
 };
 
-export default function BuildingFloorSlabModal({ open, onClose }) {
+export default function BuildingFloorSlabModal({ open, onClose, floor }) {
   const [form, setForm] = useState({
     slabArea: '',
     slabThickness: '',
@@ -113,6 +113,7 @@ export default function BuildingFloorSlabModal({ open, onClose }) {
         ...form,
         slabVolume,
         timestamp: new Date().toISOString(),
+        floor,
       };
       if (editingSlab) {
         updateSlab(editingSlab.id, dataToSave);

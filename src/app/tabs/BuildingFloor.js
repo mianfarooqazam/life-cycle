@@ -52,6 +52,9 @@ export default function BuildingFloor() {
   const setEditingSlab = useSlabStore((state) => state.setEditingSlab);
   const deleteSlab = useSlabStore((state) => state.deleteSlab);
 
+  // Filter slabs for the selected floor
+  const filteredSlabs = slabs.filter((slab) => slab.floor === selectedFloor);
+
   return (
     <div className="p-2">
       <Box sx={{ maxWidth: 320, mb: 2 }}>
@@ -101,13 +104,14 @@ export default function BuildingFloor() {
           </Button>
         ))}
       </Box>
-      <BuildingFloorSlabModal open={slabModalOpen} onClose={() => setSlabModalOpen(false)} />
+      <BuildingFloorSlabModal open={slabModalOpen} onClose={() => setSlabModalOpen(false)} floor={selectedFloor} />
       {/* Slab Table */}
       <div className="mt-8">
+        <h2 style={{ fontWeight: 700, fontSize: '1.25rem', marginBottom: '1rem', textAlign: 'center' }}>{heading} Slab Table</h2>
         <SlabTable
-          data={slabs}
+          data={filteredSlabs}
           onEdit={(id) => {
-            const slab = slabs.find((s) => s.id === id);
+            const slab = filteredSlabs.find((s) => s.id === id);
             setEditingSlab(slab);
             setSlabModalOpen(true);
           }}
