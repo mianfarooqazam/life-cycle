@@ -35,6 +35,13 @@ export default function ExteriorTable({ data, onEdit, onDelete, minWidth = 700 }
             <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120 }}>Length (ft)</TableCell>
             <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120 }}>Width (ft)</TableCell>
             <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120 }}>Area (ft²)</TableCell>
+            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120 }}>Curtain Wall</TableCell>
+            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120 }}>Glass Thickness</TableCell>
+            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120 }}>Wall Thickness (in)</TableCell>
+            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120 }}>Wall Volume (ft³)</TableCell>
+            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120 }}>Tiles Used</TableCell>
+            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120 }}>Tile Height (ft)</TableCell>
+            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120 }}>Tile Area (ft²)</TableCell>
             <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120 }}>Action</TableCell>
           </TableRow>
         </TableHead>
@@ -48,6 +55,13 @@ export default function ExteriorTable({ data, onEdit, onDelete, minWidth = 700 }
               <TableCell sx={cellStyle}>{row.length}</TableCell>
               <TableCell sx={cellStyle}>{row.width}</TableCell>
               <TableCell sx={cellStyle}>{row.area}</TableCell>
+              <TableCell sx={cellStyle}>{row.isCurtainWall === 'yes' ? 'Yes' : 'No'}</TableCell>
+              <TableCell sx={cellStyle}>{row.isCurtainWall === 'yes' ? row.glassThickness : '-'}</TableCell>
+              <TableCell sx={cellStyle}>{row.isCurtainWall === 'no' ? row.wallThickness : '-'}</TableCell>
+              <TableCell sx={cellStyle}>{row.isCurtainWall === 'no' ? row.wallVolume : '-'}</TableCell>
+              <TableCell sx={cellStyle}>{row.areTilesUsed === 'yes' ? 'Yes' : 'No'}</TableCell>
+              <TableCell sx={cellStyle}>{row.areTilesUsed === 'yes' ? row.tileHeight : '-'}</TableCell>
+              <TableCell sx={cellStyle}>{row.areTilesUsed === 'yes' ? row.tileArea : '-'}</TableCell>
               <TableCell sx={cellStyle}>
                 <IconButton color="primary" onClick={() => onEdit(row.id)} size="small" sx={{ mr: 1 }}>
                   <Edit size={18} />
@@ -65,6 +79,13 @@ export default function ExteriorTable({ data, onEdit, onDelete, minWidth = 700 }
               <TableCell sx={totalCellStyle}></TableCell>
               <TableCell sx={totalCellStyle}></TableCell>
               <TableCell sx={totalCellStyle}>{totalArea.toFixed(2)}</TableCell>
+              <TableCell sx={totalCellStyle}></TableCell>
+              <TableCell sx={totalCellStyle}></TableCell>
+              <TableCell sx={totalCellStyle}></TableCell>
+              <TableCell sx={totalCellStyle}></TableCell>
+              <TableCell sx={totalCellStyle}></TableCell>
+              <TableCell sx={totalCellStyle}></TableCell>
+              <TableCell sx={totalCellStyle}></TableCell>
               <TableCell sx={totalCellStyle}></TableCell>
             </TableRow>
           )}

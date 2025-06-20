@@ -4,7 +4,14 @@ import {
   Paper,
   Box,
   Typography,
-  IconButton
+  IconButton,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  FormControl,
+  FormLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
 import { X } from 'lucide-react';
 import SaveButton from '../components/button/SaveButton';
@@ -30,6 +37,11 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
   const [form, setForm] = useState({
     length: '',
     width: '',
+    isCurtainWall: 'no',
+    glassThickness: '',
+    wallThickness: '',
+    areTilesUsed: 'no',
+    tileHeight: '',
   });
   const [showError, setShowError] = useState(false);
 
@@ -40,11 +52,21 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
       setForm({
         length: editingInterior.length || '',
         width: editingInterior.width || '',
+        isCurtainWall: editingInterior.isCurtainWall || 'no',
+        glassThickness: editingInterior.glassThickness || '',
+        wallThickness: editingInterior.wallThickness || '',
+        areTilesUsed: editingInterior.areTilesUsed || 'no',
+        tileHeight: editingInterior.tileHeight || '',
       });
     } else if (open) {
       setForm({
         length: '',
         width: '',
+        isCurtainWall: 'no',
+        glassThickness: '',
+        wallThickness: '',
+        areTilesUsed: 'no',
+        tileHeight: '',
       });
     }
     setShowError(false);
@@ -53,6 +75,17 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleRadioChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+      ...(name === 'isCurtainWall' && value === 'yes' ? { wallThickness: '' } : {}),
+      ...(name === 'isCurtainWall' && value === 'no' ? { glassThickness: '' } : {}),
+      ...(name === 'areTilesUsed' && value === 'no' ? { tileHeight: '' } : {}),
+    }));
   };
 
   // Calculate area (ft²): length * width
@@ -65,14 +98,44 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
     return '';
   })();
 
+  // Calculate wall volume (ft³): area * thickness (in) / 12
+  const wallVolume = (() => {
+    if (form.isCurtainWall === 'no') {
+      const a = parseFloat(area);
+      const t = parseFloat(form.wallThickness);
+      if (!isNaN(a) && !isNaN(t)) {
+        return (a * t / 12).toFixed(2);
+      }
+    }
+    return '';
+  })();
+
+  // Calculate tile area (ft²): tileHeight * length
+  const tileArea = (() => {
+    if (form.areTilesUsed === 'yes') {
+      const h = parseFloat(form.tileHeight);
+      const l = parseFloat(form.length);
+      if (!isNaN(h) && !isNaN(l)) {
+        return (h * l).toFixed(2);
+      }
+    }
+    return '';
+  })();
+
   // Validation
   const validateForm = () => {
     if (!form.length || !form.width) return false;
+    if (form.isCurtainWall === 'yes' && !form.glassThickness) return false;
+    if (form.isCurtainWall === 'no' && !form.wallThickness) return false;
+    if (form.areTilesUsed === 'yes' && !form.tileHeight) return false;
     return true;
   };
 
   const getErrorMessage = () => {
     if (!form.length || !form.width) return 'Please fill in both length and width.';
+    if (form.isCurtainWall === 'yes' && !form.glassThickness) return 'Please select glass thickness.';
+    if (form.isCurtainWall === 'no' && !form.wallThickness) return 'Please enter wall thickness.';
+    if (form.areTilesUsed === 'yes' && !form.tileHeight) return 'Please enter tile height.';
     return 'Please fill all required fields!';
   };
 
@@ -86,6 +149,8 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
       const dataToSave = {
         ...form,
         area,
+        wallVolume: form.isCurtainWall === 'no' ? wallVolume : '',
+        tileArea: form.areTilesUsed === 'yes' ? tileArea : '',
         timestamp: new Date().toISOString(),
         floor,
       };
@@ -98,6 +163,11 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
       setForm({
         length: '',
         width: '',
+        isCurtainWall: 'no',
+        glassThickness: '',
+        wallThickness: '',
+        areTilesUsed: 'no',
+        tileHeight: '',
       });
       setShowError(false);
       onClose && onClose();
@@ -155,6 +225,101 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
               <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
                 <p className="text-lg font-bold text-gray-800">
                   Area: <span className="text-[#5BB045]">{area} ft²</span>
+                </p>
+              </div>
+            )}
+            {/* Curtain Wall Radio */}
+            {form.length && form.width && (
+              <div>
+                <FormControl component="fieldset">
+                  <FormLabel component="legend">Is this curtain wall?</FormLabel>
+                  <RadioGroup
+                    row
+                    name="isCurtainWall"
+                    value={form.isCurtainWall}
+                    onChange={handleRadioChange}
+                  >
+                    <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+                    <FormControlLabel value="no" control={<Radio />} label="No" />
+                  </RadioGroup>
+                </FormControl>
+              </div>
+            )}
+            {/* Glass Thickness Select */}
+            {form.isCurtainWall === 'yes' && (
+              <div>
+                <FormControl fullWidth>
+                  <FormLabel>Glass Thickness</FormLabel>
+                  <Select
+                    name="glassThickness"
+                    value={form.glassThickness}
+                    onChange={handleChange}
+                  >
+                    <MenuItem value="3mm">3mm</MenuItem>
+                    <MenuItem value="6mm">6mm</MenuItem>
+                    <MenuItem value="10mm">10mm</MenuItem>
+                  </Select>
+                </FormControl>
+              </div>
+            )}
+            {/* Wall Thickness Input */}
+            {form.isCurtainWall === 'no' && (
+              <div>
+                <TextInput
+                  label="Interior Wall Thickness (inch)"
+                  name="wallThickness"
+                  type="number"
+                  value={form.wallThickness}
+                  onChange={handleChange}
+                  required
+                  inputProps={{ min: "0", step: "0.1" }}
+                />
+              </div>
+            )}
+            {/* Wall Volume Display */}
+            {form.isCurtainWall === 'no' && form.wallThickness && area && (
+              <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
+                <p className="text-lg font-bold text-gray-800">
+                  Wall Volume: <span className="text-[#5BB045]">{wallVolume} ft³</span>
+                </p>
+              </div>
+            )}
+            {/* Tiles Used Radio */}
+            {form.length && form.width && form.isCurtainWall === 'no' && (
+              <div>
+                <FormControl component="fieldset">
+                  <FormLabel component="legend">Are tiles used in this wall?</FormLabel>
+                  <RadioGroup
+                    row
+                    name="areTilesUsed"
+                    value={form.areTilesUsed}
+                    onChange={handleRadioChange}
+                  >
+                    <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+                    <FormControlLabel value="no" control={<Radio />} label="No" />
+                  </RadioGroup>
+                </FormControl>
+              </div>
+            )}
+            {/* Tile Height Input */}
+            {form.isCurtainWall === 'no' && form.areTilesUsed === 'yes' && (
+              <div>
+                <TextInput
+                  label="Tile Height (ft)"
+                  name="tileHeight"
+                  type="number"
+                  value={form.tileHeight}
+                  onChange={handleChange}
+                  required
+                  inputProps={{ min: "0", step: "0.1" }}
+                />
+              </div>
+            )}
+            {/* Tile Area Display */}
+            {form.isCurtainWall === 'no' && form.areTilesUsed === 'yes' && form.tileHeight && form.length && (
+              <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
+                <p className="text-lg font-bold text-gray-800">
+                  Tile Area: <span className="text-[#5BB045]">{tileArea} ft²</span>
                 </p>
               </div>
             )}
