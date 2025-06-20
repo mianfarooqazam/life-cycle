@@ -132,7 +132,10 @@ export default function BuildingExteriorModal({ open, onClose, floor }) {
     if (!form.length || !form.height) return false;
     if (form.isCurtainWall === 'yes' && !form.glassThickness) return false;
     if (form.isCurtainWall === 'no' && !form.wallThickness) return false;
-    if (form.areTilesUsed === 'yes' && !form.tileHeight) return false;
+    if (form.areTilesUsed === 'yes') {
+      if (!form.tileHeight) return false;
+      if (parseFloat(form.tileHeight) > parseFloat(form.height)) return false;
+    }
     return true;
   };
 
@@ -141,6 +144,7 @@ export default function BuildingExteriorModal({ open, onClose, floor }) {
     if (form.isCurtainWall === 'yes' && !form.glassThickness) return 'Please select glass thickness.';
     if (form.isCurtainWall === 'no' && !form.wallThickness) return 'Please enter wall thickness.';
     if (form.areTilesUsed === 'yes' && !form.tileHeight) return 'Please enter tile height.';
+    if (form.areTilesUsed === 'yes' && parseFloat(form.tileHeight) > parseFloat(form.height)) return 'Tile height cannot exceed wall height.';
     return 'Please fill all required fields!';
   };
 
