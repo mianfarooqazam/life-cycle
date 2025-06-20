@@ -94,7 +94,6 @@ export default function BuildingPlan() {
    };
 
    const validateBuildingDetails = () => {
-       // Check if all building details are filled
        return formData.numberOfFloors && 
               formData.numberOfRooms && 
               formData.numberOfKitchens && 
@@ -103,23 +102,16 @@ export default function BuildingPlan() {
    };
 
    const handleSave = () => {
-       // Basic validation
        if (!formData.plotSize || !formData.marlaSize || !formData.isBasementUsed) {
            return false;
        }
-
-       // Foundation type validation
        if (formData.isBasementUsed === 'yes' && !formData.foundationType) {
            return false;
        }
-
-       // Building details validation
        if (!validateBuildingDetails()) {
            return false;
        }
-
        const plotArea = calculatePlotArea(parseFloat(formData.plotSize), parseInt(formData.marlaSize));
-
        updateBuildingPlan({
            ...formData,
            marlaSize: parseInt(formData.marlaSize),
@@ -130,7 +122,6 @@ export default function BuildingPlan() {
            numberOfLounges: formData.numberOfLounges ? parseInt(formData.numberOfLounges) : 0,
            plotArea
        });
-
        return true;
    };
 
@@ -138,15 +129,12 @@ export default function BuildingPlan() {
        if (!formData.plotSize || !formData.marlaSize || !formData.isBasementUsed) {
            return "Plot size, marla size, and basement options are required!";
        }
-       
        if (formData.isBasementUsed === 'yes' && !formData.foundationType) {
            return "Foundation type is required when basement is used!";
        }
-       
        if (!validateBuildingDetails()) {
            return "floors, rooms, kitchens, washrooms and lounges are required!";
        }
-       
        return "Please fill all required fields!";
    };
 
@@ -168,9 +156,6 @@ export default function BuildingPlan() {
    return (
        <div className="grid grid-cols-1 gap-6 p-2">
            <TitleHeader>Building Plan</TitleHeader>
-
-
-           {/* Basic Information Section */}
            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                <TextInput
                    label="Project Name"
@@ -178,14 +163,12 @@ export default function BuildingPlan() {
                    value={formData.projectName}
                    onChange={handleInputChange}
                />
-
                <TextInput
                    label="Address"
                    name="address"
                    value={formData.address}
                    onChange={handleInputChange}
                />
-
                <TextInput
                    label="Plot Size"
                    name="plotSize"
@@ -194,7 +177,6 @@ export default function BuildingPlan() {
                    onChange={handleInputChange}
                    required
                />
-
                <TextInput
                    label="Marla Size"
                    name="marlaSize"
@@ -204,8 +186,6 @@ export default function BuildingPlan() {
                    required
                />
            </div>
-
-           {/* Plot Area Display */}
            {formData.plotSize && formData.marlaSize && (
                <div className="grid grid-cols-1">
                    <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
@@ -215,8 +195,6 @@ export default function BuildingPlan() {
                    </div>
                </div>
            )}
-
-           {/* Basement and Foundation Options */}
            {formData.plotSize && (
                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                    <FormControl component="fieldset">
@@ -231,7 +209,6 @@ export default function BuildingPlan() {
                            <FormControlLabel value="no" control={<Radio />} label="No" />
                        </RadioGroup>
                    </FormControl>
-
                    {formData.isBasementUsed === 'yes' && (
                        <FormControl component="fieldset">
                            <FormLabel component="legend">Foundation Type</FormLabel>
@@ -248,8 +225,6 @@ export default function BuildingPlan() {
                    )}
                </div>
            )}
-
-           {/* Excavator Type */}
            <div className="grid grid-cols-1">
                <TextInput
                    label="Excavator Type"
@@ -259,11 +234,7 @@ export default function BuildingPlan() {
                    options={excavatorOptions}
                />
            </div>
-
-           {/* Building Details Section */}
-
            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-               
                <TextInput
                    label="Floors"
                    name="numberOfFloors"
@@ -274,7 +245,6 @@ export default function BuildingPlan() {
                    helperText={getFloorsHelperText(formData.numberOfFloors)}
                    required
                />
-
                <TextInput
                    label="Rooms"
                    name="numberOfRooms"
@@ -283,9 +253,7 @@ export default function BuildingPlan() {
                    onChange={handleInputChange}
                    required
                    placeholder="applies to each floor equally"
-
                />
-
                <TextInput
                    label="Kitchens"
                    name="numberOfKitchens"
@@ -294,9 +262,7 @@ export default function BuildingPlan() {
                    onChange={handleInputChange}
                    required
                    placeholder="applies to each floor equally"
-
                />
-
                <TextInput
                    label="Washrooms"
                    name="numberOfWashrooms"
@@ -305,9 +271,7 @@ export default function BuildingPlan() {
                    onChange={handleInputChange}
                    required
                    placeholder="applies to each floor equally"
-
                />
-
                <TextInput
                    label="Lounges"
                    name="numberOfLounges"
@@ -316,11 +280,8 @@ export default function BuildingPlan() {
                    onChange={handleInputChange}
                    required
                    placeholder="applies to each floor equally"
-
                />
            </div>
-
-           {/* Save Button */}
            <div className="grid grid-cols-1 justify-items-end">
                <SaveButton
                    onClick={handleSave}

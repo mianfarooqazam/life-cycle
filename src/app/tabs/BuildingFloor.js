@@ -4,6 +4,9 @@ import { Box, Typography, FormControl, InputLabel, Select, MenuItem, Button } fr
 import BuildingFloorSlabModal from "../tabs-components/buildingfloorslab";
 import { useSlabStore } from "../store/tabs-components-store/slabstore";
 import SlabTable from "../components/table/tabs-components-table/SlabTable";
+import BuildingInteriorModal from '../tabs-components/buildinginterior';
+import InteriorTable from '../components/table/tabs-components-table/interiortable';
+import { useInteriorStore } from '../store/tabs-components-store/interiorstore';
 
 export default function BuildingFloor() {
   const numberOfFloors = useBuildingPlanStore((state) => state.numberOfFloors);
@@ -47,13 +50,20 @@ export default function BuildingFloor() {
 
   // Modal state
   const [slabModalOpen, setSlabModalOpen] = useState(false);
+  const [interiorModalOpen, setInteriorModalOpen] = useState(false);
 
   const slabs = useSlabStore((state) => state.slabs);
   const setEditingSlab = useSlabStore((state) => state.setEditingSlab);
   const deleteSlab = useSlabStore((state) => state.deleteSlab);
 
-  // Filter slabs for the selected floor
+  // Interior wall store
+  const interiors = useInteriorStore((state) => state.interiors);
+  const setEditingInterior = useInteriorStore((state) => state.setEditingInterior);
+  const deleteInterior = useInteriorStore((state) => state.deleteInterior);
+
+  // Filter slabs and interiors for the selected floor
   const filteredSlabs = slabs.filter((slab) => slab.floor === selectedFloor);
+  const filteredInteriors = interiors.filter((interior) => interior.floor === selectedFloor);
 
   return (
     <div className="p-2">
@@ -77,34 +87,75 @@ export default function BuildingFloor() {
         </FormControl>
       </Box>
       <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mb: 2 }}>
-        {buttonLabels.map((label) => (
-          <Button
-            key={label}
-            variant="contained"
-            color="primary"
-            sx={{
-              backgroundColor: '#5BB045',
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{
+            backgroundColor: '#5BB045',
+            color: '#fff',
+            fontWeight: 600,
+            py: 1.2,
+            px: 2.5,
+            borderRadius: 2,
+            textTransform: 'none',
+            boxShadow: '0 2px 8px rgba(91, 176, 69, 0.15)',
+            '&:hover': {
+              backgroundColor: '#4a9537',
               color: '#fff',
-              fontWeight: 600,
-              py: 1.2,
-              px: 2.5,
-              borderRadius: 2,
-              textTransform: 'none',
-              boxShadow: '0 2px 8px rgba(91, 176, 69, 0.15)',
-              '&:hover': {
-                backgroundColor: '#4a9537',
-                color: '#fff',
-                transform: 'translateY(-2px)',
-                boxShadow: '0 4px 16px rgba(91, 176, 69, 0.2)',
-              },
-            }}
-            onClick={label === "Floor Slab" ? () => setSlabModalOpen(true) : undefined}
-          >
-            {heading} {label}
-          </Button>
-        ))}
+              transform: 'translateY(-2px)',
+              boxShadow: '0 4px 16px rgba(91, 176, 69, 0.2)',
+            },
+          }}
+          onClick={() => setInteriorModalOpen(true)}
+        >
+          {heading} Interior Wall
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{
+            backgroundColor: '#5BB045',
+            color: '#fff',
+            fontWeight: 600,
+            py: 1.2,
+            px: 2.5,
+            borderRadius: 2,
+            textTransform: 'none',
+            boxShadow: '0 2px 8px rgba(91, 176, 69, 0.15)',
+            '&:hover': {
+              backgroundColor: '#4a9537',
+              color: '#fff',
+              transform: 'translateY(-2px)',
+              boxShadow: '0 4px 16px rgba(91, 176, 69, 0.2)',
+            },
+          }}
+          onClick={() => setSlabModalOpen(true)}
+        >
+          {heading} Floor Slab
+        </Button>
       </Box>
+      <BuildingInteriorModal
+        open={interiorModalOpen}
+        onClose={() => {
+          setInteriorModalOpen(false);
+          setEditingInterior(null);
+        }}
+        floor={selectedFloor}
+      />
       <BuildingFloorSlabModal open={slabModalOpen} onClose={() => setSlabModalOpen(false)} floor={selectedFloor} />
+      {/* Interior Wall Table */}
+      <div className="mt-8">
+        <h2 style={{ fontWeight: 700, fontSize: '1.25rem', marginBottom: '1rem', textAlign: 'center' }}>{heading} Interior Wall Table</h2>
+        <InteriorTable
+          data={filteredInteriors}
+          onEdit={(id) => {
+            const interior = filteredInteriors.find((i) => i.id === id);
+            setEditingInterior(interior);
+            setInteriorModalOpen(true);
+          }}
+          onDelete={deleteInterior}
+        />
+      </div>
       {/* Slab Table */}
       <div className="mt-8">
         <h2 style={{ fontWeight: 700, fontSize: '1.25rem', marginBottom: '1rem', textAlign: 'center' }}>{heading} Slab Table</h2>
