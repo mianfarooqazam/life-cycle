@@ -36,7 +36,7 @@ const modalStyle = {
 export default function BuildingInteriorModal({ open, onClose, floor }) {
   const [form, setForm] = useState({
     length: '',
-    width: '',
+    height: '',
     isCurtainWall: 'no',
     glassThickness: '',
     wallThickness: '',
@@ -51,7 +51,7 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
     if (open && editingInterior) {
       setForm({
         length: editingInterior.length || '',
-        width: editingInterior.width || '',
+        height: editingInterior.height || '',
         isCurtainWall: editingInterior.isCurtainWall || 'no',
         glassThickness: editingInterior.glassThickness || '',
         wallThickness: editingInterior.wallThickness || '',
@@ -61,7 +61,7 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
     } else if (open) {
       setForm({
         length: '',
-        width: '',
+        height: '',
         isCurtainWall: 'no',
         glassThickness: '',
         wallThickness: '',
@@ -88,12 +88,12 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
     }));
   };
 
-  // Calculate area (ft²): length * width
+  // Calculate area (ft²): length * height
   const area = (() => {
     const l = parseFloat(form.length);
-    const w = parseFloat(form.width);
-    if (!isNaN(l) && !isNaN(w)) {
-      return (l * w).toFixed(2);
+    const h = parseFloat(form.height);
+    if (!isNaN(l) && !isNaN(h)) {
+      return (l * h).toFixed(2);
     }
     return '';
   })();
@@ -113,10 +113,10 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
   // Calculate tile area (ft²): tileHeight * length
   const tileArea = (() => {
     if (form.areTilesUsed === 'yes') {
-      const h = parseFloat(form.tileHeight);
+      const th = parseFloat(form.tileHeight);
       const l = parseFloat(form.length);
-      if (!isNaN(h) && !isNaN(l)) {
-        return (h * l).toFixed(2);
+      if (!isNaN(th) && !isNaN(l)) {
+        return (th * l).toFixed(2);
       }
     }
     return '';
@@ -124,7 +124,7 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
 
   // Validation
   const validateForm = () => {
-    if (!form.length || !form.width) return false;
+    if (!form.length || !form.height) return false;
     if (form.isCurtainWall === 'yes' && !form.glassThickness) return false;
     if (form.isCurtainWall === 'no' && !form.wallThickness) return false;
     if (form.areTilesUsed === 'yes' && !form.tileHeight) return false;
@@ -132,7 +132,7 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
   };
 
   const getErrorMessage = () => {
-    if (!form.length || !form.width) return 'Please fill in both length and width.';
+    if (!form.length || !form.height) return 'Please fill in both length and height.';
     if (form.isCurtainWall === 'yes' && !form.glassThickness) return 'Please select glass thickness.';
     if (form.isCurtainWall === 'no' && !form.wallThickness) return 'Please enter wall thickness.';
     if (form.areTilesUsed === 'yes' && !form.tileHeight) return 'Please enter tile height.';
@@ -162,7 +162,7 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
       }
       setForm({
         length: '',
-        width: '',
+        height: '',
         isCurtainWall: 'no',
         glassThickness: '',
         wallThickness: '',
@@ -193,7 +193,7 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
         {/* Content */}
         <Box sx={{ p: 3 }}>
           <div className="grid grid-cols-1 gap-6">
-            {/* Length & Width Inputs */}
+            {/* Length & Height Inputs */}
             <div className="flex flex-col gap-4">
               <div className="flex flex-row gap-4">
                 <div className="flex-1">
@@ -209,10 +209,10 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
                 </div>
                 <div className="flex-1">
                   <TextInput
-                    label="Interior Wall Width (ft)"
-                    name="width"
+                    label="Interior Wall Height (ft)"
+                    name="height"
                     type="number"
-                    value={form.width}
+                    value={form.height}
                     onChange={handleChange}
                     required
                     inputProps={{ min: "0", step: "0.1" }}
@@ -221,7 +221,7 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
               </div>
             </div>
             {/* Area Display */}
-            {form.length && form.width && (
+            {form.length && form.height && (
               <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
                 <p className="text-lg font-bold text-gray-800">
                   Area: <span className="text-[#5BB045]">{area} ft²</span>
@@ -229,7 +229,7 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
               </div>
             )}
             {/* Curtain Wall Radio */}
-            {form.length && form.width && (
+            {form.length && form.height && (
               <div>
                 <FormControl component="fieldset">
                   <FormLabel component="legend">Is this curtain wall?</FormLabel>
@@ -285,7 +285,7 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
               </div>
             )}
             {/* Tiles Used Radio */}
-            {form.length && form.width && form.isCurtainWall === 'no' && (
+            {form.length && form.height && form.isCurtainWall === 'no' && (
               <div>
                 <FormControl component="fieldset">
                   <FormLabel component="legend">Are tiles used in this wall?</FormLabel>

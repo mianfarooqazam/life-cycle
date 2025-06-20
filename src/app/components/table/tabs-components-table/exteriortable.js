@@ -31,18 +31,18 @@ export default function ExteriorTable({ data, onEdit, onDelete, minWidth = 700 }
       <Table sx={{ minWidth }} stickyHeader>
         <TableHead>
           <TableRow>
-            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 80 }}>Sr. No.</TableCell>
-            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120 }}>Length (ft)</TableCell>
-            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120 }}>Width (ft)</TableCell>
-            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120 }}>Area (ft²)</TableCell>
-            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120 }}>Curtain Wall</TableCell>
-            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120 }}>Glass Thickness</TableCell>
-            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120 }}>Wall Thickness (in)</TableCell>
-            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120 }}>Wall Volume (ft³)</TableCell>
-            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120 }}>Tiles Used</TableCell>
-            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120 }}>Tile Height (ft)</TableCell>
-            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120 }}>Tile Area (ft²)</TableCell>
-            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120 }}>Action</TableCell>
+            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 80, whiteSpace: 'nowrap' }}>Sr. No.</TableCell>
+            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Length (ft)</TableCell>
+            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Height (ft)</TableCell>
+            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Wall Area (ft²)</TableCell>
+            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Wall Volume (ft³)</TableCell>
+            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Curtain Wall</TableCell>
+            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Glass Thickness</TableCell>
+            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Wall Thickness (in)</TableCell>
+            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Tiles Used</TableCell>
+            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Tile Height (ft)</TableCell>
+            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Tile Area (ft²)</TableCell>
+            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Action</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -55,10 +55,10 @@ export default function ExteriorTable({ data, onEdit, onDelete, minWidth = 700 }
               <TableCell sx={cellStyle}>{row.length}</TableCell>
               <TableCell sx={cellStyle}>{row.width}</TableCell>
               <TableCell sx={cellStyle}>{row.area}</TableCell>
+              <TableCell sx={cellStyle}>{row.wallVolume}</TableCell>
               <TableCell sx={cellStyle}>{row.isCurtainWall === 'yes' ? 'Yes' : 'No'}</TableCell>
               <TableCell sx={cellStyle}>{row.isCurtainWall === 'yes' ? row.glassThickness : '-'}</TableCell>
               <TableCell sx={cellStyle}>{row.isCurtainWall === 'no' ? row.wallThickness : '-'}</TableCell>
-              <TableCell sx={cellStyle}>{row.isCurtainWall === 'no' ? row.wallVolume : '-'}</TableCell>
               <TableCell sx={cellStyle}>{row.areTilesUsed === 'yes' ? 'Yes' : 'No'}</TableCell>
               <TableCell sx={cellStyle}>{row.areTilesUsed === 'yes' ? row.tileHeight : '-'}</TableCell>
               <TableCell sx={cellStyle}>{row.areTilesUsed === 'yes' ? row.tileArea : '-'}</TableCell>
