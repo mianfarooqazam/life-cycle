@@ -11,12 +11,16 @@ import {
   FormControl,
   FormLabel,
   Select,
-  MenuItem
+  MenuItem,
+  Button
 } from '@mui/material';
-import { X } from 'lucide-react';
+import { X, DoorOpen, RectangleHorizontal, Package } from 'lucide-react';
 import SaveButton from '../components/button/SaveButton';
 import TextInput from '../components/input/TextInput';
 import { useInteriorStore } from '../store/tabs-components-store/interiorstore';
+import DoorModal from '../components/modal/DoorModal';
+import WindowModal from '../components/modal/WindowModal';
+import MaterialModal from '../components/modal/MaterialModal';
 
 const modalStyle = {
   position: 'absolute',
@@ -44,6 +48,9 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
     tileHeight: '',
   });
   const [showError, setShowError] = useState(false);
+  const [doorModalOpen, setDoorModalOpen] = useState(false);
+  const [windowModalOpen, setWindowModalOpen] = useState(false);
+  const [materialModalOpen, setMaterialModalOpen] = useState(false);
 
   const { addInterior, updateInterior, editingInterior, clearEditingInterior } = useInteriorStore();
 
@@ -323,6 +330,81 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
                 </p>
               </div>
             )}
+            {/* Action Buttons */}
+            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'space-between', flexWrap: 'nowrap', mb: 2 }}>
+              <Button
+                variant="contained"
+                startIcon={<DoorOpen size={20} />}
+                onClick={() => setDoorModalOpen(true)}
+                sx={{
+                  backgroundColor: '#5BB045',
+                  color: '#fff',
+                  fontWeight: 600,
+                  py: 1.5,
+                  px: 3,
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  boxShadow: '0 2px 8px rgba(91, 176, 69, 0.3)',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    backgroundColor: '#4a9537',
+                    color: '#fff',
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 4px 16px rgba(91, 176, 69, 0.4)',
+                  }
+                }}
+              >
+                Add Door
+              </Button>
+              <Button
+                variant="contained"
+                startIcon={<RectangleHorizontal size={20} />}
+                onClick={() => setWindowModalOpen(true)}
+                sx={{
+                  backgroundColor: '#5BB045',
+                  color: '#fff',
+                  fontWeight: 600,
+                  py: 1.5,
+                  px: 3,
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  boxShadow: '0 2px 8px rgba(91, 176, 69, 0.3)',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    backgroundColor: '#4a9537',
+                    color: '#fff',
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 4px 16px rgba(91, 176, 69, 0.4)',
+                  }
+                }}
+              >
+                Add Window
+              </Button>
+              <Button
+                variant="contained"
+                startIcon={<Package size={20} />}
+                onClick={() => setMaterialModalOpen(true)}
+                sx={{
+                  backgroundColor: '#5BB045',
+                  color: '#fff',
+                  fontWeight: 600,
+                  py: 1.5,
+                  px: 3,
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  boxShadow: '0 2px 8px rgba(91, 176, 69, 0.3)',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    backgroundColor: '#4a9537',
+                    color: '#fff',
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 4px 16px rgba(91, 176, 69, 0.4)',
+                  }
+                }}
+              >
+                Select Materials
+              </Button>
+            </Box>
             {/* Save Button */}
             <div className="flex justify-end">
               <SaveButton
@@ -333,6 +415,10 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
                 {editingInterior ? 'Update' : 'Save'}
               </SaveButton>
             </div>
+            {/* Modals */}
+            <DoorModal open={doorModalOpen} onClose={() => setDoorModalOpen(false)} />
+            <WindowModal open={windowModalOpen} onClose={() => setWindowModalOpen(false)} />
+            <MaterialModal open={materialModalOpen} onClose={() => setMaterialModalOpen(false)} />
           </div>
         </Box>
       </Paper>

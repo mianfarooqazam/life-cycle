@@ -25,6 +25,8 @@ export default function ExteriorTable({ data, onEdit, onDelete, minWidth = 700 }
 
   // Calculate total area
   const totalArea = data.reduce((sum, row) => sum + (parseFloat(row.area) || 0), 0);
+  // Calculate total wall volume
+  const totalWallVolume = data.reduce((sum, row) => sum + (parseFloat(row.wallVolume) || 0), 0);
 
   return (
     <TableContainer>
@@ -79,7 +81,7 @@ export default function ExteriorTable({ data, onEdit, onDelete, minWidth = 700 }
               <TableCell sx={totalCellStyle}></TableCell>
               <TableCell sx={totalCellStyle}></TableCell>
               <TableCell sx={totalCellStyle}>{totalArea.toFixed(2)}</TableCell>
-              <TableCell sx={totalCellStyle}></TableCell>
+              <TableCell sx={totalCellStyle}>{totalWallVolume.toFixed(2)}</TableCell>
               <TableCell sx={totalCellStyle}></TableCell>
               <TableCell sx={totalCellStyle}></TableCell>
               <TableCell sx={totalCellStyle}></TableCell>
