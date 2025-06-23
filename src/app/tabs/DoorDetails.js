@@ -1,8 +1,8 @@
 import React from 'react';
 import DoorWindowTable from '@/app/components/table/DoorWindowTable';
+import { useMumtyWallStore } from '@/app/store/mumtyWallStore';
 
 export default function DoorDetails() {
-  
   const headers = [
     'Sr No.',
     'Wall Origin',
@@ -13,34 +13,27 @@ export default function DoorDetails() {
     'Total Cost'
   ];
 
-  const sampleData = [
-    {
-      id: 1,
-      srNo: 1,
+  // Get mumty wall data from store
+  const mumtyWallsData = useMumtyWallStore(state => state.mumtyWallsData);
+
+  // Filter and map to door data for the table
+  const doorData = mumtyWallsData
+    .filter(row => row.doorType)
+    .map((row, idx) => ({
+      id: row.id,
+      srNo: idx + 1,
       wallOrigin: 'Mumty Wall',
       component: 'Door',
-      type: 'UPvc Door',
-      area: 21,
-      costPerUnit: 15000,
-      totalCost: 15000
-    },
-    {
-      id: 2,
-      srNo: 2,
-      wallOrigin: 'Basement Wall',
-      component: 'Door',
-      type: 'Wooden Door',
-      area: 18,
-      costPerUnit: 8000,
-      totalCost: 8000
-    }
-  ];
+      type: row.doorType,
+      area: row.doorArea,
+      costPerUnit: row.doorCost,
+      totalCost: row.doorCost && row.doorQuantity ? (parseFloat(row.doorCost) * parseFloat(row.doorQuantity)) : ''
+    }));
 
   return (
     <div className="p-2">
-      
       <DoorWindowTable 
-        data={sampleData}
+        data={doorData}
         headers={headers}
         showActions={false}
         minWidth={1400}
