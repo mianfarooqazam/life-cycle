@@ -47,7 +47,6 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
     areTilesUsed: 'no',
     tileHeight: '',
   });
-  const [showError, setShowError] = useState(false);
   const [doorModalOpen, setDoorModalOpen] = useState(false);
   const [windowModalOpen, setWindowModalOpen] = useState(false);
   const [materialModalOpen, setMaterialModalOpen] = useState(false);
@@ -76,7 +75,6 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
         tileHeight: '',
       });
     }
-    setShowError(false);
   }, [open, editingInterior]);
 
   const handleChange = (e) => {
@@ -153,7 +151,6 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
   // Save handler
   const handleSave = () => {
     if (!validateForm()) {
-      setShowError(true);
       return false;
     }
     try {
@@ -180,7 +177,6 @@ export default function BuildingInteriorModal({ open, onClose, floor }) {
         areTilesUsed: 'no',
         tileHeight: '',
       });
-      setShowError(false);
       onClose && onClose();
       return true;
     } catch (error) {

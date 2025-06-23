@@ -55,7 +55,7 @@ export default function ExteriorTable({ data, onEdit, onDelete, minWidth = 700 }
             >
               <TableCell sx={cellStyle}>{idx + 1}</TableCell>
               <TableCell sx={cellStyle}>{row.length}</TableCell>
-              <TableCell sx={cellStyle}>{row.width}</TableCell>
+              <TableCell sx={cellStyle}>{row.height}</TableCell>
               <TableCell sx={cellStyle}>{row.area}</TableCell>
               <TableCell sx={cellStyle}>{row.wallVolume}</TableCell>
               <TableCell sx={cellStyle}>{row.isCurtainWall === 'yes' ? 'Yes' : 'No'}</TableCell>

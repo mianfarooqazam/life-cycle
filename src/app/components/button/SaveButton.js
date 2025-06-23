@@ -5,7 +5,8 @@ export default function SaveButton({
   successMessage = 'Saved Successfully',
   errorMessage = '',
   className = '',
-  disabled = false
+  disabled = false,
+  children
 }) {
   const handleClick = () => {
     if (onClick && !disabled) {
@@ -51,7 +52,7 @@ export default function SaveButton({
         ${className}
       `}
     >
-      Save
+      {children || 'Save'}
     </button>
   );
 }
