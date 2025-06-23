@@ -1,8 +1,8 @@
 import React from 'react';
 import InsWallTable from '@/app/components/table/InsWallTable';
+import { useMumtyWallStore } from '@/app/store/mumtyWallStore';
 
 export default function InsulatedWallDetails() {
-  
   const headers = [
     'Sr No.',
     'Wall Origin',
@@ -13,35 +13,28 @@ export default function InsulatedWallDetails() {
     'Volume (ft³)'
   ];
 
-  const sampleData = [
-    {
-      id: 1,
-      srNo: 1,
-      wallOrigin: 'Basement Wall',
-      length: 12,
-      height: 10,
-      insulationThickness: 2,
-      area: 120,
-      volume: 20
-    },
-    {
-      id: 2,
-      srNo: 2,
+  // Get mumty wall data from store
+  const mumtyWallsData = useMumtyWallStore(state => state.mumtyWallsData);
+
+  // Filter and map to insulated wall data for the table
+  const insulatedWallData = mumtyWallsData
+    .filter(row => row.insulationUsed === 'yes')
+    .map((row, idx) => ({
+      id: row.id,
+      srNo: idx + 1,
       wallOrigin: 'Mumty Wall',
-      length: 15,
-      height: 10,
-      insulationThickness: 3,
-      area: 150,
-      volume: 37.5
-    }
-  ];
+      length: row.length,
+      height: row.height,
+      insulationThickness: row.insulationThickness,
+      area: row.wallArea,
+      volume: row.wallVolume
+    }));
 
   return (
     <div className="p-2">
       <h2 className="text-2xl font-bold mb-6 text-center">Insulated Wall</h2>
-      
       <InsWallTable 
-        data={sampleData}
+        data={insulatedWallData}
         headers={headers}
         minWidth={1400}
       />
