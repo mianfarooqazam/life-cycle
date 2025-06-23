@@ -10,7 +10,6 @@ import {
   Box
 } from '@mui/material';
 import { Edit, Trash2 } from 'lucide-react';
-import TextInput from '@/app/components/input/TextInput';
 
 export default function MumtyWallsTable({
   data,
@@ -67,22 +66,37 @@ export default function MumtyWallsTable({
               sx={{ backgroundColor: '#ffffff', '&:hover': { backgroundColor: '#f7f6fb' } }}
             >
               <TableCell sx={cellStyle}>{idx + 1}</TableCell>
-              <TableCell sx={cellStyle}>{row.wallArea}</TableCell>
-              <TableCell sx={cellStyle}>{row.wallVolume}</TableCell>
+              <TableCell sx={cellStyle}>{row.wallArea || '***'}</TableCell>
+              <TableCell sx={cellStyle}>{row.wallVolume || '***'}</TableCell>
               <TableCell sx={cellStyle}>{row.insulationUsed === 'yes' ? 'Yes' : 'No'}</TableCell>
-              <TableCell sx={cellStyle}>{row.insulationThickness}</TableCell>
-              <TableCell sx={cellStyle}>{row.component}</TableCell>
-              <TableCell sx={cellStyle}>{row.doorType}</TableCell>
-              <TableCell sx={cellStyle}>{row.windowType}</TableCell>
+              <TableCell sx={cellStyle}>{row.insulationThickness || '***'}</TableCell>
+              <TableCell sx={cellStyle}>{row.component || '***'}</TableCell>
+              <TableCell sx={cellStyle}>{row.doorType || '***'}</TableCell>
+              <TableCell sx={cellStyle}>{row.windowType || '***'}</TableCell>
               <TableCell sx={cellStyle}>
-                {row.doorArea && (
-                  <div>Door: {row.doorArea} ft²</div>
-                )}
-                {row.windowArea && (
-                  <div>Window: {row.windowArea} ft²</div>
-                )}
+                {(row.doorArea || row.windowArea) ? (
+                  <>
+                    {row.doorArea ? (
+                      <div>Door: {row.doorArea} ft²</div>
+                    ) : null}
+                    {row.windowArea ? (
+                      <div>Window: {row.windowArea} ft²</div>
+                    ) : null}
+                  </>
+                ) : '***'}
               </TableCell>
-              <TableCell sx={cellStyle}>{row.cost}</TableCell>
+              <TableCell sx={cellStyle}>
+                {(row.doorType && row.doorCost) || (row.windowType && row.windowCost) ? (
+                  <>
+                    {row.doorType && row.doorCost && (
+                      <div>Door: Rs. {row.doorCost}</div>
+                    )}
+                    {row.windowType && row.windowCost && (
+                      <div>Window: Rs. {row.windowCost}</div>
+                    )}
+                  </>
+                ) : '***'}
+              </TableCell>
               <TableCell sx={cellStyle}>
                 <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
                   <IconButton color="primary" onClick={() => onEdit(row.id)} size="small" sx={{ mr: 1 }}>

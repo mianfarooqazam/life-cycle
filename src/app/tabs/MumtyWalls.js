@@ -267,12 +267,12 @@ export default function MumtyWalls() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
                                         <p className="text-lg font-bold text-gray-800">
-                                            Mumty Wall Area: <span className="text-[#5BB045]">{/* calculateArea() */}</span>
+                                            Mumty Wall Area: <span className="text-[#5BB045]">{calculateWallArea()}</span>
                                         </p>
                                     </div>
                                     <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
                                         <p className="text-lg font-bold text-gray-800">
-                                            Mumty Wall Volume: <span className="text-[#5BB045]">{/* calculateVolume() */}</span>
+                                            Mumty Wall Volume: <span className="text-[#5BB045]">{calculateWallVolume()}</span>
                                         </p>
                                     </div>
                                 </div>
