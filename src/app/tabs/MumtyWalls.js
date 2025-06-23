@@ -18,6 +18,8 @@ import { X } from 'lucide-react';
 
 import SaveButton from '@/app/components/button/SaveButton';
 import TextInput from '@/app/components/input/TextInput';
+import MumtyWallsTable from '@/app/components/table/MumtyWallsTable';
+import { useMumtyWallStore } from '@/app/store/mumtyWallStore';
 
 const modalStyle = {
     position: 'absolute',
@@ -35,148 +37,124 @@ const modalStyle = {
 };
 
 export default function MumtyWalls() {
-  
+    // Modal open state only
     const [mainModalOpen, setMainModalOpen] = useState(false);
-    
-    // Form state
-    const [formData, setFormData] = useState({
-        length: '',
-        height: '',
-        thickness: '',
-        isInsulationUsed: 'no',
-        insulationThickness: ''
-    });
 
-    // Add state for door and window form data
-    const [doorForm, setDoorForm] = useState({
-        doorType: '',
-        height: '',
-        width: '',
-        thickness: '',
-        quantity: '',
-        costPerDoor: ''
-    });
-    const [windowForm, setWindowForm] = useState({
-        windowType: '',
-        height: '',
-        width: '',
-        thickness: '',
-        quantity: '',
-        costPerWindow: ''
-    });
+    // Zustand store hooks
+    const {
+        formData,
+        doorForm,
+        windowForm,
+        mumtyWallsData,
+        editingId,
+        updateFormData,
+        updateDoorForm,
+        updateWindowForm,
+        resetFormData,
+        resetDoorForm,
+        resetWindowForm,
+        addMumtyWallData,
+        updateMumtyWallData,
+        deleteMumtyWallData,
+        setEditingId,
+        clearEditingId,
+        getEditingRow,
+        calculateWallArea,
+        calculateWallVolume,
+        calculateDoorArea,
+        calculateWindowArea,
+    } = useMumtyWallStore();
 
-    // Handle input changes
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleRadioChange = (e) => {
-        setFormData(prev => ({ 
-            ...prev, 
-            isInsulationUsed: e.target.value,
-            insulationThickness: e.target.value === 'no' ? '' : prev.insulationThickness
-        }));
-    };
-
-    // Handlers for door and window input changes
-    const handleDoorInputChange = (e) => {
-        const { name, value } = e.target;
-        setDoorForm(prev => ({ ...prev, [name]: value }));
-    };
-    const handleWindowInputChange = (e) => {
-        const { name, value } = e.target;
-        setWindowForm(prev => ({ ...prev, [name]: value }));
-    };
-
-    // Calculate area and volume
-    const calculateArea = () => {
-        const length = parseFloat(formData.length);
-        const height = parseFloat(formData.height);
-        if (length && height) {
-            return (length * height).toFixed(1);
+    // Populate modal with previous data on edit
+    const handleEdit = (id) => {
+        setEditingId(id);
+        const row = getEditingRow(id);
+        if (row) {
+            updateFormData({
+                length: row.length || '',
+                height: row.height || '',
+                thickness: row.thickness || '',
+                isInsulationUsed: row.insulationUsed || 'no',
+                insulationThickness: row.insulationThickness || ''
+            });
+            updateDoorForm({
+                doorType: row.doorType || '',
+                height: row.doorHeight || '',
+                width: row.doorWidth || '',
+                thickness: row.doorThickness || '',
+                quantity: row.doorQuantity || '',
+                costPerDoor: row.doorCost || ''
+            });
+            updateWindowForm({
+                windowType: row.windowType || '',
+                height: row.windowHeight || '',
+                width: row.windowWidth || '',
+                thickness: row.windowThickness || '',
+                quantity: row.windowQuantity || '',
+                costPerWindow: row.windowCost || ''
+            });
         }
-        return '0.00';
+        setMainModalOpen(true);
     };
 
-    const calculateVolume = () => {
-        const length = parseFloat(formData.length);
-        const height = parseFloat(formData.height);
-        const thickness = parseFloat(formData.thickness);
-        if (length && height && thickness) {
-            // Convert thickness from inches to feet (divide by 12)
-            const thicknessInFeet = thickness / 12;
-            return (length * height * thicknessInFeet).toFixed(1);
+    // Save handler
+    const handleSave = () => {
+        // Validation logic here (reuse from store or local)
+        // ...
+        // Compose row data
+        const newRow = {
+            id: editingId || Date.now(),
+            wallArea: calculateWallArea(),
+            wallVolume: calculateWallVolume(),
+            insulationUsed: formData.isInsulationUsed,
+            insulationThickness: formData.insulationThickness,
+            component: [
+                doorForm.doorType && doorForm.quantity ? `Door (${doorForm.quantity})` : null,
+                windowForm.windowType && windowForm.quantity ? `Window (${windowForm.quantity})` : null
+            ].filter(Boolean).join(' / '),
+            doorType: doorForm.doorType,
+            windowType: windowForm.windowType,
+            doorArea: calculateDoorArea(),
+            windowArea: calculateWindowArea(),
+            cost: doorForm.doorType ? doorForm.costPerDoor : windowForm.windowType ? windowForm.costPerWindow : '',
+            // Store all form values for editing
+            length: formData.length,
+            height: formData.height,
+            thickness: formData.thickness,
+            doorHeight: doorForm.height,
+            doorWidth: doorForm.width,
+            doorThickness: doorForm.thickness,
+            doorQuantity: doorForm.quantity,
+            doorCost: doorForm.costPerDoor,
+            windowHeight: windowForm.height,
+            windowWidth: windowForm.width,
+            windowThickness: windowForm.thickness,
+            windowQuantity: windowForm.quantity,
+            windowCost: windowForm.costPerWindow,
+        };
+        if (editingId) {
+            updateMumtyWallData(editingId, newRow);
+            clearEditingId();
+        } else {
+            addMumtyWallData(newRow);
         }
-        return '0.00';
-    };
-
-    // Validation function
-    const validateForm = () => {
-        if (!formData.length || !formData.height || !formData.thickness) {
-            return false;
-        }
-
-        if (formData.isInsulationUsed === 'yes' && !formData.insulationThickness) {
-            return false;
-        }
-
+        resetFormData();
+        resetDoorForm();
+        resetWindowForm();
+        setMainModalOpen(false);
         return true;
     };
 
-    // Get error message
-    const getErrorMessage = () => {
-        if (!formData.length || !formData.height || !formData.thickness) {
-            return 'Please fill in all required fields (length, height, thickness)';
-        }
-
-        if (formData.isInsulationUsed === 'yes' && !formData.insulationThickness) {
-            return 'Please enter insulation thickness';
-        }
-
-        return 'Please fill all required fields!';
-    };
-
-    // Handle form submission
-    const handleSave = () => {
-        // Validation
-        if (!validateForm()) {
-            return false;
-        }
-
-        try {
-            // Here you would typically save the data to your backend
-            const dataToSave = {
-                ...formData,
-                area: calculateArea(),
-                volume: calculateVolume(),
-                timestamp: new Date().toISOString()
-            };
-
-            console.log('Saving mumty wall data:', dataToSave);
-
-            // Reset form after successful save
-            setFormData({
-                length: '',
-                height: '',
-                thickness: '',
-                isInsulationUsed: 'no',
-                insulationThickness: ''
-            });
-
-            return true; // Return true for successful save
-        } catch (error) {
-            console.error('Error saving mumty wall data:', error);
-            return false; // Return false for failed save
-        }
+    // Delete handler
+    const handleDelete = (id) => {
+        deleteMumtyWallData(id);
     };
 
     return (
         <div className="p-2">
-            {/* Button to open the modal */}
             <Button
                 variant="contained"
-                onClick={() => setMainModalOpen(true)}
+                onClick={() => { resetFormData(); resetDoorForm(); resetWindowForm(); clearEditingId(); setMainModalOpen(true); }}
                 sx={{
                     backgroundColor: '#5BB045',
                     color: '#fff',
@@ -250,7 +228,7 @@ export default function MumtyWalls() {
                                             name="length"
                                             type="number"
                                             value={formData.length}
-                                            onChange={handleInputChange}
+                                            onChange={(e) => updateFormData({ length: e.target.value })}
                                             required
                                             inputProps={{ min: "0", step: "0.1" }}
                                         />
@@ -261,7 +239,7 @@ export default function MumtyWalls() {
                                             name="height"
                                             type="number"
                                             value={formData.height}
-                                            onChange={handleInputChange}
+                                            onChange={(e) => updateFormData({ height: e.target.value })}
                                             required
                                             inputProps={{ min: "0", step: "0.1" }}
                                         />
@@ -275,7 +253,7 @@ export default function MumtyWalls() {
                                             name="thickness"
                                             type="number"
                                             value={formData.thickness}
-                                            onChange={handleInputChange}
+                                            onChange={(e) => updateFormData({ thickness: e.target.value })}
                                             required
                                             inputProps={{ min: "0", step: "0.1" }}
                                             sx={{ maxWidth: 250 }}
@@ -289,12 +267,12 @@ export default function MumtyWalls() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
                                         <p className="text-lg font-bold text-gray-800">
-                                            Mumty Wall Area: <span className="text-[#5BB045]">{calculateArea()} ft²</span>
+                                            Mumty Wall Area: <span className="text-[#5BB045]">{/* calculateArea() */}</span>
                                         </p>
                                     </div>
                                     <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
                                         <p className="text-lg font-bold text-gray-800">
-                                            Mumty Wall Volume: <span className="text-[#5BB045]">{calculateVolume()} ft³</span>
+                                            Mumty Wall Volume: <span className="text-[#5BB045]">{/* calculateVolume() */}</span>
                                         </p>
                                     </div>
                                 </div>
@@ -308,7 +286,7 @@ export default function MumtyWalls() {
                                         row
                                         name="isInsulationUsed"
                                         value={formData.isInsulationUsed}
-                                        onChange={handleRadioChange}
+                                        onChange={(e) => updateFormData({ isInsulationUsed: e.target.value })}
                                     >
                                         <FormControlLabel value="yes" control={<Radio />} label="Yes" />
                                         <FormControlLabel value="no" control={<Radio />} label="No" />
@@ -323,7 +301,7 @@ export default function MumtyWalls() {
                                         name="insulationThickness"
                                         type="number"
                                         value={formData.insulationThickness}
-                                        onChange={handleInputChange}
+                                        onChange={(e) => updateFormData({ insulationThickness: e.target.value })}
                                         required
                                         inputProps={{ min: "0", step: "0.1" }}
                                         sx={{ maxWidth: 250 }}
@@ -340,7 +318,7 @@ export default function MumtyWalls() {
                                         label="Door Type"
                                         name="doorType"
                                         value={doorForm.doorType}
-                                        onChange={handleDoorInputChange}
+                                        onChange={(e) => updateDoorForm({ doorType: e.target.value })}
                                         select
                                         options={[
                                             { value: 'wooden', label: 'Wooden' },
@@ -355,7 +333,7 @@ export default function MumtyWalls() {
                                             name="height"
                                             type="number"
                                             value={doorForm.height}
-                                            onChange={handleDoorInputChange}
+                                            onChange={(e) => updateDoorForm({ height: e.target.value })}
                                             required
                                             inputProps={{ min: "0", step: "0.1" }}
                                         />
@@ -364,7 +342,7 @@ export default function MumtyWalls() {
                                             name="width"
                                             type="number"
                                             value={doorForm.width}
-                                            onChange={handleDoorInputChange}
+                                            onChange={(e) => updateDoorForm({ width: e.target.value })}
                                             required
                                             inputProps={{ min: "0", step: "0.1" }}
                                         />
@@ -375,7 +353,7 @@ export default function MumtyWalls() {
                                             name="thickness"
                                             type="number"
                                             value={doorForm.thickness}
-                                            onChange={handleDoorInputChange}
+                                            onChange={(e) => updateDoorForm({ thickness: e.target.value })}
                                             required
                                             inputProps={{ min: "0", step: "0.1" }}
                                         />
@@ -384,7 +362,7 @@ export default function MumtyWalls() {
                                             name="quantity"
                                             type="number"
                                             value={doorForm.quantity}
-                                            onChange={handleDoorInputChange}
+                                            onChange={(e) => updateDoorForm({ quantity: e.target.value })}
                                             required
                                             inputProps={{ min: "1" }}
                                         />
@@ -395,7 +373,7 @@ export default function MumtyWalls() {
                                         name="costPerDoor"
                                         type="number"
                                         value={doorForm.costPerDoor}
-                                        onChange={handleDoorInputChange}
+                                        onChange={(e) => updateDoorForm({ costPerDoor: e.target.value })}
                                         required
                                         inputProps={{ min: "0" }}
                                     />
@@ -410,7 +388,7 @@ export default function MumtyWalls() {
                                         label="Window Type"
                                         name="windowType"
                                         value={windowForm.windowType}
-                                        onChange={handleWindowInputChange}
+                                        onChange={(e) => updateWindowForm({ windowType: e.target.value })}
                                         select
                                         options={[
                                             { value: 'wooden', label: 'Wooden' },
@@ -425,7 +403,7 @@ export default function MumtyWalls() {
                                             name="height"
                                             type="number"
                                             value={windowForm.height}
-                                            onChange={handleWindowInputChange}
+                                            onChange={(e) => updateWindowForm({ height: e.target.value })}
                                             required
                                             inputProps={{ min: "0", step: "0.1" }}
                                         />
@@ -434,7 +412,7 @@ export default function MumtyWalls() {
                                             name="width"
                                             type="number"
                                             value={windowForm.width}
-                                            onChange={handleWindowInputChange}
+                                            onChange={(e) => updateWindowForm({ width: e.target.value })}
                                             required
                                             inputProps={{ min: "0", step: "0.1" }}
                                         />
@@ -445,7 +423,7 @@ export default function MumtyWalls() {
                                             name="thickness"
                                             type="number"
                                             value={windowForm.thickness}
-                                            onChange={handleWindowInputChange}
+                                            onChange={(e) => updateWindowForm({ thickness: e.target.value })}
                                             required
                                             inputProps={{ min: "0", step: "0.1" }}
                                         />
@@ -454,7 +432,7 @@ export default function MumtyWalls() {
                                             name="quantity"
                                             type="number"
                                             value={windowForm.quantity}
-                                            onChange={handleWindowInputChange}
+                                            onChange={(e) => updateWindowForm({ quantity: e.target.value })}
                                             required
                                             inputProps={{ min: "1" }}
                                         />
@@ -465,7 +443,7 @@ export default function MumtyWalls() {
                                         name="costPerWindow"
                                         type="number"
                                         value={windowForm.costPerWindow}
-                                        onChange={handleWindowInputChange}
+                                        onChange={(e) => updateWindowForm({ costPerWindow: e.target.value })}
                                         required
                                         inputProps={{ min: "0" }}
                                     />
@@ -480,7 +458,7 @@ export default function MumtyWalls() {
                                 <SaveButton
                                     onClick={handleSave}
                                     successMessage="Mumty Wall Data Saved Successfully! 🎉"
-                                    errorMessage={getErrorMessage()}
+                                    errorMessage="Please fill all required fields!"
                                 />
                             </div>
                         </div>
@@ -488,7 +466,14 @@ export default function MumtyWalls() {
                 </Paper>
             </Modal>
 
-          
+            {/* Mumty Walls Table Section */}
+            <div className="mt-8">
+                <MumtyWallsTable
+                    data={mumtyWallsData}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                />
+            </div>
         </div>
     );
 }
