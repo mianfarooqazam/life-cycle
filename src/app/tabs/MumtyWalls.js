@@ -15,6 +15,7 @@ import {
     Divider
 } from '@mui/material';
 import { X } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 import SaveButton from '@/app/components/button/SaveButton';
 import TextInput from '@/app/components/input/TextInput';
@@ -99,8 +100,33 @@ export default function MumtyWalls() {
 
     // Save handler
     const handleSave = () => {
-        // Validation logic here (reuse from store or local)
-        // ...
+        // Calculate total door and window area
+        const doorArea = calculateDoorArea();
+        const windowArea = calculateWindowArea();
+        const wallArea = calculateWallArea();
+        
+        // Validate areas
+        if (doorArea && doorArea >= wallArea) {
+            toast.error('Door area cannot be equal to or greater than wall area!');
+            return 'validation-error';
+        }
+        
+        if (windowArea && windowArea >= wallArea) {
+            toast.error('Window area cannot be equal to or greater than wall area!');
+            return 'validation-error';
+        }
+        
+        if (doorArea && windowArea && (doorArea + windowArea) >= wallArea) {
+            toast.error('Combined door and window area cannot be equal to or greater than wall area!');
+            return 'validation-error';
+        }
+
+        // Validation for required fields (example: length, height, thickness)
+        if (!formData.length || !formData.height || !formData.thickness) {
+            return false;
+        }
+        // ... you can add more required field checks as needed ...
+
         // Compose row data
         const newRow = {
             id: editingId || Date.now(),
@@ -451,7 +477,25 @@ export default function MumtyWalls() {
                                 </Box>
                             </Box>
 
-                         
+                            {/* Display Door and Window Area */}
+                            {(doorForm.height && doorForm.width && doorForm.quantity) || (windowForm.height && windowForm.width && windowForm.quantity) ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {doorForm.height && doorForm.width && doorForm.quantity && (
+                                        <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
+                                            <p className="text-lg font-bold text-gray-800">
+                                                Door Area: <span className="text-[#5BB045]">{calculateDoorArea()} ft²</span>
+                                            </p>
+                                        </div>
+                                    )}
+                                    {windowForm.height && windowForm.width && windowForm.quantity && (
+                                        <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
+                                            <p className="text-lg font-bold text-gray-800">
+                                                Window Area: <span className="text-[#5BB045]">{calculateWindowArea()} ft²</span>
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : null}
 
                             {/* Save Button */}
                             <div className="grid grid-cols-1 justify-items-end">

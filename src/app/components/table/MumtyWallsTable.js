@@ -66,13 +66,13 @@ export default function MumtyWallsTable({
               sx={{ backgroundColor: '#ffffff', '&:hover': { backgroundColor: '#f7f6fb' } }}
             >
               <TableCell sx={cellStyle}>{idx + 1}</TableCell>
-              <TableCell sx={cellStyle}>{row.wallArea || '***'}</TableCell>
-              <TableCell sx={cellStyle}>{row.wallVolume || '***'}</TableCell>
+              <TableCell sx={cellStyle}>{row.wallArea || '-'}</TableCell>
+              <TableCell sx={cellStyle}>{row.wallVolume || '-'}</TableCell>
               <TableCell sx={cellStyle}>{row.insulationUsed === 'yes' ? 'Yes' : 'No'}</TableCell>
-              <TableCell sx={cellStyle}>{row.insulationThickness || '***'}</TableCell>
-              <TableCell sx={cellStyle}>{row.component || '***'}</TableCell>
-              <TableCell sx={cellStyle}>{row.doorType || '***'}</TableCell>
-              <TableCell sx={cellStyle}>{row.windowType || '***'}</TableCell>
+              <TableCell sx={cellStyle}>{row.insulationThickness || '-'}</TableCell>
+              <TableCell sx={cellStyle}>{row.component || '-'}</TableCell>
+              <TableCell sx={cellStyle}>{row.doorType || '-'}</TableCell>
+              <TableCell sx={cellStyle}>{row.windowType || '-'}</TableCell>
               <TableCell sx={cellStyle}>
                 {(row.doorArea || row.windowArea) ? (
                   <>
@@ -83,7 +83,7 @@ export default function MumtyWallsTable({
                       <div>Window: {row.windowArea} ft²</div>
                     ) : null}
                   </>
-                ) : '***'}
+                ) : '-'}
               </TableCell>
               <TableCell sx={cellStyle}>
                 {(row.doorType && row.doorCost) || (row.windowType && row.windowCost) ? (
@@ -95,7 +95,7 @@ export default function MumtyWallsTable({
                       <div>Window: Rs. {row.windowCost}</div>
                     )}
                   </>
-                ) : '***'}
+                ) : '-'}
               </TableCell>
               <TableCell sx={cellStyle}>
                 <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
