@@ -9,15 +9,13 @@ import {
     Radio,
     FormLabel,
     Paper,
-    Grid,
     Modal,
     Typography,
-    IconButton
+    IconButton,
+    Divider
 } from '@mui/material';
-import { DoorOpen, RectangleHorizontal, Package, X } from 'lucide-react';
-import DoorModal from '@/app/components/modal/DoorModal';
-import WindowModal from '@/app/components/modal/WindowModal';
-import MaterialModal from '@/app/components/modal/MaterialModal';
+import { X } from 'lucide-react';
+
 import SaveButton from '@/app/components/button/SaveButton';
 import TextInput from '@/app/components/input/TextInput';
 
@@ -26,7 +24,7 @@ const modalStyle = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 700,
+    width: 900,
     bgcolor: 'background.paper',
     borderRadius: 2,
     boxShadow: 24,
@@ -37,9 +35,7 @@ const modalStyle = {
 };
 
 export default function MumtyWalls() {
-    const [doorModalOpen, setDoorModalOpen] = useState(false);
-    const [windowModalOpen, setWindowModalOpen] = useState(false);
-    const [materialModalOpen, setMaterialModalOpen] = useState(false);
+  
     const [mainModalOpen, setMainModalOpen] = useState(false);
     
     // Form state
@@ -49,6 +45,24 @@ export default function MumtyWalls() {
         thickness: '',
         isInsulationUsed: 'no',
         insulationThickness: ''
+    });
+
+    // Add state for door and window form data
+    const [doorForm, setDoorForm] = useState({
+        doorType: '',
+        height: '',
+        width: '',
+        thickness: '',
+        quantity: '',
+        costPerDoor: ''
+    });
+    const [windowForm, setWindowForm] = useState({
+        windowType: '',
+        height: '',
+        width: '',
+        thickness: '',
+        quantity: '',
+        costPerWindow: ''
     });
 
     // Handle input changes
@@ -63,6 +77,16 @@ export default function MumtyWalls() {
             isInsulationUsed: e.target.value,
             insulationThickness: e.target.value === 'no' ? '' : prev.insulationThickness
         }));
+    };
+
+    // Handlers for door and window input changes
+    const handleDoorInputChange = (e) => {
+        const { name, value } = e.target;
+        setDoorForm(prev => ({ ...prev, [name]: value }));
+    };
+    const handleWindowInputChange = (e) => {
+        const { name, value } = e.target;
+        setWindowForm(prev => ({ ...prev, [name]: value }));
     };
 
     // Calculate area and volume
@@ -254,6 +278,7 @@ export default function MumtyWalls() {
                                             onChange={handleInputChange}
                                             required
                                             inputProps={{ min: "0", step: "0.1" }}
+                                            sx={{ maxWidth: 250 }}
                                         />
                                     </div>
                                 </div>
@@ -292,7 +317,7 @@ export default function MumtyWalls() {
                             </div>
                             {/* Insulation Thickness Input - now below radio button */}
                             {formData.isInsulationUsed === 'yes' && (
-                                <div className="mt-2">
+                                <div>
                                     <TextInput
                                         label="Mumty Wall Insulation Thickness (inch)"
                                         name="insulationThickness"
@@ -301,87 +326,154 @@ export default function MumtyWalls() {
                                         onChange={handleInputChange}
                                         required
                                         inputProps={{ min: "0", step: "0.1" }}
+                                        sx={{ maxWidth: 250 }}
                                     />
                                 </div>
                             )}
 
-                            {/* Action Buttons */}
-                            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'space-between', flexWrap: 'nowrap' }}>
-                                <Button
-                                    variant="contained"
-                                    startIcon={<DoorOpen size={20} />}
-                                    onClick={() => setDoorModalOpen(true)}
-                                    sx={{
-                                        backgroundColor: '#5BB045',
-                                        color: '#fff',
-                                        fontWeight: 600,
-                                        py: 1.5,
-                                        px: 3,
-                                        borderRadius: 2,
-                                        textTransform: 'none',
-                                        boxShadow: '0 2px 8px rgba(91, 176, 69, 0.3)',
-                                        transition: 'all 0.3s ease',
-                                        '&:hover': {
-                                            backgroundColor: '#4a9537',
-                                            color: '#fff',
-                                            transform: 'translateY(-2px)',
-                                            boxShadow: '0 4px 16px rgba(91, 176, 69, 0.4)',
-                                        }
-                                    }}
-                                >
-                                    Add Door
-                                </Button>
-
-                                <Button
-                                    variant="contained"
-                                    startIcon={<RectangleHorizontal size={20} />}
-                                    onClick={() => setWindowModalOpen(true)}
-                                    sx={{
-                                        backgroundColor: '#5BB045',
-                                        color: '#fff',
-                                        fontWeight: 600,
-                                        py: 1.5,
-                                        px: 3,
-                                        borderRadius: 2,
-                                        textTransform: 'none',
-                                        boxShadow: '0 2px 8px rgba(91, 176, 69, 0.3)',
-                                        transition: 'all 0.3s ease',
-                                        '&:hover': {
-                                            backgroundColor: '#4a9537',
-                                            color: '#fff',
-                                            transform: 'translateY(-2px)',
-                                            boxShadow: '0 4px 16px rgba(91, 176, 69, 0.4)',
-                                        }
-                                    }}
-                                >
-                                    Add Window
-                                </Button>
-
-                                <Button
-                                    variant="contained"
-                                    startIcon={<Package size={20} />}
-                                    onClick={() => setMaterialModalOpen(true)}
-                                    sx={{
-                                        backgroundColor: '#5BB045',
-                                        color: '#fff',
-                                        fontWeight: 600,
-                                        py: 1.5,
-                                        px: 3,
-                                        borderRadius: 2,
-                                        textTransform: 'none',
-                                        boxShadow: '0 2px 8px rgba(91, 176, 69, 0.3)',
-                                        transition: 'all 0.3s ease',
-                                        '&:hover': {
-                                            backgroundColor: '#4a9537',
-                                            color: '#fff',
-                                            transform: 'translateY(-2px)',
-                                            boxShadow: '0 4px 16px rgba(91, 176, 69, 0.4)',
-                                        }
-                                    }}
-                                >
-                                    Select Materials
-                                </Button>
+                            {/* Door and Window Inputs Side by Side */}
+                            <Box sx={{ display: 'flex', gap: 4, alignItems: 'flex-start', mt: 2 }}>
+                                {/* Door Inputs (Left) */}
+                                <Box sx={{ flex: 1, minWidth: 0 }}>
+                                    <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>Door Details</Typography>
+                                    <TextInput
+                                        label="Door Type"
+                                        name="doorType"
+                                        value={doorForm.doorType}
+                                        onChange={handleDoorInputChange}
+                                        select
+                                        options={[
+                                            { value: 'wooden', label: 'Wooden' },
+                                            { value: 'upvc', label: 'UPVC' },
+                                            { value: 'aluminium', label: 'Aluminium' }
+                                        ]}
+                                        required
+                                    />
+                                    <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+                                        <TextInput
+                                            label="Height (ft)"
+                                            name="height"
+                                            type="number"
+                                            value={doorForm.height}
+                                            onChange={handleDoorInputChange}
+                                            required
+                                            inputProps={{ min: "0", step: "0.1" }}
+                                        />
+                                        <TextInput
+                                            label="Width (ft)"
+                                            name="width"
+                                            type="number"
+                                            value={doorForm.width}
+                                            onChange={handleDoorInputChange}
+                                            required
+                                            inputProps={{ min: "0", step: "0.1" }}
+                                        />
+                                    </Box>
+                                    <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+                                        <TextInput
+                                            label="Thickness (inch)"
+                                            name="thickness"
+                                            type="number"
+                                            value={doorForm.thickness}
+                                            onChange={handleDoorInputChange}
+                                            required
+                                            inputProps={{ min: "0", step: "0.1" }}
+                                        />
+                                        <TextInput
+                                            label="Quantity"
+                                            name="quantity"
+                                            type="number"
+                                            value={doorForm.quantity}
+                                            onChange={handleDoorInputChange}
+                                            required
+                                            inputProps={{ min: "1" }}
+                                        />
+                                    </Box>
+                                     <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+                                    <TextInput
+                                        label="Cost per Door"
+                                        name="costPerDoor"
+                                        type="number"
+                                        value={doorForm.costPerDoor}
+                                        onChange={handleDoorInputChange}
+                                        required
+                                        inputProps={{ min: "0" }}
+                                    />
+                                    </Box>
+                                </Box>
+                                {/* Divider */}
+                                <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
+                                {/* Window Inputs (Right) */}
+                                <Box sx={{ flex: 1, minWidth: 0 }}>
+                                    <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>Window Details</Typography>
+                                    <TextInput
+                                        label="Window Type"
+                                        name="windowType"
+                                        value={windowForm.windowType}
+                                        onChange={handleWindowInputChange}
+                                        select
+                                        options={[
+                                            { value: 'wooden', label: 'Wooden' },
+                                            { value: 'upvc', label: 'UPVC' },
+                                            { value: 'aluminium', label: 'Aluminium' }
+                                        ]}
+                                        required
+                                    />
+                                    <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+                                        <TextInput
+                                            label="Height (ft)"
+                                            name="height"
+                                            type="number"
+                                            value={windowForm.height}
+                                            onChange={handleWindowInputChange}
+                                            required
+                                            inputProps={{ min: "0", step: "0.1" }}
+                                        />
+                                        <TextInput
+                                            label="Width (ft)"
+                                            name="width"
+                                            type="number"
+                                            value={windowForm.width}
+                                            onChange={handleWindowInputChange}
+                                            required
+                                            inputProps={{ min: "0", step: "0.1" }}
+                                        />
+                                    </Box>
+                                    <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+                                        <TextInput
+                                            label="Thickness (inch)"
+                                            name="thickness"
+                                            type="number"
+                                            value={windowForm.thickness}
+                                            onChange={handleWindowInputChange}
+                                            required
+                                            inputProps={{ min: "0", step: "0.1" }}
+                                        />
+                                        <TextInput
+                                            label="Quantity"
+                                            name="quantity"
+                                            type="number"
+                                            value={windowForm.quantity}
+                                            onChange={handleWindowInputChange}
+                                            required
+                                            inputProps={{ min: "1" }}
+                                        />
+                                    </Box>
+                                     <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+                                    <TextInput
+                                        label="Cost per Window"
+                                        name="costPerWindow"
+                                        type="number"
+                                        value={windowForm.costPerWindow}
+                                        onChange={handleWindowInputChange}
+                                        required
+                                        inputProps={{ min: "0" }}
+                                    />
+                                    </Box>
+                                </Box>
                             </Box>
+
+                         
 
                             {/* Save Button */}
                             <div className="grid grid-cols-1 justify-items-end">
@@ -396,19 +488,7 @@ export default function MumtyWalls() {
                 </Paper>
             </Modal>
 
-            {/* Modals */}
-            <DoorModal 
-                open={doorModalOpen} 
-                onClose={() => setDoorModalOpen(false)} 
-            />
-            <WindowModal 
-                open={windowModalOpen} 
-                onClose={() => setWindowModalOpen(false)} 
-            />
-            <MaterialModal 
-                open={materialModalOpen} 
-                onClose={() => setMaterialModalOpen(false)} 
-            />
+          
         </div>
     );
 }
