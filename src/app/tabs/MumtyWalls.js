@@ -101,9 +101,9 @@ export default function MumtyWalls() {
     // Save handler
     const handleSave = () => {
         // Calculate total door and window area
-        const doorArea = calculateDoorArea();
-        const windowArea = calculateWindowArea();
-        const wallArea = calculateWallArea();
+        const doorArea = Number(calculateDoorArea());
+        const windowArea = Number(calculateWindowArea());
+        const wallArea = Number(calculateWallArea());
         
         // Validate areas
         if (doorArea && doorArea >= wallArea) {
@@ -293,12 +293,12 @@ export default function MumtyWalls() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
                                         <p className="text-lg font-bold text-gray-800">
-                                            Mumty Wall Area: <span className="text-[#5BB045]">{calculateWallArea()}</span>
+                                            Mumty Wall Area: <span className="text-[#5BB045]">{calculateWallArea() } ft²</span>
                                         </p>
                                     </div>
                                     <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
                                         <p className="text-lg font-bold text-gray-800">
-                                            Mumty Wall Volume: <span className="text-[#5BB045]">{calculateWallVolume()}</span>
+                                            Mumty Wall Volume: <span className="text-[#5BB045]">{calculateWallVolume()} ft²</span>
                                         </p>
                                     </div>
                                 </div>

@@ -114,14 +114,16 @@ export const useMumtyWallStore = create(
         const { doorForm } = get();
         const h = parseFloat(doorForm.height);
         const w = parseFloat(doorForm.width);
-        if (h && w) return (h * w).toFixed(2);
+        const q = parseFloat(doorForm.quantity) || 1;
+        if (h && w && q) return (h * w * q).toFixed(2);
         return '';
       },
       calculateWindowArea: () => {
         const { windowForm } = get();
         const h = parseFloat(windowForm.height);
         const w = parseFloat(windowForm.width);
-        if (h && w) return (h * w).toFixed(2);
+        const q = parseFloat(windowForm.quantity) || 1;
+        if (h && w && q) return (h * w * q).toFixed(2);
         return '';
       },
     }),
