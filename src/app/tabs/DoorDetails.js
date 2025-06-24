@@ -1,6 +1,8 @@
 import React from 'react';
 import DoorWindowTable from '@/app/components/table/DoorWindowTable';
 import { useMumtyWallStore } from '@/app/store/mumtyWallStore';
+import { useExteriorWallStore } from '@/app/store/exteriorWallStore';
+import { useInteriorWallStore } from '@/app/store/interiorWallStore';
 
 export default function DoorDetails() {
   const headers = [
@@ -15,13 +17,14 @@ export default function DoorDetails() {
 
   // Get mumty wall data from store
   const mumtyWallsData = useMumtyWallStore(state => state.mumtyWallsData);
+  const exteriorWallsData = useExteriorWallStore(state => state.exteriorWallsData);
+  const interiorWallsData = useInteriorWallStore(state => state.interiorWallsData);
 
   // Filter and map to door data for the table
-  const doorData = mumtyWallsData
+  const mumtyDoorData = mumtyWallsData
     .filter(row => row.doorType)
     .map((row, idx) => ({
       id: row.id,
-      srNo: idx + 1,
       wallOrigin: 'Mumty Wall',
       component: 'Door',
       type: row.doorType,
@@ -29,6 +32,32 @@ export default function DoorDetails() {
       costPerUnit: row.doorCost,
       totalCost: row.doorCost && row.doorQuantity ? (parseFloat(row.doorCost) * parseFloat(row.doorQuantity)) : ''
     }));
+
+  const exteriorDoorData = exteriorWallsData
+    .filter(row => row.doorType)
+    .map((row, idx) => ({
+      id: row.id,
+      wallOrigin: 'Exterior Wall',
+      component: 'Door',
+      type: row.doorType,
+      area: row.doorArea,
+      costPerUnit: row.doorCost,
+      totalCost: row.doorCost && row.doorQuantity ? (parseFloat(row.doorCost) * parseFloat(row.doorQuantity)) : ''
+    }));
+
+  const interiorDoorData = interiorWallsData
+    .filter(row => row.doorType)
+    .map((row, idx) => ({
+      id: row.id,
+      wallOrigin: 'Interior Wall',
+      component: 'Door',
+      type: row.doorType,
+      area: row.doorArea,
+      costPerUnit: row.doorCost,
+      totalCost: row.doorCost && row.doorQuantity ? (parseFloat(row.doorCost) * parseFloat(row.doorQuantity)) : ''
+    }));
+
+  const doorData = [...mumtyDoorData, ...exteriorDoorData, ...interiorDoorData].map((item, idx) => ({ ...item, srNo: idx + 1 }));
 
   return (
     <div className="p-2">
