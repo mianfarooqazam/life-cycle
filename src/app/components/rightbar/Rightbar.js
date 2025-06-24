@@ -1,8 +1,12 @@
 'use client';
+import { useState } from 'react';
 import TitleHeader from '@/app/components/header/TitleHeader';
 import { useBuildingPlanStore } from '@/app/store/buildingPlanStore';
+import { Button, Box } from '@mui/material';
 
 export default function Rightbar() {
+  const [highlightedElement, setHighlightedElement] = useState(null);
+  
   const {
     plotArea,
     plotSize,
@@ -20,6 +24,10 @@ export default function Rightbar() {
     height: Math.sqrt(plotArea),
     area: plotArea
   } : null;
+
+  const handleHighlight = (element) => {
+    setHighlightedElement(element);
+  };
 
   const renderArchitecturePlan = () => {
     if (!plotDimensions) {
@@ -40,6 +48,48 @@ export default function Rightbar() {
     const svgWidth = viewWidth + padding * 2;
     const svgHeight = viewHeight + padding * 2;
 
+    // Architectural line weights and styles
+    const getExteriorWallStyle = () => {
+      if (highlightedElement === 'exterior') {
+        return {
+          stroke: '#ff6b35',
+          strokeWidth: '3',
+          filter: 'drop-shadow(0 0 6px rgba(255, 107, 53, 0.6))'
+        };
+      }
+      return {
+        stroke: '#1a1a1a',
+        strokeWidth: '2.5'
+      };
+    };
+
+    const getInteriorWallStyle = () => {
+      if (highlightedElement === 'interior') {
+        return {
+          stroke: '#ff6b35',
+          strokeWidth: '2',
+          filter: 'drop-shadow(0 0 4px rgba(255, 107, 53, 0.6))'
+        };
+      }
+      return {
+        stroke: '#1a1a1a',
+        strokeWidth: '1.5'
+      };
+    };
+
+    const getSlabStyle = () => {
+      if (highlightedElement === 'slab') {
+        return {
+          fill: '#ff6b35',
+          opacity: '0.2',
+          filter: 'drop-shadow(0 0 4px rgba(255, 107, 53, 0.4))'
+        };
+      }
+      return {
+        fill: '#f8f9fa'
+      };
+    };
+
     return (
       <div className="overflow-auto max-w-full">
         <svg
@@ -49,85 +99,212 @@ export default function Rightbar() {
           height="auto"
           preserveAspectRatio="xMidYMid meet"
         >
-          {/* Main plot boundary */}
+          {/* Plot boundary with architectural styling */}
           <rect
             x={padding}
             y={padding}
             width={viewWidth}
             height={viewHeight}
-            fill="#e8f4f8"
-            stroke="#2563eb"
-            strokeWidth="2"
-            strokeDasharray="5,5"
+            fill="#f0f8ff"
+            stroke="#4a90e2"
+            strokeWidth="1.5"
+            strokeDasharray="8,4"
           />
 
-          {/* Building footprint */}
+          {/* Building slab area (background) */}
           <rect
-            x={padding + viewWidth * 0.1}
-            y={padding + viewHeight * 0.1}
-            width={viewWidth * 0.8}
-            height={viewHeight * 0.8}
-            fill="#f3f4f6"
-            stroke="#374151"
-            strokeWidth="2"
+            x={padding + viewWidth * 0.08}
+            y={padding + viewHeight * 0.08}
+            width={viewWidth * 0.84}
+            height={viewHeight * 0.84}
+            fill={getSlabStyle().fill}
+            opacity={getSlabStyle().opacity || '1'}
+            filter={getSlabStyle().filter}
           />
 
-          {/* Living area */}
+          {/* Building footprint - Exterior Wall (only the boundary) */}
           <rect
-            x={padding + viewWidth * 0.1}
-            y={padding + viewHeight * 0.1}
-            width={viewWidth * 0.4}
-            height={viewHeight * 0.4}
-            fill="#dbeafe"
-            stroke="#374151"
-            strokeWidth="1"
+            x={padding + viewWidth * 0.08}
+            y={padding + viewHeight * 0.08}
+            width={viewWidth * 0.84}
+            height={viewHeight * 0.84}
+            fill="none"
+            stroke={getExteriorWallStyle().stroke}
+            strokeWidth={getExteriorWallStyle().strokeWidth}
+            filter={getExteriorWallStyle().filter}
+          />
+
+          {/* Main Living Area */}
+          <rect
+            x={padding + viewWidth * 0.12}
+            y={padding + viewHeight * 0.12}
+            width={viewWidth * 0.35}
+            height={viewHeight * 0.35}
+            fill="#e3f2fd"
+            stroke={getInteriorWallStyle().stroke}
+            strokeWidth={getInteriorWallStyle().strokeWidth}
+            filter={getInteriorWallStyle().filter}
           />
 
           {/* Kitchen */}
           <rect
-            x={padding + viewWidth * 0.5}
-            y={padding + viewHeight * 0.1}
-            width={viewWidth * 0.4}
+            x={padding + viewWidth * 0.52}
+            y={padding + viewHeight * 0.12}
+            width={viewWidth * 0.35}
             height={viewHeight * 0.25}
-            fill="#fed7d7"
-            stroke="#374151"
-            strokeWidth="1"
+            fill="#fff3e0"
+            stroke={getInteriorWallStyle().stroke}
+            strokeWidth={getInteriorWallStyle().strokeWidth}
+            filter={getInteriorWallStyle().filter}
           />
 
           {/* Bedroom */}
           <rect
-            x={padding + viewWidth * 0.5}
-            y={padding + viewHeight * 0.35}
-            width={viewWidth * 0.4}
-            height={viewHeight * 0.3}
-            fill="#d4edda"
-            stroke="#374151"
-            strokeWidth="1"
+            x={padding + viewWidth * 0.52}
+            y={padding + viewHeight * 0.42}
+            width={viewWidth * 0.35}
+            height={viewHeight * 0.35}
+            fill="#f3e5f5"
+            stroke={getInteriorWallStyle().stroke}
+            strokeWidth={getInteriorWallStyle().strokeWidth}
+            filter={getInteriorWallStyle().filter}
           />
 
           {/* Bathroom */}
           <rect
-            x={padding + viewWidth * 0.1}
-            y={padding + viewHeight * 0.5}
-            width={viewWidth * 0.2}
-            height={viewHeight * 0.4}
-            fill="#fff3cd"
-            stroke="#374151"
-            strokeWidth="1"
+            x={padding + viewWidth * 0.12}
+            y={padding + viewHeight * 0.52}
+            width={viewWidth * 0.25}
+            height={viewHeight * 0.35}
+            fill="#e8f5e8"
+            stroke={getInteriorWallStyle().stroke}
+            strokeWidth={getInteriorWallStyle().strokeWidth}
+            filter={getInteriorWallStyle().filter}
           />
 
           {/* Corridor */}
           <rect
-            x={padding + viewWidth * 0.3}
-            y={padding + viewHeight * 0.5}
-            width={viewWidth * 0.6}
-            height={viewHeight * 0.4}
-            fill="#e2e8f0"
-            stroke="#374151"
-            strokeWidth="1"
+            x={padding + viewWidth * 0.42}
+            y={padding + viewHeight * 0.52}
+            width={viewWidth * 0.45}
+            height={viewHeight * 0.35}
+            fill="#fafafa"
+            stroke={getInteriorWallStyle().stroke}
+            strokeWidth={getInteriorWallStyle().strokeWidth}
+            filter={getInteriorWallStyle().filter}
           />
 
-          {/* Basement */}
+          {/* Doors - Architectural door symbols */}
+          {/* Main entrance */}
+          <line
+            x1={padding + viewWidth * 0.25}
+            y1={padding + viewHeight * 0.08}
+            x2={padding + viewWidth * 0.25}
+            y2={padding + viewHeight * 0.12}
+            stroke="#1a1a1a"
+            strokeWidth="1"
+          />
+          <circle
+            cx={padding + viewWidth * 0.25}
+            cy={padding + viewHeight * 0.08}
+            r="2"
+            fill="#1a1a1a"
+          />
+
+          {/* Kitchen door */}
+          <line
+            x1={padding + viewWidth * 0.47}
+            y1={padding + viewHeight * 0.37}
+            x2={padding + viewWidth * 0.52}
+            y2={padding + viewHeight * 0.37}
+            stroke="#1a1a1a"
+            strokeWidth="1"
+          />
+          <circle
+            cx={padding + viewWidth * 0.47}
+            cy={padding + viewHeight * 0.37}
+            r="2"
+            fill="#1a1a1a"
+          />
+
+          {/* Bedroom door */}
+          <line
+            x1={padding + viewWidth * 0.47}
+            y1={padding + viewHeight * 0.52}
+            x2={padding + viewWidth * 0.52}
+            y2={padding + viewHeight * 0.52}
+            stroke="#1a1a1a"
+            strokeWidth="1"
+          />
+          <circle
+            cx={padding + viewWidth * 0.47}
+            cy={padding + viewWidth * 0.52}
+            r="2"
+            fill="#1a1a1a"
+          />
+
+          {/* Bathroom door */}
+          <line
+            x1={padding + viewWidth * 0.37}
+            y1={padding + viewHeight * 0.52}
+            x2={padding + viewWidth * 0.42}
+            y2={padding + viewHeight * 0.52}
+            stroke="#1a1a1a"
+            strokeWidth="1"
+          />
+          <circle
+            cx={padding + viewWidth * 0.37}
+            cy={padding + viewHeight * 0.52}
+            r="2"
+            fill="#1a1a1a"
+          />
+
+          {/* Windows - Architectural window symbols */}
+          {/* Living room window */}
+          <rect
+            x={padding + viewWidth * 0.25}
+            y={padding + viewHeight * 0.08}
+            width={viewWidth * 0.08}
+            height="1"
+            fill="none"
+            stroke="#1a1a1a"
+            strokeWidth="0.5"
+          />
+
+          {/* Kitchen window */}
+          <rect
+            x={padding + viewWidth * 0.65}
+            y={padding + viewHeight * 0.12}
+            width="1"
+            height={viewHeight * 0.08}
+            fill="none"
+            stroke="#1a1a1a"
+            strokeWidth="0.5"
+          />
+
+          {/* Bedroom window */}
+          <rect
+            x={padding + viewWidth * 0.65}
+            y={padding + viewHeight * 0.52}
+            width="1"
+            height={viewHeight * 0.08}
+            fill="none"
+            stroke="#1a1a1a"
+            strokeWidth="0.5"
+          />
+
+          {/* Bathroom window */}
+          <rect
+            x={padding + viewWidth * 0.12}
+            y={padding + viewHeight * 0.65}
+            width={viewWidth * 0.08}
+            height="1"
+            fill="none"
+            stroke="#1a1a1a"
+            strokeWidth="0.5"
+          />
+
+          {/* Basement - Architectural basement symbol */}
           {isBasementUsed === 'yes' && (
             <g>
               <rect
@@ -138,87 +315,159 @@ export default function Rightbar() {
                 fill="none"
                 stroke="#dc2626"
                 strokeWidth="1"
-                strokeDasharray="3,3"
+                strokeDasharray="4,2"
               />
               <text
                 x={padding + viewWidth * 0.5}
                 y={padding + viewHeight * 0.95}
                 textAnchor="middle"
                 fill="#dc2626"
-                fontSize="10"
+                fontSize="8"
+                fontWeight="bold"
               >
-                Basement ({foundationType})
+                BASEMENT ({foundationType})
               </text>
             </g>
           )}
 
-          {/* Room Labels with Correct Counts */}
+          {/* Room Labels with architectural styling */}
           <text
-            x={padding + viewWidth * 0.3}
+            x={padding + viewWidth * 0.295}
             y={padding + viewHeight * 0.3}
             textAnchor="middle"
-            fill="#374151"
-            fontSize="10"
+            fill="#1a1a1a"
+            fontSize="8"
+            fontWeight="600"
           >
-            Lounge ({numberOfLounges || 1})
+            LIVING ({numberOfLounges || 1})
           </text>
           <text
-            x={padding + viewWidth * 0.7}
-            y={padding + viewHeight * 0.22}
+            x={padding + viewWidth * 0.695}
+            y={padding + viewHeight * 0.25}
             textAnchor="middle"
-            fill="#374151"
-            fontSize="10"
+            fill="#1a1a1a"
+            fontSize="8"
+            fontWeight="600"
           >
-            Kitchen ({numberOfKitchens || 1})
+            KITCHEN ({numberOfKitchens || 1})
           </text>
           <text
-            x={padding + viewWidth * 0.7}
-            y={padding + viewHeight * 0.5}
+            x={padding + viewWidth * 0.695}
+            y={padding + viewHeight * 0.6}
             textAnchor="middle"
-            fill="#374151"
-            fontSize="10"
+            fill="#1a1a1a"
+            fontSize="8"
+            fontWeight="600"
           >
-            Bedroom ({numberOfRooms || 1})
+            BEDROOM ({numberOfRooms || 1})
           </text>
           <text
-            x={padding + viewWidth * 0.2}
+            x={padding + viewWidth * 0.245}
             y={padding + viewHeight * 0.7}
             textAnchor="middle"
-            fill="#374151"
-            fontSize="10"
+            fill="#1a1a1a"
+            fontSize="8"
+            fontWeight="600"
           >
-            Bath ({numberOfWashrooms || 1})
+            BATH ({numberOfWashrooms || 1})
           </text>
           <text
-            x={padding + viewWidth * 0.6}
+            x={padding + viewWidth * 0.645}
             y={padding + viewHeight * 0.7}
             textAnchor="middle"
-            fill="#374151"
-            fontSize="10"
+            fill="#1a1a1a"
+            fontSize="8"
+            fontWeight="600"
           >
-            Corridor
+            CORRIDOR
           </text>
 
-          {/* Dimensions */}
+          {/* Dimensions with architectural styling */}
           <text
             x={padding + viewWidth / 2}
-            y={padding - 5}
+            y={padding - 8}
             textAnchor="middle"
-            fill="#2563eb"
-            fontSize="10"
+            fill="#4a90e2"
+            fontSize="9"
+            fontWeight="600"
           >
-            {plotDimensions.width.toFixed(1)} ft
+            {plotDimensions.width.toFixed(1)}&apos; - 0&quot;
           </text>
           <text
-            x={padding - 5}
+            x={padding - 8}
             y={padding + viewHeight / 2}
             textAnchor="middle"
-            fill="#2563eb"
-            fontSize="10"
-            transform={`rotate(-90, ${padding - 5}, ${padding + viewHeight / 2})`}
+            fill="#4a90e2"
+            fontSize="9"
+            fontWeight="600"
+            transform={`rotate(-90, ${padding - 8}, ${padding + viewHeight / 2})`}
           >
-            {plotDimensions.height.toFixed(1)} ft
+            {plotDimensions.height.toFixed(1)}&apos; - 0&quot;
           </text>
+
+          {/* North arrow */}
+          <g transform={`translate(${padding + viewWidth * 0.85}, ${padding + viewHeight * 0.15})`}>
+            <polygon
+              points="0,-8 4,0 0,8 -4,0"
+              fill="#1a1a1a"
+            />
+            <text
+              x="0"
+              y="15"
+              textAnchor="middle"
+              fill="#1a1a1a"
+              fontSize="6"
+              fontWeight="bold"
+            >
+              N
+            </text>
+          </g>
+
+          {/* Scale bar */}
+          <g transform={`translate(${padding + viewWidth * 0.1}, ${padding + viewHeight * 0.95})`}>
+            <line
+              x1="0"
+              y1="0"
+              x2="40"
+              y2="0"
+              stroke="#1a1a1a"
+              strokeWidth="1"
+            />
+            <line
+              x1="0"
+              y1="-2"
+              x2="0"
+              y2="2"
+              stroke="#1a1a1a"
+              strokeWidth="1"
+            />
+            <line
+              x1="20"
+              y1="-2"
+              x2="20"
+              y2="2"
+              stroke="#1a1a1a"
+              strokeWidth="1"
+            />
+            <line
+              x1="40"
+              y1="-2"
+              x2="40"
+              y2="2"
+              stroke="#1a1a1a"
+              strokeWidth="1"
+            />
+            <text
+              x="20"
+              y="12"
+              textAnchor="middle"
+              fill="#1a1a1a"
+              fontSize="6"
+              fontWeight="600"
+            >
+              10&apos; - 0&quot;
+            </text>
+          </g>
         </svg>
       </div>
     );
@@ -227,8 +476,67 @@ export default function Rightbar() {
   return (
     <div className="col-span-2 rounded-lg p-4" style={{ backgroundColor: '#f7f6fb' }}>
       <TitleHeader>Info Panel</TitleHeader>
+      
+      {/* Highlight Control Buttons */}
+      <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', mb: 3 }}>
+        <Button
+          variant={highlightedElement === 'exterior' ? 'contained' : 'outlined'}
+          size="small"
+          onClick={() => handleHighlight(highlightedElement === 'exterior' ? null : 'exterior')}
+          sx={{
+            backgroundColor: highlightedElement === 'exterior' ? '#ff6b35' : 'transparent',
+            color: highlightedElement === 'exterior' ? '#fff' : '#ff6b35',
+            borderColor: '#ff6b35',
+            fontWeight: 600,
+            textTransform: 'none',
+            '&:hover': {
+              backgroundColor: highlightedElement === 'exterior' ? '#e55a2b' : 'rgba(255, 107, 53, 0.1)',
+              borderColor: '#e55a2b',
+            }
+          }}
+        >
+          Exterior Wall
+        </Button>
+        <Button
+          variant={highlightedElement === 'interior' ? 'contained' : 'outlined'}
+          size="small"
+          onClick={() => handleHighlight(highlightedElement === 'interior' ? null : 'interior')}
+          sx={{
+            backgroundColor: highlightedElement === 'interior' ? '#ff6b35' : 'transparent',
+            color: highlightedElement === 'interior' ? '#fff' : '#ff6b35',
+            borderColor: '#ff6b35',
+            fontWeight: 600,
+            textTransform: 'none',
+            '&:hover': {
+              backgroundColor: highlightedElement === 'interior' ? '#e55a2b' : 'rgba(255, 107, 53, 0.1)',
+              borderColor: '#e55a2b',
+            }
+          }}
+        >
+          Interior Wall
+        </Button>
+        <Button
+          variant={highlightedElement === 'slab' ? 'contained' : 'outlined'}
+          size="small"
+          onClick={() => handleHighlight(highlightedElement === 'slab' ? null : 'slab')}
+          sx={{
+            backgroundColor: highlightedElement === 'slab' ? '#ff6b35' : 'transparent',
+            color: highlightedElement === 'slab' ? '#fff' : '#ff6b35',
+            borderColor: '#ff6b35',
+            fontWeight: 600,
+            textTransform: 'none',
+            '&:hover': {
+              backgroundColor: highlightedElement === 'slab' ? '#e55a2b' : 'rgba(255, 107, 53, 0.1)',
+              borderColor: '#e55a2b',
+            }
+          }}
+        >
+          Slab
+        </Button>
+      </Box>
+
       <div className="mb-4">
-        <h3 className="text-md font-semibold text-center text-black">
+        <h3 className="text-md font-semibold text-center text-black mb-3">
           2D Floor Plan
         </h3>
         
