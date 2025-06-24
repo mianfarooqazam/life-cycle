@@ -45,6 +45,7 @@ const TextInput = ({
                     onChange={onChange}
                     disabled={disabled}
                     variant={variant}
+                    select={false}
                     {...props}
                 />
             )}

@@ -11,7 +11,10 @@ import {
     Modal,
     Typography,
     IconButton,
-    Divider
+    Divider,
+    MenuItem,
+    Select,
+    InputLabel
 } from '@mui/material';
 import { X } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -60,7 +63,10 @@ export default function ExteriorWallModal({ open, onClose, selectedFloorName }) 
         calculateWallVolume,
         calculateDoorArea,
         calculateWindowArea,
+        calculateTilesArea,
     } = useExteriorWallStore();
+
+    const [tileHeightError, setTileHeightError] = useState('');
 
     // Populate modal with previous data on edit
     const handleEdit = (id) => {
@@ -72,7 +78,11 @@ export default function ExteriorWallModal({ open, onClose, selectedFloorName }) 
                 height: row.height || '',
                 thickness: row.thickness || '',
                 isInsulationUsed: row.insulationUsed || 'no',
-                insulationThickness: row.insulationThickness || ''
+                insulationThickness: row.insulationThickness || '',
+                isCurtainWall: row.isCurtainWall || 'no',
+                glassThickness: row.glassThickness || '',
+                isTilesUsed: row.isTilesUsed || 'no',
+                tileHeight: row.tileHeight || '',
             });
             updateDoorForm({
                 doorType: row.doorType || '',
@@ -95,29 +105,45 @@ export default function ExteriorWallModal({ open, onClose, selectedFloorName }) 
 
     // Save handler
     const handleSave = () => {
+        // Validate tile height
+        if (formData.isCurtainWall === 'no' && formData.isTilesUsed === 'yes') {
+            const tileHeight = parseFloat(formData.tileHeight);
+            const wallHeight = parseFloat(formData.height);
+            if (tileHeight > wallHeight) {
+                toast.error('Tile height cannot be greater than wall height');
+                return false;
+            }
+        }
+
         // Calculate total door and window area
         const doorArea = Number(calculateDoorArea());
         const windowArea = Number(calculateWindowArea());
         const wallArea = Number(calculateWallArea());
         
         // Validate areas
-        if (doorArea && doorArea >= wallArea) {
-            toast.error('Door area cannot be equal to or greater than wall area!');
-            return 'validation-error';
+        if (formData.isCurtainWall === 'no') {
+            if (doorArea && doorArea >= wallArea) {
+                toast.error('Door area cannot be equal to or greater than wall area!');
+                return 'validation-error';
+            }
+            if (windowArea && windowArea >= wallArea) {
+                toast.error('Window area cannot be equal to or greater than wall area!');
+                return 'validation-error';
+            }
+            if (doorArea && windowArea && (doorArea + windowArea) >= wallArea) {
+                toast.error('Combined door and window area cannot be equal to or greater than wall area!');
+                return 'validation-error';
+            }
         }
         
-        if (windowArea && windowArea >= wallArea) {
-            toast.error('Window area cannot be equal to or greater than wall area!');
-            return 'validation-error';
-        }
-        
-        if (doorArea && windowArea && (doorArea + windowArea) >= wallArea) {
-            toast.error('Combined door and window area cannot be equal to or greater than wall area!');
-            return 'validation-error';
-        }
-
         // Validation for required fields
         if (!formData.length || !formData.height || !formData.thickness) {
+            return false;
+        }
+        if (formData.isCurtainWall === 'yes' && !formData.glassThickness) {
+            return false;
+        }
+        if (formData.isCurtainWall === 'no' && formData.isTilesUsed === 'yes' && !formData.tileHeight) {
             return false;
         }
 
@@ -126,17 +152,34 @@ export default function ExteriorWallModal({ open, onClose, selectedFloorName }) 
             id: editingId || Date.now(),
             wallArea: calculateWallArea(),
             wallVolume: calculateWallVolume(),
+            isCurtainWall: formData.isCurtainWall,
+            glassThickness: formData.glassThickness,
             insulationUsed: formData.isInsulationUsed,
             insulationThickness: formData.insulationThickness,
-            component: [
-                doorForm.doorType && doorForm.quantity ? `Door (${doorForm.quantity})` : null,
-                windowForm.windowType && windowForm.quantity ? `Window (${windowForm.quantity})` : null
-            ].filter(Boolean).join(' / '),
+            isTilesUsed: formData.isTilesUsed,
+            tileHeight: formData.tileHeight,
+            tilesArea: calculateTilesArea(),
+            component:
+                formData.isCurtainWall === 'no'
+                    ? [
+                        doorForm.doorType && doorForm.quantity ? `Door (${doorForm.quantity})` : null,
+                        windowForm.windowType && windowForm.quantity ? `Window (${windowForm.quantity})` : null
+                    ]
+                        .filter(Boolean)
+                        .join(' / ')
+                    : '',
             doorType: doorForm.doorType,
             windowType: windowForm.windowType,
             doorArea: calculateDoorArea(),
             windowArea: calculateWindowArea(),
-            cost: doorForm.doorType ? doorForm.costPerDoor : windowForm.windowType ? windowForm.costPerWindow : '',
+            cost:
+                formData.isCurtainWall === 'no'
+                    ? doorForm.doorType
+                        ? doorForm.costPerDoor
+                        : windowForm.windowType
+                        ? windowForm.costPerWindow
+                        : ''
+                    : '',
             // Store all form values for editing
             length: formData.length,
             height: formData.height,
@@ -281,198 +324,280 @@ export default function ExteriorWallModal({ open, onClose, selectedFloorName }) 
                             </div>
                         )}
 
-                        {/* Insulation Radio Button */}
+                        {/* Curtain Wall Selection */}
                         <div className="grid grid-cols-1">
                             <FormControl component="fieldset">
-                                <FormLabel component="legend">Is Insulation Used?</FormLabel>
+                                <FormLabel component="legend">Is this a curtain wall?</FormLabel>
                                 <RadioGroup
                                     row
-                                    name="isInsulationUsed"
-                                    value={formData.isInsulationUsed}
-                                    onChange={(e) => updateFormData({ isInsulationUsed: e.target.value })}
+                                    name="isCurtainWall"
+                                    value={formData.isCurtainWall ?? 'no'}
+                                    onChange={(e) => updateFormData({ isCurtainWall: e.target.value })}
                                 >
                                     <FormControlLabel value="yes" control={<Radio />} label="Yes" />
                                     <FormControlLabel value="no" control={<Radio />} label="No" />
                                 </RadioGroup>
                             </FormControl>
                         </div>
-                        {/* Insulation Thickness Input */}
-                        {formData.isInsulationUsed === 'yes' && (
-                            <div>
-                                <TextInput
-                                    label="Exterior Wall Insulation Thickness (inch)"
-                                    name="insulationThickness"
-                                    type="number"
-                                    value={formData.insulationThickness}
-                                    onChange={(e) => updateFormData({ insulationThickness: e.target.value })}
-                                    required
-                                    inputProps={{ min: "0", step: "0.1" }}
-                                    sx={{ maxWidth: 250 }}
-                                />
+
+                        {/* If curtain wall is yes, show only glass thickness */}
+                        {formData.isCurtainWall === 'yes' && (
+                            <div className="flex flex-row gap-4">
+                                <div className="flex-1">
+                                    <FormControl fullWidth>
+                                        <InputLabel id="glass-thickness-label">Glass Thickness (mm)</InputLabel>
+                                        <Select
+                                            labelId="glass-thickness-label"
+                                            id="glass-thickness"
+                                            value={formData.glassThickness}
+                                            label="Glass Thickness (mm)"
+                                            onChange={(e) => updateFormData({ glassThickness: e.target.value })}
+                                        >
+                                            {[3, 4, 5, 6, 8, 10, 12].map((mm) => (
+                                                <MenuItem key={mm} value={mm}>{mm} mm</MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                </div>
                             </div>
                         )}
 
-                        {/* Door and Window Inputs Side by Side */}
-                        <Box sx={{ display: 'flex', gap: 4, alignItems: 'flex-start', mt: 2 }}>
-                            {/* Door Inputs (Left) */}
-                            <Box sx={{ flex: 1, minWidth: 0 }}>
-                                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>Door Details</Typography>
-                                <TextInput
-                                    label="Door Type"
-                                    name="doorType"
-                                    value={doorForm.doorType}
-                                    onChange={(e) => updateDoorForm({ doorType: e.target.value })}
-                                    select
-                                    options={[
-                                        { value: 'wooden', label: 'Wooden' },
-                                        { value: 'upvc', label: 'UPVC' },
-                                        { value: 'aluminium', label: 'Aluminium' }
-                                    ]}
-                                    required
-                                />
-                                <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-                                    <TextInput
-                                        label="Height (ft)"
-                                        name="height"
-                                        type="number"
-                                        value={doorForm.height}
-                                        onChange={(e) => updateDoorForm({ height: e.target.value })}
-                                        required
-                                        inputProps={{ min: "0", step: "0.1" }}
-                                    />
-                                    <TextInput
-                                        label="Width (ft)"
-                                        name="width"
-                                        type="number"
-                                        value={doorForm.width}
-                                        onChange={(e) => updateDoorForm({ width: e.target.value })}
-                                        required
-                                        inputProps={{ min: "0", step: "0.1" }}
-                                    />
-                                </Box>
-                                <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-                                    <TextInput
-                                        label="Thickness (inch)"
-                                        name="thickness"
-                                        type="number"
-                                        value={doorForm.thickness}
-                                        onChange={(e) => updateDoorForm({ thickness: e.target.value })}
-                                        required
-                                        inputProps={{ min: "0", step: "0.1" }}
-                                    />
-                                    <TextInput
-                                        label="Quantity"
-                                        name="quantity"
-                                        type="number"
-                                        value={doorForm.quantity}
-                                        onChange={(e) => updateDoorForm({ quantity: e.target.value })}
-                                        required
-                                        inputProps={{ min: "1" }}
-                                    />
-                                </Box>
-                                 <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-                                <TextInput
-                                    label="Cost per Door"
-                                    name="costPerDoor"
-                                    type="number"
-                                    value={doorForm.costPerDoor}
-                                    onChange={(e) => updateDoorForm({ costPerDoor: e.target.value })}
-                                    required
-                                    inputProps={{ min: "0" }}
-                                />
-                                </Box>
-                            </Box>
-                            {/* Divider */}
-                            <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
-                            {/* Window Inputs (Right) */}
-                            <Box sx={{ flex: 1, minWidth: 0 }}>
-                                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>Window Details</Typography>
-                                <TextInput
-                                    label="Window Type"
-                                    name="windowType"
-                                    value={windowForm.windowType}
-                                    onChange={(e) => updateWindowForm({ windowType: e.target.value })}
-                                    select
-                                    options={[
-                                        { value: 'wooden', label: 'Wooden' },
-                                        { value: 'upvc', label: 'UPVC' },
-                                        { value: 'aluminium', label: 'Aluminium' }
-                                    ]}
-                                    required
-                                />
-                                <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-                                    <TextInput
-                                        label="Height (ft)"
-                                        name="height"
-                                        type="number"
-                                        value={windowForm.height}
-                                        onChange={(e) => updateWindowForm({ height: e.target.value })}
-                                        required
-                                        inputProps={{ min: "0", step: "0.1" }}
-                                    />
-                                    <TextInput
-                                        label="Width (ft)"
-                                        name="width"
-                                        type="number"
-                                        value={windowForm.width}
-                                        onChange={(e) => updateWindowForm({ width: e.target.value })}
-                                        required
-                                        inputProps={{ min: "0", step: "0.1" }}
-                                    />
-                                </Box>
-                                <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-                                    <TextInput
-                                        label="Thickness (inch)"
-                                        name="thickness"
-                                        type="number"
-                                        value={windowForm.thickness}
-                                        onChange={(e) => updateWindowForm({ thickness: e.target.value })}
-                                        required
-                                        inputProps={{ min: "0", step: "0.1" }}
-                                    />
-                                    <TextInput
-                                        label="Quantity"
-                                        name="quantity"
-                                        type="number"
-                                        value={windowForm.quantity}
-                                        onChange={(e) => updateWindowForm({ quantity: e.target.value })}
-                                        required
-                                        inputProps={{ min: "1" }}
-                                    />
-                                </Box>
-                                 <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-                                <TextInput
-                                    label="Cost per Window"
-                                    name="costPerWindow"
-                                    type="number"
-                                    value={windowForm.costPerWindow}
-                                    onChange={(e) => updateWindowForm({ costPerWindow: e.target.value })}
-                                    required
-                                    inputProps={{ min: "0" }}
-                                />
-                                </Box>
-                            </Box>
-                        </Box>
-
-                        {/* Display Door and Window Area */}
-                        {(doorForm.height && doorForm.width && doorForm.quantity) || (windowForm.height && windowForm.width && windowForm.quantity) ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {doorForm.height && doorForm.width && doorForm.quantity && (
-                                    <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
+                        {/* If not curtain wall, show insulation, tiles, and rest of form */}
+                        {formData.isCurtainWall === 'no' && (
+                            <>
+                                {/* Insulation Radio Button */}
+                                <div className="grid grid-cols-1">
+                                    <FormControl component="fieldset">
+                                        <FormLabel component="legend">Is Insulation Used?</FormLabel>
+                                        <RadioGroup
+                                            row
+                                            name="isInsulationUsed"
+                                            value={formData.isInsulationUsed ?? 'no'}
+                                            onChange={(e) => updateFormData({ isInsulationUsed: e.target.value })}
+                                        >
+                                            <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+                                            <FormControlLabel value="no" control={<Radio />} label="No" />
+                                        </RadioGroup>
+                                    </FormControl>
+                                </div>
+                                {/* Insulation Thickness Input */}
+                                {formData.isInsulationUsed === 'yes' && (
+                                    <div>
+                                        <TextInput
+                                            label="Exterior Wall Insulation Thickness (inch)"
+                                            name="insulationThickness"
+                                            type="number"
+                                            value={formData.insulationThickness}
+                                            onChange={(e) => updateFormData({ insulationThickness: e.target.value })}
+                                            required
+                                            inputProps={{ min: "0", step: "0.1" }}
+                                            sx={{ maxWidth: 250 }}
+                                        />
+                                    </div>
+                                )}
+                                {/* Tiles Used Radio Button */}
+                                <div className="grid grid-cols-1">
+                                    <FormControl component="fieldset">
+                                        <FormLabel component="legend">Is Tiles Used in Wall?</FormLabel>
+                                        <RadioGroup
+                                            row
+                                            name="isTilesUsed"
+                                            value={formData.isTilesUsed ?? 'no'}
+                                            onChange={(e) => updateFormData({ isTilesUsed: e.target.value })}
+                                        >
+                                            <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+                                            <FormControlLabel value="no" control={<Radio />} label="No" />
+                                        </RadioGroup>
+                                    </FormControl>
+                                </div>
+                                {/* Tile Height Input */}
+                                {formData.isTilesUsed === 'yes' && (
+                                    <div>
+                                        <TextInput
+                                            label="Tile Height (ft)"
+                                            name="tileHeight"
+                                            type="number"
+                                            value={formData.tileHeight}
+                                            onChange={(e) => updateFormData({ tileHeight: e.target.value })}
+                                            required
+                                            inputProps={{ min: '0', step: '0.1', max: formData.height || undefined }}
+                                            sx={{ maxWidth: 250 }}
+                                            error={!!tileHeightError}
+                                            helperText={tileHeightError}
+                                        />
+                                    </div>
+                                )}
+                                {/* Tiles Area Display */}
+                                {formData.isTilesUsed === 'yes' && formData.tileHeight && !tileHeightError && (
+                                    <div className="p-4 rounded-md" style={{ backgroundColor: '#f7f6fb', maxWidth: 350 }}>
                                         <p className="text-lg font-bold text-gray-800">
-                                            Door Area: <span className="text-[#5BB045]">{calculateDoorArea()} ft²</span>
+                                            Exterior Wall Tiles Area: <span className="text-[#5BB045]">{calculateTilesArea()} ft²</span>
                                         </p>
                                     </div>
                                 )}
-                                {windowForm.height && windowForm.width && windowForm.quantity && (
-                                    <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
-                                        <p className="text-lg font-bold text-gray-800">
-                                            Window Area: <span className="text-[#5BB045]">{calculateWindowArea()} ft²</span>
-                                        </p>
+                                {/* Door and Window Inputs Side by Side */}
+                                <Box sx={{ display: 'flex', gap: 4, alignItems: 'flex-start', mt: 2 }}>
+                                    {/* Door Inputs (Left) */}
+                                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                                        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>Door Details</Typography>
+                                        <TextInput
+                                            label="Door Type"
+                                            name="doorType"
+                                            value={doorForm.doorType}
+                                            onChange={(e) => updateDoorForm({ doorType: e.target.value })}
+                                            select
+                                            options={[
+                                                { value: 'wooden', label: 'Wooden' },
+                                                { value: 'upvc', label: 'UPVC' },
+                                                { value: 'aluminium', label: 'Aluminium' }
+                                            ]}
+                                            required
+                                        />
+                                        <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+                                            <TextInput
+                                                label="Height (ft)"
+                                                name="height"
+                                                type="number"
+                                                value={doorForm.height}
+                                                onChange={(e) => updateDoorForm({ height: e.target.value })}
+                                                required
+                                                inputProps={{ min: "0", step: "0.1" }}
+                                            />
+                                            <TextInput
+                                                label="Width (ft)"
+                                                name="width"
+                                                type="number"
+                                                value={doorForm.width}
+                                                onChange={(e) => updateDoorForm({ width: e.target.value })}
+                                                required
+                                                inputProps={{ min: "0", step: "0.1" }}
+                                            />
+                                        </Box>
+                                        <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+                                            <TextInput
+                                                label="Thickness (inch)"
+                                                name="thickness"
+                                                type="number"
+                                                value={doorForm.thickness}
+                                                onChange={(e) => updateDoorForm({ thickness: e.target.value })}
+                                                required
+                                                inputProps={{ min: "0", step: "0.1" }}
+                                            />
+                                            <TextInput
+                                                label="Quantity"
+                                                name="quantity"
+                                                type="number"
+                                                value={doorForm.quantity}
+                                                onChange={(e) => updateDoorForm({ quantity: e.target.value })}
+                                                required
+                                                inputProps={{ min: "1" }}
+                                            />
+                                        </Box>
+                                         <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+                                        <TextInput
+                                            label="Cost per Door"
+                                            name="costPerDoor"
+                                            type="number"
+                                            value={doorForm.costPerDoor}
+                                            onChange={(e) => updateDoorForm({ costPerDoor: e.target.value })}
+                                            required
+                                            inputProps={{ min: "0" }}
+                                        />
+                                        </Box>
+                                    </Box>
+                                    {/* Divider */}
+                                    <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
+                                    {/* Window Inputs (Right) */}
+                                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                                        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>Window Details</Typography>
+                                        <TextInput
+                                            label="Window Type"
+                                            name="windowType"
+                                            value={windowForm.windowType}
+                                            onChange={(e) => updateWindowForm({ windowType: e.target.value })}
+                                            select
+                                            options={[
+                                                { value: 'wooden', label: 'Wooden' },
+                                                { value: 'upvc', label: 'UPVC' },
+                                                { value: 'aluminium', label: 'Aluminium' }
+                                            ]}
+                                            required
+                                        />
+                                        <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+                                            <TextInput
+                                                label="Height (ft)"
+                                                name="height"
+                                                type="number"
+                                                value={windowForm.height}
+                                                onChange={(e) => updateWindowForm({ height: e.target.value })}
+                                                required
+                                                inputProps={{ min: "0", step: "0.1" }}
+                                            />
+                                            <TextInput
+                                                label="Width (ft)"
+                                                name="width"
+                                                type="number"
+                                                value={windowForm.width}
+                                                onChange={(e) => updateWindowForm({ width: e.target.value })}
+                                                required
+                                                inputProps={{ min: "0", step: "0.1" }}
+                                            />
+                                        </Box>
+                                        <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+                                            <TextInput
+                                                label="Thickness (inch)"
+                                                name="thickness"
+                                                type="number"
+                                                value={windowForm.thickness}
+                                                onChange={(e) => updateWindowForm({ thickness: e.target.value })}
+                                                required
+                                                inputProps={{ min: "0", step: "0.1" }}
+                                            />
+                                            <TextInput
+                                                label="Quantity"
+                                                name="quantity"
+                                                type="number"
+                                                value={windowForm.quantity}
+                                                onChange={(e) => updateWindowForm({ quantity: e.target.value })}
+                                                required
+                                                inputProps={{ min: "1" }}
+                                            />
+                                        </Box>
+                                         <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+                                        <TextInput
+                                            label="Cost per Window"
+                                            name="costPerWindow"
+                                            type="number"
+                                            value={windowForm.costPerWindow}
+                                            onChange={(e) => updateWindowForm({ costPerWindow: e.target.value })}
+                                            required
+                                            inputProps={{ min: "0" }}
+                                        />
+                                        </Box>
+                                    </Box>
+                                </Box>
+                                {/* Display Door and Window Area */}
+                                {(doorForm.height && doorForm.width && doorForm.quantity) ||
+                                (windowForm.height && windowForm.width && windowForm.quantity) ? (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        {doorForm.height && doorForm.width && doorForm.quantity && (
+                                            <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
+                                                <p className="text-lg font-bold text-gray-800">
+                                                    Door Area: <span className="text-[#5BB045]">{calculateDoorArea()} ft²</span>
+                                                </p>
+                                            </div>
+                                        )}
+                                        {windowForm.height && windowForm.width && windowForm.quantity && (
+                                            <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
+                                                <p className="text-lg font-bold text-gray-800">
+                                                    Window Area: <span className="text-[#5BB045]">{calculateWindowArea()} ft²</span>
+                                                </p>
+                                            </div>
+                                        )}
                                     </div>
-                                )}
-                            </div>
-                        ) : null}
+                                ) : null}
+                            </>
+                        )}
 
                         {/* Save Button */}
                         <div className="grid grid-cols-1 justify-items-end">

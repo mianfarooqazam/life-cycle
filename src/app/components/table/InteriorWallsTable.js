@@ -25,8 +25,13 @@ export default function InteriorWallsTable({ data, onEdit, onDelete }) {
                         <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
                             <TableCell sx={{ fontWeight: 600 }}>Interior Wall Area (ft²)</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Interior Wall Volume (ft³)</TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>Curtain Wall</TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>Glass Thickness (mm)</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Insulation Used</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Insulation Thickness (inch)</TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>Tiles Used</TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>Tile Height (ft)</TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>Tiles Area (ft²)</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Components</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Door Area (ft²)</TableCell>
                             <TableCell sx={{ fontWeight: 600 }}>Window Area (ft²)</TableCell>
@@ -37,7 +42,7 @@ export default function InteriorWallsTable({ data, onEdit, onDelete }) {
                     <TableBody>
                         {data.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={9} align="center" sx={{ py: 4 }}>
+                                <TableCell colSpan={14} align="center" sx={{ py: 4 }}>
                                     <Typography variant="body1" color="text.secondary">
                                         No interior wall data available. Add some data to get started.
                                     </Typography>
@@ -48,8 +53,13 @@ export default function InteriorWallsTable({ data, onEdit, onDelete }) {
                                 <TableRow key={row.id} sx={{ '&:hover': { backgroundColor: '#f9f9f9' } }}>
                                     <TableCell>{row.wallArea || '-'}</TableCell>
                                     <TableCell>{row.wallVolume || '-'}</TableCell>
+                                    <TableCell>{row.isCurtainWall === 'yes' ? 'Yes' : 'No'}</TableCell>
+                                    <TableCell>{row.isCurtainWall === 'yes' ? (row.glassThickness ? `${row.glassThickness} mm` : '-') : '-'}</TableCell>
                                     <TableCell>{row.insulationUsed === 'yes' ? 'Yes' : 'No'}</TableCell>
                                     <TableCell>{row.insulationThickness || '-'}</TableCell>
+                                    <TableCell>{row.isTilesUsed === 'yes' ? 'Yes' : 'No'}</TableCell>
+                                    <TableCell>{row.isTilesUsed === 'yes' ? row.tileHeight : '-'}</TableCell>
+                                    <TableCell>{row.isTilesUsed === 'yes' ? row.tilesArea : '-'}</TableCell>
                                     <TableCell>{row.component || '-'}</TableCell>
                                     <TableCell>{row.doorArea || '-'}</TableCell>
                                     <TableCell>{row.windowArea || '-'}</TableCell>

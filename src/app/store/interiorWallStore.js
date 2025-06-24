@@ -9,8 +9,12 @@ export const useInteriorWallStore = create(
         length: '',
         height: '',
         thickness: '',
+        isCurtainWall: 'no',
+        glassThickness: '',
         isInsulationUsed: 'no',
-        insulationThickness: ''
+        insulationThickness: '',
+        isTilesUsed: 'no',
+        tileHeight: '',
       },
       doorForm: {
         doorType: '',
@@ -46,8 +50,12 @@ export const useInteriorWallStore = create(
           length: '',
           height: '',
           thickness: '',
+          isCurtainWall: 'no',
+          glassThickness: '',
           isInsulationUsed: 'no',
-          insulationThickness: ''
+          insulationThickness: '',
+          isTilesUsed: 'no',
+          tileHeight: '',
         }
       }),
       resetDoorForm: () => set({
@@ -124,6 +132,16 @@ export const useInteriorWallStore = create(
         const w = parseFloat(windowForm.width);
         const q = parseFloat(windowForm.quantity) || 1;
         if (h && w && q) return (h * w * q).toFixed(2);
+        return '';
+      },
+      calculateTilesArea: () => {
+        const { formData } = get();
+        const length = parseFloat(formData.length);
+        const tileHeight = parseFloat(formData.tileHeight);
+        const wallHeight = parseFloat(formData.height);
+        if (formData.isTilesUsed === 'yes' && length && tileHeight && wallHeight && tileHeight <= wallHeight) {
+          return (length * tileHeight).toFixed(2);
+        }
         return '';
       },
     }),
