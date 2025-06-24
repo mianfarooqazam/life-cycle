@@ -3,10 +3,13 @@ import { useEffect, useState } from "react";
 import { Box, FormControl, InputLabel, Select, MenuItem, Button } from "@mui/material";
 import ExteriorWallModal from "../components/modal/ExteriorWallModal";
 import InteriorWallModal from "../components/modal/InteriorWallModal";
+import SlabModal from "../components/modal/SlabModal";
 import ExteriorWallsTable from "../components/table/ExteriorWallsTable";
 import InteriorWallsTable from "../components/table/InteriorWallsTable";
+import SlabTable from "../components/table/SlabTable";
 import { useExteriorWallStore } from "../store/exteriorWallStore";
 import { useInteriorWallStore } from "../store/interiorWallStore";
+import { useSlabStore } from "../store/slabStore";
 
 export default function BuildingFloor() {
   const numberOfFloors = useBuildingPlanStore((state) => state.numberOfFloors);
@@ -16,6 +19,7 @@ export default function BuildingFloor() {
   // Modal states
   const [exteriorWallModalOpen, setExteriorWallModalOpen] = useState(false);
   const [interiorWallModalOpen, setInteriorWallModalOpen] = useState(false);
+  const [slabModalOpen, setSlabModalOpen] = useState(false);
 
   const floorCount = parseInt(numberOfFloors) || 0;
   const floorNames = [
@@ -73,10 +77,20 @@ export default function BuildingFloor() {
     resetDoorForm: resetInteriorDoorForm,
     resetWindowForm: resetInteriorWindowForm,
   } = useInteriorWallStore();
+  const {
+    slabData,
+    getSlabsByFloor,
+    setEditingId: setSlabEditingId,
+    deleteSlabData,
+    getEditingRow: getSlabEditingRow,
+    updateFormData: updateSlabFormData,
+    resetFormData: resetSlabFormData
+  } = useSlabStore();
 
   // Get filtered walls for the selected floor
   const filteredExteriorWalls = getExteriorWallsByFloor(selectedFloor);
   const filteredInteriorWalls = getInteriorWallsByFloor(selectedFloor);
+  const filteredSlabs = getSlabsByFloor(selectedFloor);
 
   // Edit handlers
   const handleEditExterior = (id) => {
@@ -153,6 +167,24 @@ export default function BuildingFloor() {
   const handleDeleteInterior = (id) => {
     deleteInteriorWallData(id);
   };
+  const handleEditSlab = (id) => {
+    setSlabEditingId(id);
+    const row = getSlabEditingRow(id);
+    if (row) {
+      updateSlabFormData({
+        slabArea: row.slabArea || '',
+        slabThickness: row.slabThickness || '',
+        isCeilingUsed: row.isCeilingUsed || 'no',
+        ceilingArea: row.ceilingArea || '',
+        areTilesUsed: row.areTilesUsed || 'no',
+        tilesArea: row.tilesArea || '',
+      });
+    }
+    setSlabModalOpen(true);
+  };
+  const handleDeleteSlab = (id) => {
+    deleteSlabData(id);
+  };
 
   // Handle button clicks
   const handleExteriorWallClick = () => {
@@ -161,6 +193,9 @@ export default function BuildingFloor() {
 
   const handleInteriorWallClick = () => {
     setInteriorWallModalOpen(true);
+  };
+  const handleSlabClick = () => {
+    setSlabModalOpen(true);
   };
 
   return (
@@ -234,6 +269,7 @@ export default function BuildingFloor() {
         </Button>
         <Button
           variant="contained"
+          onClick={handleSlabClick}
           sx={{
             backgroundColor: '#5BB045',
             color: '#fff',
@@ -269,6 +305,12 @@ export default function BuildingFloor() {
         selectedFloorName={selectedFloorName}
         floorNumber={selectedFloor}
       />
+      <SlabModal
+        open={slabModalOpen}
+        onClose={() => setSlabModalOpen(false)}
+        selectedFloorName={selectedFloorName}
+        floorNumber={selectedFloor}
+      />
       {/* Wall Tables */}
       {filteredExteriorWalls.length > 0 && (
         <Box sx={{ mt: 4 }}>
@@ -285,6 +327,15 @@ export default function BuildingFloor() {
             data={filteredInteriorWalls}
             onEdit={handleEditInterior}
             onDelete={handleDeleteInterior}
+          />
+        </Box>
+      )}
+      {filteredSlabs.length > 0 && (
+        <Box sx={{ mt: 4 }}>
+          <SlabTable
+            data={filteredSlabs}
+            onEdit={handleEditSlab}
+            onDelete={handleDeleteSlab}
           />
         </Box>
       )}
