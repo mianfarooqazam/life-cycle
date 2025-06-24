@@ -262,20 +262,24 @@ export default function BuildingFloor() {
         selectedFloorName={selectedFloorName}
       />
       {/* Wall Tables */}
-      <Box sx={{ mt: 4 }}>
-        <ExteriorWallsTable
-          data={exteriorWallsData}
-          onEdit={handleEditExterior}
-          onDelete={handleDeleteExterior}
-        />
-      </Box>
-      <Box sx={{ mt: 4 }}>
-        <InteriorWallsTable
-          data={interiorWallsData}
-          onEdit={handleEditInterior}
-          onDelete={handleDeleteInterior}
-        />
-      </Box>
+      {exteriorWallsData.length > 0 && (
+        <Box sx={{ mt: 4 }}>
+          <ExteriorWallsTable
+            data={exteriorWallsData}
+            onEdit={handleEditExterior}
+            onDelete={handleDeleteExterior}
+          />
+        </Box>
+      )}
+      {interiorWallsData.length > 0 && (
+        <Box sx={{ mt: 4 }}>
+          <InteriorWallsTable
+            data={interiorWallsData}
+            onEdit={handleEditInterior}
+            onDelete={handleDeleteInterior}
+          />
+        </Box>
+      )}
     </div>
   );
 }
