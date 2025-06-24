@@ -34,10 +34,11 @@ export default function ExteriorWallsTable({ data, onEdit, onDelete, minWidth = 
 
     return (
         <div>
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-                Exterior Walls Data
-            </Typography>
-            <TableContainer component={Paper} sx={{ boxShadow: 2, borderRadius: 2 }}>
+                  <h2 className="text-lg font-bold mb-2 text-center">                Exterior Wall
+                  </h2>
+
+           
+            <TableContainer>
                 <Table sx={{ minWidth }} stickyHeader>
                     <TableHead>
                         <TableRow>
