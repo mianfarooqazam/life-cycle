@@ -111,7 +111,7 @@ export default function ExteriorWallModal({ open, onClose, selectedFloorName }) 
             const wallHeight = parseFloat(formData.height);
             if (tileHeight > wallHeight) {
                 toast.error('Tile height cannot be greater than wall height');
-                return false;
+                return 'tile-height-error'; // Return a unique value to indicate this specific error
             }
         }
 
@@ -136,16 +136,11 @@ export default function ExteriorWallModal({ open, onClose, selectedFloorName }) 
             }
         }
         
-        // Validation for required fields
+        // Validation for required fields (ONLY length, height, thickness)
         if (!formData.length || !formData.height || !formData.thickness) {
             return false;
         }
-        if (formData.isCurtainWall === 'yes' && !formData.glassThickness) {
-            return false;
-        }
-        if (formData.isCurtainWall === 'no' && formData.isTilesUsed === 'yes' && !formData.tileHeight) {
-            return false;
-        }
+        // (No longer require glassThickness or tileHeight for the generic error)
 
         // Compose row data
         const newRow = {
