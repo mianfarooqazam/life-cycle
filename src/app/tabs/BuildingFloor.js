@@ -49,6 +49,7 @@ export default function BuildingFloor() {
   // Wall data and edit state
   const {
     exteriorWallsData,
+    getWallsByFloor: getExteriorWallsByFloor,
     setEditingId: setExteriorEditingId,
     deleteExteriorWallData,
     getEditingRow: getExteriorEditingRow,
@@ -61,6 +62,7 @@ export default function BuildingFloor() {
   } = useExteriorWallStore();
   const {
     interiorWallsData,
+    getWallsByFloor: getInteriorWallsByFloor,
     setEditingId: setInteriorEditingId,
     deleteInteriorWallData,
     getEditingRow: getInteriorEditingRow,
@@ -71,6 +73,10 @@ export default function BuildingFloor() {
     resetDoorForm: resetInteriorDoorForm,
     resetWindowForm: resetInteriorWindowForm,
   } = useInteriorWallStore();
+
+  // Get filtered walls for the selected floor
+  const filteredExteriorWalls = getExteriorWallsByFloor(selectedFloor);
+  const filteredInteriorWalls = getInteriorWallsByFloor(selectedFloor);
 
   // Edit handlers
   const handleEditExterior = (id) => {
@@ -255,26 +261,28 @@ export default function BuildingFloor() {
         open={exteriorWallModalOpen}
         onClose={() => setExteriorWallModalOpen(false)}
         selectedFloorName={selectedFloorName}
+        floorNumber={selectedFloor}
       />
       <InteriorWallModal
         open={interiorWallModalOpen}
         onClose={() => setInteriorWallModalOpen(false)}
         selectedFloorName={selectedFloorName}
+        floorNumber={selectedFloor}
       />
       {/* Wall Tables */}
-      {exteriorWallsData.length > 0 && (
+      {filteredExteriorWalls.length > 0 && (
         <Box sx={{ mt: 4 }}>
           <ExteriorWallsTable
-            data={exteriorWallsData}
+            data={filteredExteriorWalls}
             onEdit={handleEditExterior}
             onDelete={handleDeleteExterior}
           />
         </Box>
       )}
-      {interiorWallsData.length > 0 && (
+      {filteredInteriorWalls.length > 0 && (
         <Box sx={{ mt: 4 }}>
           <InteriorWallsTable
-            data={interiorWallsData}
+            data={filteredInteriorWalls}
             onEdit={handleEditInterior}
             onDelete={handleDeleteInterior}
           />

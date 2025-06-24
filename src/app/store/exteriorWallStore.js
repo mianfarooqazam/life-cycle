@@ -81,11 +81,11 @@ export const useExteriorWallStore = create(
 
       // Add new exterior wall data
       addExteriorWallData: (row) => set((state) => ({
-        exteriorWallsData: [...state.exteriorWallsData, row]
+        exteriorWallsData: [...state.exteriorWallsData, { ...row, floorNumber: row.floorNumber }]
       })),
       // Update existing exterior wall data
       updateExteriorWallData: (id, updatedRow) => set((state) => ({
-        exteriorWallsData: state.exteriorWallsData.map(item => item.id === id ? updatedRow : item)
+        exteriorWallsData: state.exteriorWallsData.map(item => item.id === id ? { ...updatedRow, floorNumber: updatedRow.floorNumber } : item)
       })),
       // Delete exterior wall data
       deleteExteriorWallData: (id) => set((state) => ({
@@ -98,6 +98,11 @@ export const useExteriorWallStore = create(
       getEditingRow: (id) => {
         const { exteriorWallsData } = get();
         return exteriorWallsData.find(row => row.id === id);
+      },
+      // Get walls for a specific floor
+      getWallsByFloor: (floorNumber) => {
+        const { exteriorWallsData } = get();
+        return exteriorWallsData.filter(row => row.floorNumber === floorNumber);
       },
       // Calculation helpers
       calculateWallArea: () => {

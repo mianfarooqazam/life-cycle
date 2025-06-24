@@ -81,11 +81,11 @@ export const useInteriorWallStore = create(
 
       // Add new interior wall data
       addInteriorWallData: (row) => set((state) => ({
-        interiorWallsData: [...state.interiorWallsData, row]
+        interiorWallsData: [...state.interiorWallsData, { ...row, floorNumber: row.floorNumber }]
       })),
       // Update existing interior wall data
       updateInteriorWallData: (id, updatedRow) => set((state) => ({
-        interiorWallsData: state.interiorWallsData.map(item => item.id === id ? updatedRow : item)
+        interiorWallsData: state.interiorWallsData.map(item => item.id === id ? { ...updatedRow, floorNumber: updatedRow.floorNumber } : item)
       })),
       // Delete interior wall data
       deleteInteriorWallData: (id) => set((state) => ({
@@ -98,6 +98,11 @@ export const useInteriorWallStore = create(
       getEditingRow: (id) => {
         const { interiorWallsData } = get();
         return interiorWallsData.find(row => row.id === id);
+      },
+      // Get walls for a specific floor
+      getWallsByFloor: (floorNumber) => {
+        const { interiorWallsData } = get();
+        return interiorWallsData.filter(row => row.floorNumber === floorNumber);
       },
       // Calculation helpers
       calculateWallArea: () => {

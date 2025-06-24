@@ -39,7 +39,7 @@ const modalStyle = {
     overflowY: 'auto'
 };
 
-export default function ExteriorWallModal({ open, onClose, selectedFloorName }) {
+export default function ExteriorWallModal({ open, onClose, selectedFloorName, floorNumber }) {
     // Zustand store hooks
     const {
         formData,
@@ -105,14 +105,25 @@ export default function ExteriorWallModal({ open, onClose, selectedFloorName }) 
 
     // Save handler
     const handleSave = () => {
-        // Validate tile height
-        if (formData.isCurtainWall === 'no' && formData.isTilesUsed === 'yes') {
+        // Validation checks
+        if (!formData.length || !formData.height || !formData.thickness) {
+            toast.error('Please fill in all required fields (length, height, thickness)');
+            return;
+        }
+
+        // Validate tile height if tiles are used
+        if (formData.isTilesUsed === 'yes') {
             const tileHeight = parseFloat(formData.tileHeight);
             const wallHeight = parseFloat(formData.height);
-            if (tileHeight > wallHeight) {
-                toast.error('Tile height cannot be greater than wall height');
-                return 'tile-height-error'; // Return a unique value to indicate this specific error
+            if (!tileHeight) {
+                setTileHeightError('Please enter tile height');
+                return;
             }
+            if (tileHeight > wallHeight) {
+                setTileHeightError('Tile height cannot be greater than wall height');
+                return;
+            }
+            setTileHeightError('');
         }
 
         // Calculate total door and window area
@@ -136,15 +147,10 @@ export default function ExteriorWallModal({ open, onClose, selectedFloorName }) 
             }
         }
         
-        // Validation for required fields (ONLY length, height, thickness)
-        if (!formData.length || !formData.height || !formData.thickness) {
-            return false;
-        }
-        // (No longer require glassThickness or tileHeight for the generic error)
-
         // Compose row data
         const newRow = {
             id: editingId || Date.now(),
+            floorNumber,
             wallArea: calculateWallArea(),
             wallVolume: calculateWallVolume(),
             isCurtainWall: formData.isCurtainWall,
