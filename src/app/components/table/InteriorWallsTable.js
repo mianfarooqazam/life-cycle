@@ -1,4 +1,5 @@
 "use client";
+import React from 'react';
 import { 
     Table, 
     TableBody, 
@@ -9,34 +10,53 @@ import {
     Paper, 
     IconButton, 
     Tooltip,
-    Typography
+    Typography,
+    Box
 } from '@mui/material';
 import { Edit, Trash2 } from 'lucide-react';
 
-export default function InteriorWallsTable({ data, onEdit, onDelete }) {
+export default function InteriorWallsTable({ data, onEdit, onDelete, minWidth = 1400 }) {
+    const cellStyle = {
+        fontWeight: 'medium',
+        textAlign: 'center',
+        padding: '12px 8px',
+        whiteSpace: 'nowrap',
+    };
+
+    const headerStyle = {
+        backgroundColor: '#f7f6fb',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        padding: '16px 8px',
+        minWidth: 120,
+        whiteSpace: 'nowrap',
+    };
+
     return (
         <div>
             <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
                 Interior Walls Data
             </Typography>
             <TableContainer component={Paper} sx={{ boxShadow: 2, borderRadius: 2 }}>
-                <Table sx={{ minWidth: 650 }} aria-label="interior walls table">
+                <Table sx={{ minWidth }} stickyHeader>
                     <TableHead>
-                        <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-                            <TableCell sx={{ fontWeight: 600 }}>Interior Wall Area (ft²)</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Interior Wall Volume (ft³)</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Curtain Wall</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Glass Thickness (mm)</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Insulation Used</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Insulation Thickness (inch)</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Tiles Used</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Tile Height (ft)</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Tiles Area (ft²)</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Components</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Door Area (ft²)</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Window Area (ft²)</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Cost</TableCell>
-                            <TableCell sx={{ fontWeight: 600 }}>Actions</TableCell>
+                        <TableRow>
+                            <TableCell sx={headerStyle}>Sr. No.</TableCell>
+                            <TableCell sx={headerStyle}>Wall Area (ft²)</TableCell>
+                            <TableCell sx={headerStyle}>Wall Volume (ft³)</TableCell>
+                            <TableCell sx={headerStyle}>Curtain Wall</TableCell>
+                            <TableCell sx={headerStyle}>Glass Thickness (mm)</TableCell>
+                            <TableCell sx={headerStyle}>Insulation Used?</TableCell>
+                            <TableCell sx={headerStyle}>Insulation Thickness (in)</TableCell>
+                            <TableCell sx={headerStyle}>Tiles Used?</TableCell>
+                            <TableCell sx={headerStyle}>Tile Height (ft)</TableCell>
+                            <TableCell sx={headerStyle}>Tiles Area (ft²)</TableCell>
+                            <TableCell sx={headerStyle}>Component</TableCell>
+                            <TableCell sx={headerStyle}>Door Type</TableCell>
+                            <TableCell sx={headerStyle}>Window Type</TableCell>
+                            <TableCell sx={headerStyle}>Door/Window Area (ft²)</TableCell>
+                            <TableCell sx={headerStyle}>Cost</TableCell>
+                            <TableCell sx={headerStyle}>Action</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -49,52 +69,57 @@ export default function InteriorWallsTable({ data, onEdit, onDelete }) {
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            data.map((row) => (
-                                <TableRow key={row.id} sx={{ '&:hover': { backgroundColor: '#f9f9f9' } }}>
-                                    <TableCell>{row.wallArea || '-'}</TableCell>
-                                    <TableCell>{row.wallVolume || '-'}</TableCell>
-                                    <TableCell>{row.isCurtainWall === 'yes' ? 'Yes' : 'No'}</TableCell>
-                                    <TableCell>{row.isCurtainWall === 'yes' ? (row.glassThickness ? `${row.glassThickness} mm` : '-') : '-'}</TableCell>
-                                    <TableCell>{row.insulationUsed === 'yes' ? 'Yes' : 'No'}</TableCell>
-                                    <TableCell>{row.insulationThickness || '-'}</TableCell>
-                                    <TableCell>{row.isTilesUsed === 'yes' ? 'Yes' : 'No'}</TableCell>
-                                    <TableCell>{row.isTilesUsed === 'yes' ? row.tileHeight : '-'}</TableCell>
-                                    <TableCell>{row.isTilesUsed === 'yes' ? row.tilesArea : '-'}</TableCell>
-                                    <TableCell>{row.component || '-'}</TableCell>
-                                    <TableCell>{row.doorArea || '-'}</TableCell>
-                                    <TableCell>{row.windowArea || '-'}</TableCell>
-                                    <TableCell>{row.cost || '-'}</TableCell>
-                                    <TableCell>
-                                        <div style={{ display: 'flex', gap: '8px' }}>
-                                            <Tooltip title="Edit">
-                                                <IconButton
-                                                    size="small"
-                                                    onClick={() => onEdit(row.id)}
-                                                    sx={{
-                                                        color: '#5BB045',
-                                                        '&:hover': {
-                                                            backgroundColor: 'rgba(91, 176, 69, 0.1)'
-                                                        }
-                                                    }}
-                                                >
-                                                    <Edit size={16} />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <Tooltip title="Delete">
-                                                <IconButton
-                                                    size="small"
-                                                    onClick={() => onDelete(row.id)}
-                                                    sx={{
-                                                        color: '#f44336',
-                                                        '&:hover': {
-                                                            backgroundColor: 'rgba(244, 67, 54, 0.1)'
-                                                        }
-                                                    }}
-                                                >
-                                                    <Trash2 size={16} />
-                                                </IconButton>
-                                            </Tooltip>
-                                        </div>
+                            data.map((row, idx) => (
+                                <TableRow
+                                    key={row.id}
+                                    sx={{ backgroundColor: '#ffffff', '&:hover': { backgroundColor: '#f7f6fb' } }}
+                                >
+                                    <TableCell sx={cellStyle}>{idx + 1}</TableCell>
+                                    <TableCell sx={cellStyle}>{row.wallArea || '-'}</TableCell>
+                                    <TableCell sx={cellStyle}>{row.wallVolume || '-'}</TableCell>
+                                    <TableCell sx={cellStyle}>{row.isCurtainWall === 'yes' ? 'Yes' : 'No'}</TableCell>
+                                    <TableCell sx={cellStyle}>{row.isCurtainWall === 'yes' ? (row.glassThickness ? `${row.glassThickness} mm` : '-') : '-'}</TableCell>
+                                    <TableCell sx={cellStyle}>{row.insulationUsed === 'yes' ? 'Yes' : 'No'}</TableCell>
+                                    <TableCell sx={cellStyle}>{row.insulationThickness || '-'}</TableCell>
+                                    <TableCell sx={cellStyle}>{row.isTilesUsed === 'yes' ? 'Yes' : 'No'}</TableCell>
+                                    <TableCell sx={cellStyle}>{row.isTilesUsed === 'yes' ? row.tileHeight : '-'}</TableCell>
+                                    <TableCell sx={cellStyle}>{row.isTilesUsed === 'yes' ? row.tilesArea : '-'}</TableCell>
+                                    <TableCell sx={cellStyle}>{row.component || '-'}</TableCell>
+                                    <TableCell sx={cellStyle}>{row.doorType || '-'}</TableCell>
+                                    <TableCell sx={cellStyle}>{row.windowType || '-'}</TableCell>
+                                    <TableCell sx={cellStyle}>
+                                        {(row.doorArea || row.windowArea) ? (
+                                            <>
+                                                {row.doorArea ? (
+                                                    <div>Door: {row.doorArea} ft²</div>
+                                                ) : null}
+                                                {row.windowArea ? (
+                                                    <div>Window: {row.windowArea} ft²</div>
+                                                ) : null}
+                                            </>
+                                        ) : '-'}
+                                    </TableCell>
+                                    <TableCell sx={cellStyle}>
+                                        {(row.doorType && row.doorCost) || (row.windowType && row.windowCost) ? (
+                                            <>
+                                                {row.doorType && row.doorCost && (
+                                                    <div>Door: Rs. {row.doorCost}</div>
+                                                )}
+                                                {row.windowType && row.windowCost && (
+                                                    <div>Window: Rs. {row.windowCost}</div>
+                                                )}
+                                            </>
+                                        ) : '-'}
+                                    </TableCell>
+                                    <TableCell sx={cellStyle}>
+                                        <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
+                                            <IconButton color="primary" onClick={() => onEdit(row.id)} size="small" sx={{ mr: 1 }}>
+                                                <Edit size={18} />
+                                            </IconButton>
+                                            <IconButton color="error" onClick={() => onDelete(row.id)} size="small">
+                                                <Trash2 size={18} />
+                                            </IconButton>
+                                        </Box>
                                     </TableCell>
                                 </TableRow>
                             ))

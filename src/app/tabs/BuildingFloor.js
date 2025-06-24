@@ -3,6 +3,10 @@ import { useEffect, useState } from "react";
 import { Box, FormControl, InputLabel, Select, MenuItem, Button } from "@mui/material";
 import ExteriorWallModal from "../components/modal/ExteriorWallModal";
 import InteriorWallModal from "../components/modal/InteriorWallModal";
+import ExteriorWallsTable from "../components/table/ExteriorWallsTable";
+import InteriorWallsTable from "../components/table/InteriorWallsTable";
+import { useExteriorWallStore } from "../store/exteriorWallStore";
+import { useInteriorWallStore } from "../store/interiorWallStore";
 
 export default function BuildingFloor() {
   const numberOfFloors = useBuildingPlanStore((state) => state.numberOfFloors);
@@ -41,6 +45,108 @@ export default function BuildingFloor() {
 
   // Get the selected floor name
   const selectedFloorName = options.find((opt) => opt.value === selectedFloor)?.label || "Floor";
+
+  // Wall data and edit state
+  const {
+    exteriorWallsData,
+    setEditingId: setExteriorEditingId,
+    deleteExteriorWallData,
+    getEditingRow: getExteriorEditingRow,
+    updateFormData: updateExteriorFormData,
+    updateDoorForm: updateExteriorDoorForm,
+    updateWindowForm: updateExteriorWindowForm,
+    resetFormData: resetExteriorFormData,
+    resetDoorForm: resetExteriorDoorForm,
+    resetWindowForm: resetExteriorWindowForm,
+  } = useExteriorWallStore();
+  const {
+    interiorWallsData,
+    setEditingId: setInteriorEditingId,
+    deleteInteriorWallData,
+    getEditingRow: getInteriorEditingRow,
+    updateFormData: updateInteriorFormData,
+    updateDoorForm: updateInteriorDoorForm,
+    updateWindowForm: updateInteriorWindowForm,
+    resetFormData: resetInteriorFormData,
+    resetDoorForm: resetInteriorDoorForm,
+    resetWindowForm: resetInteriorWindowForm,
+  } = useInteriorWallStore();
+
+  // Edit handlers
+  const handleEditExterior = (id) => {
+    setExteriorEditingId(id);
+    const row = getExteriorEditingRow(id);
+    if (row) {
+      updateExteriorFormData({
+        length: row.length || '',
+        height: row.height || '',
+        thickness: row.thickness || '',
+        isInsulationUsed: row.insulationUsed || 'no',
+        insulationThickness: row.insulationThickness || '',
+        isCurtainWall: row.isCurtainWall || 'no',
+        glassThickness: row.glassThickness || '',
+        isTilesUsed: row.isTilesUsed || 'no',
+        tileHeight: row.tileHeight || '',
+      });
+      updateExteriorDoorForm({
+        doorType: row.doorType || '',
+        height: row.doorHeight || '',
+        width: row.doorWidth || '',
+        thickness: row.doorThickness || '',
+        quantity: row.doorQuantity || '',
+        costPerDoor: row.doorCost || ''
+      });
+      updateExteriorWindowForm({
+        windowType: row.windowType || '',
+        height: row.windowHeight || '',
+        width: row.windowWidth || '',
+        thickness: row.windowThickness || '',
+        quantity: row.windowQuantity || '',
+        costPerWindow: row.windowCost || ''
+      });
+    }
+    setExteriorWallModalOpen(true);
+  };
+  const handleDeleteExterior = (id) => {
+    deleteExteriorWallData(id);
+  };
+  const handleEditInterior = (id) => {
+    setInteriorEditingId(id);
+    const row = getInteriorEditingRow(id);
+    if (row) {
+      updateInteriorFormData({
+        length: row.length || '',
+        height: row.height || '',
+        thickness: row.thickness || '',
+        isInsulationUsed: row.insulationUsed || 'no',
+        insulationThickness: row.insulationThickness || '',
+        isCurtainWall: row.isCurtainWall || 'no',
+        glassThickness: row.glassThickness || '',
+        isTilesUsed: row.isTilesUsed || 'no',
+        tileHeight: row.tileHeight || '',
+      });
+      updateInteriorDoorForm({
+        doorType: row.doorType || '',
+        height: row.doorHeight || '',
+        width: row.doorWidth || '',
+        thickness: row.doorThickness || '',
+        quantity: row.doorQuantity || '',
+        costPerDoor: row.doorCost || ''
+      });
+      updateInteriorWindowForm({
+        windowType: row.windowType || '',
+        height: row.windowHeight || '',
+        width: row.windowWidth || '',
+        thickness: row.windowThickness || '',
+        quantity: row.windowQuantity || '',
+        costPerWindow: row.windowCost || ''
+      });
+    }
+    setInteriorWallModalOpen(true);
+  };
+  const handleDeleteInterior = (id) => {
+    deleteInteriorWallData(id);
+  };
 
   // Handle button clicks
   const handleExteriorWallClick = () => {
@@ -155,6 +261,21 @@ export default function BuildingFloor() {
         onClose={() => setInteriorWallModalOpen(false)}
         selectedFloorName={selectedFloorName}
       />
+      {/* Wall Tables */}
+      <Box sx={{ mt: 4 }}>
+        <ExteriorWallsTable
+          data={exteriorWallsData}
+          onEdit={handleEditExterior}
+          onDelete={handleDeleteExterior}
+        />
+      </Box>
+      <Box sx={{ mt: 4 }}>
+        <InteriorWallsTable
+          data={interiorWallsData}
+          onEdit={handleEditInterior}
+          onDelete={handleDeleteInterior}
+        />
+      </Box>
     </div>
   );
 }
