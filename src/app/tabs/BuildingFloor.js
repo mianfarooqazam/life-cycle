@@ -1,6 +1,6 @@
 import { useBuildingPlanStore } from "../store/buildingPlanStore";
 import { useEffect } from "react";
-import { Box, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Box, FormControl, InputLabel, Select, MenuItem, Button } from "@mui/material";
 
 export default function BuildingFloor() {
   const numberOfFloors = useBuildingPlanStore((state) => state.numberOfFloors);
@@ -33,6 +33,9 @@ export default function BuildingFloor() {
     }
   }, [selectedFloor, options, setSelectedFloor]);
 
+  // Get the selected floor name
+  const selectedFloorName = options.find((opt) => opt.value === selectedFloor)?.label || "Floor";
+
   return (
     <div className="p-2">
       <Box sx={{ maxWidth: 320, mb: 2 }}>
@@ -53,6 +56,75 @@ export default function BuildingFloor() {
             ))}
           </Select>
         </FormControl>
+      </Box>
+      
+      <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mb: 2 }}>
+        <Button
+          variant="contained"
+          sx={{
+            backgroundColor: '#5BB045',
+            color: '#fff',
+            fontWeight: 600,
+            py: 1.5,
+            px: 3,
+            borderRadius: 2,
+            textTransform: 'none',
+            boxShadow: '0 2px 8px rgba(91, 176, 69, 0.3)',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              backgroundColor: '#4a9537',
+              color: '#fff',
+              transform: 'translateY(-2px)',
+              boxShadow: '0 4px 16px rgba(91, 176, 69, 0.4)',
+            }
+          }}
+        >
+          {selectedFloorName} Exterior Wall
+        </Button>
+        <Button
+          variant="contained"
+          sx={{
+            backgroundColor: '#5BB045',
+            color: '#fff',
+            fontWeight: 600,
+            py: 1.5,
+            px: 3,
+            borderRadius: 2,
+            textTransform: 'none',
+            boxShadow: '0 2px 8px rgba(91, 176, 69, 0.3)',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              backgroundColor: '#4a9537',
+              color: '#fff',
+              transform: 'translateY(-2px)',
+              boxShadow: '0 4px 16px rgba(91, 176, 69, 0.4)',
+            }
+          }}
+        >
+          {selectedFloorName} Interior Wall
+        </Button>
+        <Button
+          variant="contained"
+          sx={{
+            backgroundColor: '#5BB045',
+            color: '#fff',
+            fontWeight: 600,
+            py: 1.5,
+            px: 3,
+            borderRadius: 2,
+            textTransform: 'none',
+            boxShadow: '0 2px 8px rgba(91, 176, 69, 0.3)',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              backgroundColor: '#4a9537',
+              color: '#fff',
+              transform: 'translateY(-2px)',
+              boxShadow: '0 4px 16px rgba(91, 176, 69, 0.4)',
+            }
+          }}
+        >
+          {selectedFloorName} Slab
+        </Button>
       </Box>
     </div>
   );
