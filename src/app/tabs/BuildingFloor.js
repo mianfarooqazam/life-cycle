@@ -1,11 +1,17 @@
 import { useBuildingPlanStore } from "../store/buildingPlanStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Box, FormControl, InputLabel, Select, MenuItem, Button } from "@mui/material";
+import ExteriorWallModal from "../components/modal/ExteriorWallModal";
+import InteriorWallModal from "../components/modal/InteriorWallModal";
 
 export default function BuildingFloor() {
   const numberOfFloors = useBuildingPlanStore((state) => state.numberOfFloors);
   const selectedFloor = useBuildingPlanStore((state) => state.selectedFloor);
   const setSelectedFloor = useBuildingPlanStore((state) => state.setSelectedFloor);
+
+  // Modal states
+  const [exteriorWallModalOpen, setExteriorWallModalOpen] = useState(false);
+  const [interiorWallModalOpen, setInteriorWallModalOpen] = useState(false);
 
   const floorCount = parseInt(numberOfFloors) || 0;
   const floorNames = [
@@ -36,6 +42,15 @@ export default function BuildingFloor() {
   // Get the selected floor name
   const selectedFloorName = options.find((opt) => opt.value === selectedFloor)?.label || "Floor";
 
+  // Handle button clicks
+  const handleExteriorWallClick = () => {
+    setExteriorWallModalOpen(true);
+  };
+
+  const handleInteriorWallClick = () => {
+    setInteriorWallModalOpen(true);
+  };
+
   return (
     <div className="p-2">
       <Box sx={{ maxWidth: 320, mb: 2 }}>
@@ -61,6 +76,7 @@ export default function BuildingFloor() {
       <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mb: 2 }}>
         <Button
           variant="contained"
+          onClick={handleExteriorWallClick}
           sx={{
             backgroundColor: '#5BB045',
             color: '#fff',
@@ -83,6 +99,7 @@ export default function BuildingFloor() {
         </Button>
         <Button
           variant="contained"
+          onClick={handleInteriorWallClick}
           sx={{
             backgroundColor: '#5BB045',
             color: '#fff',
@@ -126,6 +143,18 @@ export default function BuildingFloor() {
           {selectedFloorName} Slab
         </Button>
       </Box>
+
+      {/* Modals */}
+      <ExteriorWallModal
+        open={exteriorWallModalOpen}
+        onClose={() => setExteriorWallModalOpen(false)}
+        selectedFloorName={selectedFloorName}
+      />
+      <InteriorWallModal
+        open={interiorWallModalOpen}
+        onClose={() => setInteriorWallModalOpen(false)}
+        selectedFloorName={selectedFloorName}
+      />
     </div>
   );
 }
