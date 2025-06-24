@@ -484,14 +484,14 @@ export default function Rightbar() {
           size="small"
           onClick={() => handleHighlight(highlightedElement === 'exterior' ? null : 'exterior')}
           sx={{
-            backgroundColor: highlightedElement === 'exterior' ? '#ff6b35' : 'transparent',
-            color: highlightedElement === 'exterior' ? '#fff' : '#ff6b35',
-            borderColor: '#ff6b35',
+            backgroundColor: highlightedElement === 'exterior' ? '#5BB045' : 'transparent',
+            color: highlightedElement === 'exterior' ? '#fff' : '#5BB045',
+            borderColor: '#5BB045',
             fontWeight: 600,
             textTransform: 'none',
             '&:hover': {
-              backgroundColor: highlightedElement === 'exterior' ? '#e55a2b' : 'rgba(255, 107, 53, 0.1)',
-              borderColor: '#e55a2b',
+              backgroundColor: highlightedElement === 'exterior' ? '#4a9a3a' : 'rgba(91, 176, 69, 0.1)',
+              borderColor: '#4a9a3a',
             }
           }}
         >
@@ -502,14 +502,14 @@ export default function Rightbar() {
           size="small"
           onClick={() => handleHighlight(highlightedElement === 'interior' ? null : 'interior')}
           sx={{
-            backgroundColor: highlightedElement === 'interior' ? '#ff6b35' : 'transparent',
-            color: highlightedElement === 'interior' ? '#fff' : '#ff6b35',
-            borderColor: '#ff6b35',
+            backgroundColor: highlightedElement === 'interior' ? '#5BB045' : 'transparent',
+            color: highlightedElement === 'interior' ? '#fff' : '#5BB045',
+            borderColor: '#5BB045',
             fontWeight: 600,
             textTransform: 'none',
             '&:hover': {
-              backgroundColor: highlightedElement === 'interior' ? '#e55a2b' : 'rgba(255, 107, 53, 0.1)',
-              borderColor: '#e55a2b',
+              backgroundColor: highlightedElement === 'interior' ? '#4a9a3a' : 'rgba(91, 176, 69, 0.1)',
+              borderColor: '#4a9a3a',
             }
           }}
         >
@@ -520,14 +520,14 @@ export default function Rightbar() {
           size="small"
           onClick={() => handleHighlight(highlightedElement === 'slab' ? null : 'slab')}
           sx={{
-            backgroundColor: highlightedElement === 'slab' ? '#ff6b35' : 'transparent',
-            color: highlightedElement === 'slab' ? '#fff' : '#ff6b35',
-            borderColor: '#ff6b35',
+            backgroundColor: highlightedElement === 'slab' ? '#5BB045' : 'transparent',
+            color: highlightedElement === 'slab' ? '#fff' : '#5BB045',
+            borderColor: '#5BB045',
             fontWeight: 600,
             textTransform: 'none',
             '&:hover': {
-              backgroundColor: highlightedElement === 'slab' ? '#e55a2b' : 'rgba(255, 107, 53, 0.1)',
-              borderColor: '#e55a2b',
+              backgroundColor: highlightedElement === 'slab' ? '#4a9a3a' : 'rgba(91, 176, 69, 0.1)',
+              borderColor: '#4a9a3a',
             }
           }}
         >
