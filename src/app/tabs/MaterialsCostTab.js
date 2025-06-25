@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { WallBrickBlock, ExteriorFinish, InteriorFinish, Insulation } from '@/app/data/Materials';
 import {
   Table,
@@ -7,138 +7,161 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  IconButton,
-  Paper
+  Paper,
+  Typography,
+  Box,
+  IconButton
 } from '@mui/material';
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit } from 'lucide-react';
+import MaterialModal from '@/app/components/modal/MaterialModal';
 
 export default function MaterialsCostTab() {
-  // Prepare dummy data for Materials Cost tab (for demonstration)
-  const materialsCostData = [
+  // Initial data for demonstration
+  const initialData = [
     {
       id: 1,
-      srNo: 1,
-      wallBrickBlock: WallBrickBlock[0]?.name,
-      wallBrickBlockCost: WallBrickBlock[0]?.costperitem,
-      exteriorFinish: ExteriorFinish[0]?.name,
-      exteriorFinishCost: ExteriorFinish[0]?.costperitem,
-      interiorFinish: InteriorFinish[0]?.name,
-      interiorFinishCost: InteriorFinish[0]?.costperitem,
-      insulation: Insulation[0]?.name,
-      insulationCost: Insulation[0]?.costperitem,
-      insulationThickness: 2
+      component: 'Wall Brick/Block',
+      materialName: WallBrickBlock[0]?.name,
+      cost: WallBrickBlock[0]?.costperitem,
     },
     {
       id: 2,
-      srNo: 2,
-      wallBrickBlock: WallBrickBlock[1]?.name,
-      wallBrickBlockCost: WallBrickBlock[1]?.costperitem,
-      exteriorFinish: ExteriorFinish[1]?.name,
-      exteriorFinishCost: ExteriorFinish[1]?.costperitem,
-      interiorFinish: InteriorFinish[1]?.name,
-      interiorFinishCost: InteriorFinish[1]?.costperitem,
-      insulation: Insulation[1]?.name,
-      insulationCost: Insulation[1]?.costperitem,
-      insulationThickness: 2
+      component: 'Exterior Finish',
+      materialName: ExteriorFinish[0]?.name,
+      cost: ExteriorFinish[0]?.costperitem,
     },
-    // Add more rows as needed
+    {
+      id: 3,
+      component: 'Interior Finish',
+      materialName: InteriorFinish[0]?.name,
+      cost: InteriorFinish[0]?.costperitem,
+    },
+    {
+      id: 4,
+      component: 'Insulation',
+      materialName: Insulation[0]?.name,
+      cost: Insulation[0]?.costperitem,
+    },
   ];
 
-  const cellStyle = {
-    fontWeight: 'medium',
-    textAlign: 'center',
-    padding: '12px 8px',
-    whiteSpace: 'nowrap',
+  const [materialsData, setMaterialsData] = useState(initialData);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editingRowIndex, setEditingRowIndex] = useState(null);
+
+  // Prepare data for modal
+  const getEditingMaterial = () => {
+    if (editingRowIndex === null) return null;
+    const row = materialsData[editingRowIndex];
+    if (!row) return null;
+    // Map row to modal fields
+    return {
+      wallBrickBlock: row.component === 'Wall Brick/Block' ? row.materialName : '',
+      wallBrickBlockCost: row.component === 'Wall Brick/Block' ? row.cost : '',
+      exteriorFinish: row.component === 'Exterior Finish' ? row.materialName : '',
+      exteriorFinishCost: row.component === 'Exterior Finish' ? row.cost : '',
+      interiorFinish: row.component === 'Interior Finish' ? row.materialName : '',
+      interiorFinishCost: row.component === 'Interior Finish' ? row.cost : '',
+      insulation: row.component === 'Insulation' ? row.materialName : '',
+      insulationCost: row.component === 'Insulation' ? row.cost : '',
+      insulationThickness: '',
+    };
   };
 
-  const headers = [
-    'Sr. No',
-    'Wall Brick Block',
-    'Cost (Rs.)',
-    'Exterior Finish',
-    'Cost (Rs.)',
-    'Interior Finish',
-    'Cost (Rs.)',
-    'Insulation',
-    'Cost (Rs.)',
-    'Insulation Thickness (in)',
-    'Action'
-  ];
+  const handleEdit = (rowIndex) => {
+    setEditingRowIndex(rowIndex);
+    setEditModalOpen(true);
+  };
 
-  const handleAction = (action, id) => {
-    // Placeholder for edit/delete actions
-    if (action === 'Edit') {
-      // Implement edit logic
-    } else if (action === 'Delete') {
-      // Implement delete logic
-    }
+  const handleSave = (formData) => {
+    setMaterialsData((prev) => {
+      const updated = [...prev];
+      if (editingRowIndex === null) return prev;
+      let updatedRow = { ...updated[editingRowIndex] };
+      if (updatedRow.component === 'Wall Brick/Block') {
+        updatedRow.materialName = formData.wallBrickBlock;
+        updatedRow.cost = formData.wallBrickBlockCost;
+      } else if (updatedRow.component === 'Exterior Finish') {
+        updatedRow.materialName = formData.exteriorFinish;
+        updatedRow.cost = formData.exteriorFinishCost;
+      } else if (updatedRow.component === 'Interior Finish') {
+        updatedRow.materialName = formData.interiorFinish;
+        updatedRow.cost = formData.interiorFinishCost;
+      } else if (updatedRow.component === 'Insulation') {
+        updatedRow.materialName = formData.insulation;
+        updatedRow.cost = formData.insulationCost;
+      }
+      updated[editingRowIndex] = updatedRow;
+      return updated;
+    });
+    setEditModalOpen(false);
+    setEditingRowIndex(null);
+  };
+
+  const handleCloseModal = () => {
+    setEditModalOpen(false);
+    setEditingRowIndex(null);
   };
 
   return (
-    <Paper elevation={2} sx={{ borderRadius: 2, overflow: 'hidden' }}>
-      <TableContainer>
-        <Table sx={{ minWidth: 1200 }} stickyHeader>
+    <div className="grid grid-cols-1 p-2">
+      <TableContainer component={Paper}>
+        <Table>
           <TableHead>
-            <TableRow>
-              {headers.map((header, index) => (
-                <TableCell key={index} sx={{
-                  backgroundColor: "#f7f6fb",
-                  fontWeight: 'bold',
-                  textAlign: 'center',
-                  padding: '16px 8px',
-                  minWidth: 100,
-                  whiteSpace: 'nowrap',
-                }}>
-                  {header}
-                </TableCell>
-              ))}
+            <TableRow sx={{ backgroundColor: '#f7f6fb' }}>
+              <TableCell sx={{ fontWeight: 'bold', color: '#000' }}>Component</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', color: '#000' }}>Material Name</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', color: '#000' }}>Cost (Rs.)</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {materialsCostData.map((row) => (
+            {materialsData.map((row, idx) => (
               <TableRow
                 key={row.id}
                 sx={{
-                  backgroundColor: "#ffffff",
+                  backgroundColor: '#ffffff',
                   '&:hover': {
-                    backgroundColor: "#f7f6fb"
-                  }
+                    backgroundColor: '#f7f6fb',
+                  },
                 }}
               >
-                <TableCell sx={cellStyle}>{row.srNo}</TableCell>
-                <TableCell sx={cellStyle}>{row.wallBrickBlock}</TableCell>
-                <TableCell sx={cellStyle}>{row.wallBrickBlockCost}</TableCell>
-                <TableCell sx={cellStyle}>{row.exteriorFinish}</TableCell>
-                <TableCell sx={cellStyle}>{row.exteriorFinishCost}</TableCell>
-                <TableCell sx={cellStyle}>{row.interiorFinish}</TableCell>
-                <TableCell sx={cellStyle}>{row.interiorFinishCost}</TableCell>
-                <TableCell sx={cellStyle}>{row.insulation}</TableCell>
-                <TableCell sx={cellStyle}>{row.insulationCost}</TableCell>
-                <TableCell sx={cellStyle}>
-                  {row.insulationThickness || (row.insulation === 'No Insulation Used' ? '-' : 'N/A')}
-                </TableCell>
-                <TableCell sx={cellStyle}>
-                  <IconButton
-                    color="primary"
-                    onClick={() => handleAction('Edit', row.id)}
-                    size="small"
-                    sx={{ mr: 1 }}
-                  >
-                    <Edit size={18} />
-                  </IconButton>
-                  <IconButton
-                    color="error"
-                    onClick={() => handleAction('Delete', row.id)}
-                    size="small"
-                  >
-                    <Trash2 size={18} />
-                  </IconButton>
+                <TableCell>{row.component}</TableCell>
+                <TableCell>{row.materialName}</TableCell>
+                <TableCell>
+                  <div>
+                    <div>{row.cost}</div>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: '#2663eb',
+                        cursor: 'pointer',
+                        textDecoration: 'underline',
+                        '&:hover': {
+                          color: '#1557b0',
+                        },
+                      }}
+                      onClick={() => handleEdit(idx)}
+                    >
+                      Edit
+                    </Typography>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-    </Paper>
+      {/* Edit Modal */}
+      <MaterialModal
+        open={editModalOpen}
+        onClose={handleCloseModal}
+        onSave={handleSave}
+        editingMaterial={getEditingMaterial()}
+      />
+      <Box sx={{ mt: 3, p: 2, backgroundColor: '#f7f6fb', borderRadius: 1 }}>
+        <Typography variant="body2" sx={{ fontStyle: 'italic', color: '#000' }}>
+          <strong>Note:</strong> All the values of material cost are taken from market rates and can be edited as per your project.
+        </Typography>
+      </Box>
+    </div>
   );
-} 
+}
