@@ -9,7 +9,7 @@ import {
   IconButton,
   Paper
 } from '@mui/material';
-import { Edit, Trash2, Package } from 'lucide-react';
+import { Edit, Trash2 } from 'lucide-react';
 
 export default function MaterialsTable({ 
   data, 
