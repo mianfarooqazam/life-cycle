@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from 'react';
 import TitleHeader from '@/app/components/header/TitleHeader';
 import { Toaster } from 'react-hot-toast';
@@ -13,9 +14,16 @@ import {
   Select,
   MenuItem,
   Box,
+  Tabs,
+  Tab,
+  Typography
 } from '@mui/material';
+import MaterialsTable from '@/app/components/table/MaterialsTable';
+import { WallBrickBlock, ExteriorFinish, InteriorFinish, Insulation } from '@/app/data/Materials';
+import { Package, DollarSign } from 'lucide-react';
 
 export default function Materials() {
+  const [activeTab, setActiveTab] = useState(0);
   const [selectedView, setSelectedView] = useState('total');
 
   const viewOptions = [
@@ -53,7 +61,6 @@ export default function Materials() {
           allMaterials.steel,
           allMaterials.crush
         ];
-      
       case 'basement-strip':
         return [
           allMaterials.bricks,
@@ -61,14 +68,12 @@ export default function Materials() {
           allMaterials.sand,
           allMaterials.crush
         ];
-      
       case 'retaining-wall-brick':
         return [
           allMaterials.bricksRetaining,
           allMaterials.cement,
           allMaterials.sand
         ];
-      
       case 'retaining-wall-concrete':
         return [
           allMaterials.cement,
@@ -76,14 +81,12 @@ export default function Materials() {
           allMaterials.steel,
           allMaterials.crush
         ];
-      
       case 'building-floor':
         return [
           allMaterials.bricks,
           allMaterials.cement,
           allMaterials.sand
         ];
-      
       case 'ground-slab':
         return [
           allMaterials.cement,
@@ -91,21 +94,18 @@ export default function Materials() {
           allMaterials.steel,
           allMaterials.crush
         ];
-      
       case 'mumty-wall':
         return [
           allMaterials.bricks,
           allMaterials.cement,
           allMaterials.sand
         ];
-      
       case 'parapet-walls':
         return [
           allMaterials.bricks,
           allMaterials.cement,
           allMaterials.sand
         ];
-      
       case 'water-tank':
         return [
           allMaterials.bricks,
@@ -114,7 +114,6 @@ export default function Materials() {
           allMaterials.steel,
           allMaterials.crush
         ];
-      
       case 'septic-tank':
         return [
           allMaterials.bricks,
@@ -123,7 +122,6 @@ export default function Materials() {
           allMaterials.steel,
           allMaterials.crush
         ];
-      
       case 'column':
         return [
           allMaterials.cement,
@@ -131,7 +129,6 @@ export default function Materials() {
           allMaterials.steel,
           allMaterials.crush
         ];
-      
       case 'beam':
         return [
           allMaterials.cement,
@@ -139,7 +136,6 @@ export default function Materials() {
           allMaterials.steel,
           allMaterials.crush
         ];
-      
       case 'total':
       default:
         return [
@@ -157,68 +153,159 @@ export default function Materials() {
     setSelectedView(event.target.value);
   };
 
-  const materialsData = getMaterialsData(selectedView);
+  // Prepare dummy data for Materials Cost tab (for demonstration)
+  const materialsCostData = [
+    {
+      id: 1,
+      srNo: 1,
+      wallBrickBlock: WallBrickBlock[0]?.name,
+      wallBrickBlockCost: WallBrickBlock[0]?.costperitem,
+      exteriorFinish: ExteriorFinish[0]?.name,
+      exteriorFinishCost: ExteriorFinish[0]?.costperitem,
+      interiorFinish: InteriorFinish[0]?.name,
+      interiorFinishCost: InteriorFinish[0]?.costperitem,
+      insulation: Insulation[0]?.name,
+      insulationCost: Insulation[0]?.costperitem,
+      insulationThickness: 2
+    },
+    {
+      id: 2,
+      srNo: 2,
+      wallBrickBlock: WallBrickBlock[1]?.name,
+      wallBrickBlockCost: WallBrickBlock[1]?.costperitem,
+      exteriorFinish: ExteriorFinish[1]?.name,
+      exteriorFinishCost: ExteriorFinish[1]?.costperitem,
+      interiorFinish: InteriorFinish[1]?.name,
+      interiorFinishCost: InteriorFinish[1]?.costperitem,
+      insulation: Insulation[1]?.name,
+      insulationCost: Insulation[1]?.costperitem,
+      insulationThickness: 2
+    },
+    // Add more rows as needed
+  ];
 
   return (
-    <div className="grid grid-cols-1  p-2">
+    <div className="grid grid-cols-1 p-2">
       <Toaster />
       <TitleHeader>Materials</TitleHeader>
-      
-      {/* Selection Input */}
-      <Box sx={{ mb: 3 }}>
-        
-        <FormControl sx={{ minWidth: 200 }}>
-          <InputLabel>Select View</InputLabel>
-          <Select
-            value={selectedView}
-            label="Select View"
-            onChange={handleViewChange}
-          >
-            {viewOptions.map((option) => (
-              <MenuItem 
-                key={option.value} 
-                value={option.value}
-                sx={{ 
-                  fontWeight: option.value === 'total' ? 'bold' : 'normal' 
-                }}
-              >
-                {option.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+      <Box sx={{ backgroundColor: '#f7f6fb', mb: 2 }}>
+        <Tabs
+          value={activeTab}
+          onChange={(_, newValue) => setActiveTab(newValue)}
+          variant="scrollable"
+          scrollButtons="auto"
+          sx={{ '& .MuiTabs-indicator': { backgroundColor: '#1976d2' } }}
+        >
+          <Tab
+            label={
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}>
+                <Package size={20} />
+                <Typography
+                  variant="caption"
+                  sx={{ color: activeTab === 0 ? '#1976d2' : 'black' }}
+                >
+                  Materials Quantity
+                </Typography>
+              </Box>
+            }
+            sx={{
+              textTransform: 'none',
+              minHeight: 'auto',
+              py: 1.5,
+              px: 2,
+              color: 'black',
+              '&.Mui-selected': {
+                color: '#1976d2',
+              },
+              '&:hover': {
+                color: '#1565c0',
+              },
+            }}
+          />
+          <Tab
+            label={
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}>
+                <DollarSign size={20} />
+                <Typography
+                  variant="caption"
+                  sx={{ color: activeTab === 1 ? '#1976d2' : 'black' }}
+                >
+                  Materials Cost
+                </Typography>
+              </Box>
+            }
+            sx={{
+              textTransform: 'none',
+              minHeight: 'auto',
+              py: 1.5,
+              px: 2,
+              color: 'black',
+              '&.Mui-selected': {
+                color: '#1976d2',
+              },
+              '&:hover': {
+                color: '#1565c0',
+              },
+            }}
+          />
+        </Tabs>
       </Box>
-      
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow sx={{ backgroundColor: "#f7f6fb" }}>
-              <TableCell sx={{ fontWeight: "bold", color: "#000" }}>Materials</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#000" }}>Quantity</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {materialsData.map((row, index) => (
-              <TableRow 
-                key={index}
-                sx={{ 
-                  backgroundColor: "#ffffff",
-                  '&:hover': {
-                    backgroundColor: "#f7f6fb"
-                  }
-                }}
-              >
-                <TableCell sx={{ fontWeight: "medium" }}>
-                  {row.material}
-                </TableCell>
-                <TableCell>
-                  {row.quantity}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <Box sx={{ mt: 3 }}>
+        {activeTab === 0 && (
+          <>
+            {/* Selection Input */}
+            <Box sx={{ mb: 3 }}>
+              <FormControl sx={{ minWidth: 200 }}>
+                <InputLabel>Select View</InputLabel>
+                <Select
+                  value={selectedView}
+                  label="Select View"
+                  onChange={handleViewChange}
+                >
+                  {viewOptions.map((option) => (
+                    <MenuItem
+                      key={option.value}
+                      value={option.value}
+                      sx={{ fontWeight: option.value === 'total' ? 'bold' : 'normal' }}
+                    >
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow sx={{ backgroundColor: "#f7f6fb" }}>
+                    <TableCell sx={{ fontWeight: "bold", color: "#000" }}>Materials</TableCell>
+                    <TableCell sx={{ fontWeight: "bold", color: "#000" }}>Quantity</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {getMaterialsData(selectedView).map((row, index) => (
+                    <TableRow
+                      key={index}
+                      sx={{
+                        backgroundColor: "#ffffff",
+                        '&:hover': {
+                          backgroundColor: "#f7f6fb"
+                        }
+                      }}
+                    >
+                      <TableCell sx={{ fontWeight: "medium" }}>{row.material}</TableCell>
+                      <TableCell>{row.quantity}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        )}
+        {activeTab === 1 && (
+          <MaterialsTable data={materialsCostData} minWidth={1200} />
+        )}
+      </Box>
     </div>
   );
 }
