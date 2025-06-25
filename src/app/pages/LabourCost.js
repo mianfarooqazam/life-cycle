@@ -15,6 +15,7 @@ import {
   TextField,
   Button,
   Box,
+  Alert,
 } from '@mui/material';
 
 export default function LabourCost() {
@@ -145,11 +146,9 @@ export default function LabourCost() {
       </TableContainer>
 
       {/* Note */}
-      <Box sx={{ mt: 3, p: 2, backgroundColor: "#f7f6fb", borderRadius: 1 }}>
-        <Typography variant="body2" sx={{ fontStyle: "italic", color: "#000" }}>
-          <strong>Note:</strong> All the values of labour rate is taken from market rate system (MRS-2022) Pakistan.
-        </Typography>
-      </Box>
+      <Alert severity="info" sx={{ mt: 3 }}>
+        <strong>Note:</strong> All the values of labour rate is taken from market rate system (MRS-2022) Pakistan.
+      </Alert>
 
       {/* Edit Rate Modal */}
       <Dialog 
