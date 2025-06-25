@@ -6,6 +6,7 @@ export const useInteriorWallStore = create(
     (set, get) => ({
       // Form state
       formData: {
+        wallMaterial: '',
         length: '',
         height: '',
         thickness: '',
@@ -47,6 +48,7 @@ export const useInteriorWallStore = create(
       })),
       resetFormData: () => set({
         formData: {
+          wallMaterial: '',
           length: '',
           height: '',
           thickness: '',

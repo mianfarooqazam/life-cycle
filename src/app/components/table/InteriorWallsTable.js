@@ -41,6 +41,7 @@ export default function InteriorWallsTable({ data, onEdit, onDelete, minWidth = 
                     <TableHead>
                         <TableRow>
                             <TableCell sx={headerStyle}>Sr. No.</TableCell>
+                            <TableCell sx={headerStyle}>Wall Material</TableCell>
                             <TableCell sx={headerStyle}>Wall Area (ft²)</TableCell>
                             <TableCell sx={headerStyle}>Wall Volume (ft³)</TableCell>
                             <TableCell sx={headerStyle}>Curtain Wall</TableCell>
@@ -61,7 +62,7 @@ export default function InteriorWallsTable({ data, onEdit, onDelete, minWidth = 
                     <TableBody>
                         {data.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={14} align="center" sx={{ py: 4 }}>
+                                <TableCell colSpan={16} align="center" sx={{ py: 4 }}>
                                     <Typography variant="body1" color="text.secondary">
                                         No interior wall data available. Add some data to get started.
                                     </Typography>
@@ -74,6 +75,7 @@ export default function InteriorWallsTable({ data, onEdit, onDelete, minWidth = 
                                     sx={{ backgroundColor: '#ffffff', '&:hover': { backgroundColor: '#f7f6fb' } }}
                                 >
                                     <TableCell sx={cellStyle}>{idx + 1}</TableCell>
+                                    <TableCell sx={cellStyle}>{row.wallMaterial || '-'}</TableCell>
                                     <TableCell sx={cellStyle}>{row.wallArea || '-'}</TableCell>
                                     <TableCell sx={cellStyle}>{row.wallVolume || '-'}</TableCell>
                                     <TableCell sx={cellStyle}>{row.isCurtainWall === 'yes' ? 'Yes' : 'No'}</TableCell>

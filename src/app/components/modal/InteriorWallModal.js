@@ -23,6 +23,7 @@ import SaveButton from '@/app/components/button/SaveButton';
 import TextInput from '@/app/components/input/TextInput';
 import InteriorWallsTable from '@/app/components/table/InteriorWallsTable';
 import { useInteriorWallStore } from '@/app/store/interiorWallStore';
+import { WallBrickBlock } from '@/app/data/Materials';
 
 const modalStyle = {
     position: 'absolute',
@@ -74,6 +75,7 @@ export default function InteriorWallModal({ open, onClose, selectedFloorName, fl
         const row = getEditingRow(id);
         if (row) {
             updateFormData({
+                wallMaterial: row.wallMaterial || '',
                 length: row.length || '',
                 height: row.height || '',
                 thickness: row.thickness || '',
@@ -150,6 +152,7 @@ export default function InteriorWallModal({ open, onClose, selectedFloorName, fl
         const newRow = {
             id: editingId || Date.now(),
             floorNumber,
+            wallMaterial: formData.wallMaterial,
             wallArea: calculateWallArea(),
             wallVolume: calculateWallVolume(),
             isCurtainWall: formData.isCurtainWall,
@@ -266,6 +269,25 @@ export default function InteriorWallModal({ open, onClose, selectedFloorName, fl
                     <div className="grid grid-cols-1 gap-6">
                         {/* Interior Wall Form */}
                         <div className="flex flex-col gap-4">
+                            {/* Wall Material Selection */}
+                            <div className="flex flex-row gap-4">
+                                <div className="flex-1">
+                                    <FormControl  sx={{ width: '50%' }}>
+                                        <InputLabel id="wall-material-label">Wall Material</InputLabel>
+                                        <Select
+                                            labelId="wall-material-label"
+                                            id="wall-material"
+                                            value={formData.wallMaterial}
+                                            label="Wall Material"
+                                            onChange={(e) => updateFormData({ wallMaterial: e.target.value })}
+                                        >
+                                            {WallBrickBlock.map((item) => (
+                                                <MenuItem key={item.name} value={item.name}>{item.name}</MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                </div>
+                            </div>
                             {/* First row: Length & Height */}
                             <div className="flex flex-row gap-4">
                                 <div className="flex-1">
