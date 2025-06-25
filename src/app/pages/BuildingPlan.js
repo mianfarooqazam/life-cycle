@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { calculatePlotArea } from '@/app/utils/buildingPlanCalc';
 import SaveButton from '@/app/components/button/SaveButton';
 import { useBuildingPlanStore } from '@/app/store/buildingPlanStore';
@@ -13,6 +14,10 @@ import {
    Radio,
    FormLabel
 } from '@mui/material';
+
+const ArchitecturalMapModal = dynamic(() => import('@/app/components/modal/ArchitecturalMapModal'), {
+    ssr: false
+});
 
 export default function BuildingPlan() {
    const {
@@ -45,6 +50,8 @@ export default function BuildingPlan() {
        numberOfWashrooms: numberOfWashrooms || '',
        numberOfLounges: numberOfLounges || ''
    });
+
+   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
 
    useEffect(() => {
        setFormData({
@@ -152,6 +159,14 @@ export default function BuildingPlan() {
            value: "Crawler Excavation", label: "Crawler Excavation"
        }
    ];
+
+   let floors = getFloorsHelperText(formData.numberOfFloors)
+       .replace(/[()]/g, '')
+       .split(', ')
+       .filter(floor => floor);
+   if (formData.isBasementUsed === 'yes') {
+       floors = ['Basement', ...floors];
+   }
 
    return (
        <div className="grid grid-cols-1 gap-6 p-2">
@@ -282,6 +297,19 @@ export default function BuildingPlan() {
                    placeholder="applies to each floor equally"
                />
            </div>
+           {/* Centered OR above the Open Architectural Map button */}
+           <div className="w-full flex flex-col items-center">
+               <span className="text-gray-500 font-semibold mb-2">OR</span>
+           </div>
+           <div className="grid grid-cols-1 justify-items-center mt-4">
+               <button
+                   className="mb-4 px-6 py-2 rounded font-semibold shadow"
+                   style={{ backgroundColor: '#5BB045', color: '#fff', textTransform: 'none', fontWeight: 600, fontSize: '1rem', boxShadow: '0 2px 8px rgba(91, 176, 69, 0.3)' }}
+                   onClick={() => setIsMapModalOpen(true)}
+               >
+                   Draw Architectural Map
+               </button>
+           </div>
            <div className="grid grid-cols-1 justify-items-end">
                <SaveButton
                    onClick={handleSave}
@@ -289,6 +317,7 @@ export default function BuildingPlan() {
                    errorMessage={getErrorMessage()}
                />
            </div>
+           {isMapModalOpen && <ArchitecturalMapModal open={isMapModalOpen} onClose={() => setIsMapModalOpen(false)} plotArea={plotArea} floors={floors} />}
        </div>
    );
 }
