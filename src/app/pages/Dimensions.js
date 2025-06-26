@@ -12,8 +12,7 @@ import {
   BrickWall,
   DoorClosed,
   Grid2X2,
-  Cuboid,
-  Map,
+  Cuboid
 } from 'lucide-react';
 import {
   Box,
@@ -21,7 +20,6 @@ import {
   Tab,
   Typography
 } from '@mui/material';
-import FloorPlan from '../tabs/FloorPlan';
 import BuildingFloor from '@/app/tabs/BuildingFloor';
 import MumtyWalls from '@/app/tabs/MumtyWalls';
 import ParapetWalls from '@/app/tabs/ParapetWalls';
@@ -40,7 +38,6 @@ export default function Dimensions() {
   const [activeTab, setActiveTab] = useState(0);
 
   const tabs = [
-    { id: 'floorPlan', name: 'Floor Plan', component: FloorPlan, icon: Map },
     { id: 'basement', name: 'Basement', component: BasementDetails, icon: Layers2 },
     { id: 'buildingFloor', name: 'Building Floor', component: BuildingFloor, icon: Layers },
     { id: 'mumtyWalls', name: 'Mumty Walls', component: MumtyWalls, icon: BoxIcon },
