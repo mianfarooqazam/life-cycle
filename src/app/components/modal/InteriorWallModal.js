@@ -202,6 +202,11 @@ export default function InteriorWallModal({ open, onClose, selectedFloorName, fl
             windowThickness: windowForm.thickness,
             windowQuantity: windowForm.quantity,
             windowCost: windowForm.costPerWindow,
+            // Ensure select fields are always present
+            wallMaterial: formData.wallMaterial,
+            exteriorFinish: formData.exteriorFinish,
+            interiorFinish: formData.interiorFinish,
+            insulationType: formData.insulationType,
         };
         if (editingId) {
             updateInteriorWallData(editingId, newRow);

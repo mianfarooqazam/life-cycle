@@ -107,6 +107,10 @@ export default function BuildingFloor() {
         glassThickness: row.glassThickness || '',
         isTilesUsed: row.isTilesUsed || 'no',
         tileHeight: row.tileHeight || '',
+        wallMaterial: row.wallMaterial || '',
+        exteriorFinish: row.exteriorFinish || '',
+        interiorFinish: row.interiorFinish || '',
+        insulationType: row.insulationType || '',
       });
       updateExteriorDoorForm({
         doorType: row.doorType || '',
@@ -144,6 +148,10 @@ export default function BuildingFloor() {
         glassThickness: row.glassThickness || '',
         isTilesUsed: row.isTilesUsed || 'no',
         tileHeight: row.tileHeight || '',
+        wallMaterial: row.wallMaterial || '',
+        exteriorFinish: row.exteriorFinish || '',
+        interiorFinish: row.interiorFinish || '',
+        insulationType: row.insulationType || '',
       });
       updateInteriorDoorForm({
         doorType: row.doorType || '',
