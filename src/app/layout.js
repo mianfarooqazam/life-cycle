@@ -1,7 +1,7 @@
 import { Numans } from "next/font/google";
 import "./globals.css";
 import ClientProvider from './context/ClientProvider';
-import ToastProvider from './components/toast/ToastProvider';
+// import ToastProvider from './components/toast/ToastProvider';
 
 const numans = Numans({
   weight: ["400"],
@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
           {children}
         </ClientProvider>
         
-        <ToastProvider />
+        {/* <ToastProvider /> */}
       </body>
     </html>
   );
