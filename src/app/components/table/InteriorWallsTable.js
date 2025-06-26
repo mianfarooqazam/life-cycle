@@ -49,6 +49,7 @@ export default function InteriorWallsTable({ data, onEdit, onDelete, minWidth = 
                             <TableCell sx={headerStyle}>Curtain Wall</TableCell>
                             <TableCell sx={headerStyle}>Glass Thickness (mm)</TableCell>
                             <TableCell sx={headerStyle}>Insulation Used?</TableCell>
+                            <TableCell sx={headerStyle}>Insulation Type</TableCell>
                             <TableCell sx={headerStyle}>Insulation Thickness (in)</TableCell>
                             <TableCell sx={headerStyle}>Tiles Used?</TableCell>
                             <TableCell sx={headerStyle}>Tile Height (ft)</TableCell>
@@ -64,7 +65,7 @@ export default function InteriorWallsTable({ data, onEdit, onDelete, minWidth = 
                     <TableBody>
                         {data.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={18} align="center" sx={{ py: 4 }}>
+                                <TableCell colSpan={19} align="center" sx={{ py: 4 }}>
                                     <Typography variant="body1" color="text.secondary">
                                         No interior wall data available. Add some data to get started.
                                     </Typography>
@@ -85,6 +86,7 @@ export default function InteriorWallsTable({ data, onEdit, onDelete, minWidth = 
                                     <TableCell sx={cellStyle}>{row.isCurtainWall === 'yes' ? 'Yes' : 'No'}</TableCell>
                                     <TableCell sx={cellStyle}>{row.isCurtainWall === 'yes' ? (row.glassThickness ? `${row.glassThickness} mm` : '-') : '-'}</TableCell>
                                     <TableCell sx={cellStyle}>{row.insulationUsed === 'yes' ? 'Yes' : 'No'}</TableCell>
+                                    <TableCell sx={cellStyle}>{row.insulationType || '-'}</TableCell>
                                     <TableCell sx={cellStyle}>{row.insulationThickness || '-'}</TableCell>
                                     <TableCell sx={cellStyle}>{row.isTilesUsed === 'yes' ? 'Yes' : 'No'}</TableCell>
                                     <TableCell sx={cellStyle}>{row.isTilesUsed === 'yes' ? row.tileHeight : '-'}</TableCell>

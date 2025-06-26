@@ -23,7 +23,7 @@ import SaveButton from '@/app/components/button/SaveButton';
 import TextInput from '@/app/components/input/TextInput';
 import InteriorWallsTable from '@/app/components/table/InteriorWallsTable';
 import { useInteriorWallStore } from '@/app/store/interiorWallStore';
-import { WallBrickBlock, ExteriorFinish, InteriorFinish } from '@/app/data/Materials';
+import { WallBrickBlock, ExteriorFinish, InteriorFinish, Insulation } from '@/app/data/Materials';
 
 const modalStyle = {
     position: 'absolute',
@@ -80,6 +80,7 @@ export default function InteriorWallModal({ open, onClose, selectedFloorName, fl
                 height: row.height || '',
                 thickness: row.thickness || '',
                 isInsulationUsed: row.insulationUsed || 'no',
+                insulationType: row.insulationType || '',
                 insulationThickness: row.insulationThickness || '',
                 isCurtainWall: row.isCurtainWall || 'no',
                 glassThickness: row.glassThickness || '',
@@ -160,6 +161,7 @@ export default function InteriorWallModal({ open, onClose, selectedFloorName, fl
             isCurtainWall: formData.isCurtainWall,
             glassThickness: formData.glassThickness,
             insulationUsed: formData.isInsulationUsed,
+            insulationType: formData.insulationType,
             insulationThickness: formData.insulationThickness,
             isTilesUsed: formData.isTilesUsed,
             tileHeight: formData.tileHeight,
@@ -438,19 +440,36 @@ export default function InteriorWallModal({ open, onClose, selectedFloorName, fl
                                         </RadioGroup>
                                     </FormControl>
                                 </div>
-                                {/* Insulation Thickness Input */}
+                                {/* Insulation Type and Thickness Input */}
                                 {formData.isInsulationUsed === 'yes' && (
-                                    <div>
-                                        <TextInput
-                                            label="Interior Wall Insulation Thickness (inch)"
-                                            name="insulationThickness"
-                                            type="number"
-                                            value={formData.insulationThickness}
-                                            onChange={(e) => updateFormData({ insulationThickness: e.target.value })}
-                                            required
-                                            inputProps={{ min: "0", step: "0.1" }}
-                                            sx={{ maxWidth: 250 }}
-                                        />
+                                    <div className="flex flex-row gap-4">
+                                        <div className="flex-1">
+                                            <FormControl fullWidth>
+                                                <InputLabel id="insulation-type-label">Insulation Type</InputLabel>
+                                                <Select
+                                                    labelId="insulation-type-label"
+                                                    id="insulation-type"
+                                                    value={formData.insulationType}
+                                                    label="Insulation Type"
+                                                    onChange={(e) => updateFormData({ insulationType: e.target.value })}
+                                                >
+                                                    {Insulation.map((item) => (
+                                                        <MenuItem key={item.name} value={item.name}>{item.name}</MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                        </div>
+                                        <div className="flex-1">
+                                            <TextInput
+                                                label="Interior Wall Insulation Thickness (inch)"
+                                                name="insulationThickness"
+                                                type="number"
+                                                value={formData.insulationThickness}
+                                                onChange={(e) => updateFormData({ insulationThickness: e.target.value })}
+                                                required
+                                                inputProps={{ min: "0", step: "0.1" }}
+                                            />
+                                        </div>
                                     </div>
                                 )}
                                 {/* Tiles Used Radio Button */}
