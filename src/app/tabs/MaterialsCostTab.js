@@ -156,6 +156,13 @@ export default function MaterialsCostTab() {
         const row = materialsData[editingRowIndex];
         if (!row) return null;
         
+        let originalWall;
+        if (row.wallType === 'exterior') {
+            originalWall = exteriorWalls.find(wall => wall.id === row.wallId);
+        } else {
+            originalWall = interiorWalls.find(wall => wall.id === row.wallId);
+        }
+        
         // Initialize modal data
         const modalData = {
             wallBrickBlock: '',
@@ -166,7 +173,7 @@ export default function MaterialsCostTab() {
             interiorFinishCost: '',
             insulation: '',
             insulationCost: '',
-            insulationThickness: '',
+            insulationThickness: originalWall?.insulationThickness || '',
             // Add flags to indicate which materials are present
             hasWallMaterial: false,
             hasExteriorFinish: false,
