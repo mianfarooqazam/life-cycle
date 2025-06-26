@@ -261,7 +261,7 @@ export default function MaterialsCostTab() {
 
     return (
         <div className="grid grid-cols-1 p-2">
-            <TableContainer component={Paper}>
+            <TableContainer >
                 <Table>
                     <TableHead>
                         <TableRow sx={{ backgroundColor: '#f7f6fb' }}>
@@ -274,7 +274,7 @@ export default function MaterialsCostTab() {
                     <TableBody>
                         {materialsData.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={4} align="center">No materials added for this floor.</TableCell>
+                                <TableCell colSpan={4} align="center">No materials added</TableCell>
                             </TableRow>
                         ) : (
                             materialsData.map((row, idx) => (
