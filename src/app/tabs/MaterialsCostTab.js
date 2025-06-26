@@ -337,6 +337,11 @@ export default function MaterialsCostTab() {
             <Alert severity="info" sx={{ mt: 3 }}>
                 <strong>Note:</strong> All the values of labour rate is taken from market rate system (MRS-2022) Pakistan.
             </Alert>
+            <Alert severity="info" sx={{ mt: 3 }}>
+                 If you want to delete materials, do it from respective tab.
+            </Alert>
+
         </div>
     );
 }
+
