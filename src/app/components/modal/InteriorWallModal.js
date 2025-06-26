@@ -479,7 +479,7 @@ export default function InteriorWallModal({ open, onClose, selectedFloorName, fl
                                 {/* Tiles Used Radio Button */}
                                 <div className="grid grid-cols-1">
                                     <FormControl component="fieldset">
-                                        <FormLabel component="legend">Is Tiles Used in Wall?</FormLabel>
+                                        <FormLabel component="legend">Are Tiles Used in Wall?</FormLabel>
                                         <RadioGroup
                                             row
                                             name="isTilesUsed"
