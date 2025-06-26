@@ -23,7 +23,7 @@ import SaveButton from '@/app/components/button/SaveButton';
 import TextInput from '@/app/components/input/TextInput';
 import InteriorWallsTable from '@/app/components/table/InteriorWallsTable';
 import { useInteriorWallStore } from '@/app/store/interiorWallStore';
-import { WallBrickBlock } from '@/app/data/Materials';
+import { WallBrickBlock, ExteriorFinish, InteriorFinish } from '@/app/data/Materials';
 
 const modalStyle = {
     position: 'absolute',
@@ -85,6 +85,8 @@ export default function InteriorWallModal({ open, onClose, selectedFloorName, fl
                 glassThickness: row.glassThickness || '',
                 isTilesUsed: row.isTilesUsed || 'no',
                 tileHeight: row.tileHeight || '',
+                exteriorFinish: row.exteriorFinish || '',
+                interiorFinish: row.interiorFinish || '',
             });
             updateDoorForm({
                 doorType: row.doorType || '',
@@ -162,6 +164,8 @@ export default function InteriorWallModal({ open, onClose, selectedFloorName, fl
             isTilesUsed: formData.isTilesUsed,
             tileHeight: formData.tileHeight,
             tilesArea: calculateTilesArea(),
+            exteriorFinish: formData.exteriorFinish,
+            interiorFinish: formData.interiorFinish,
             component:
                 formData.isCurtainWall === 'no'
                     ? [
@@ -269,10 +273,10 @@ export default function InteriorWallModal({ open, onClose, selectedFloorName, fl
                     <div className="grid grid-cols-1 gap-6">
                         {/* Interior Wall Form */}
                         <div className="flex flex-col gap-4">
-                            {/* Wall Material Selection */}
+                            {/* Wall Material and Finish Selection in one line */}
                             <div className="flex flex-row gap-4">
                                 <div className="flex-1">
-                                    <FormControl  sx={{ width: '50%' }}>
+                                    <FormControl fullWidth>
                                         <InputLabel id="wall-material-label">Wall Material</InputLabel>
                                         <Select
                                             labelId="wall-material-label"
@@ -282,6 +286,38 @@ export default function InteriorWallModal({ open, onClose, selectedFloorName, fl
                                             onChange={(e) => updateFormData({ wallMaterial: e.target.value })}
                                         >
                                             {WallBrickBlock.map((item) => (
+                                                <MenuItem key={item.name} value={item.name}>{item.name}</MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                </div>
+                                <div className="flex-1">
+                                    <FormControl fullWidth>
+                                        <InputLabel id="exterior-finish-label">Exterior Finish</InputLabel>
+                                        <Select
+                                            labelId="exterior-finish-label"
+                                            id="exterior-finish"
+                                            value={formData.exteriorFinish}
+                                            label="Exterior Finish"
+                                            onChange={(e) => updateFormData({ exteriorFinish: e.target.value })}
+                                        >
+                                            {ExteriorFinish.map((item) => (
+                                                <MenuItem key={item.name} value={item.name}>{item.name}</MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                </div>
+                                <div className="flex-1">
+                                    <FormControl fullWidth>
+                                        <InputLabel id="interior-finish-label">Interior Finish</InputLabel>
+                                        <Select
+                                            labelId="interior-finish-label"
+                                            id="interior-finish"
+                                            value={formData.interiorFinish}
+                                            label="Interior Finish"
+                                            onChange={(e) => updateFormData({ interiorFinish: e.target.value })}
+                                        >
+                                            {InteriorFinish.map((item) => (
                                                 <MenuItem key={item.name} value={item.name}>{item.name}</MenuItem>
                                             ))}
                                         </Select>

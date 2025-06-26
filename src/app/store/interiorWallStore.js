@@ -16,6 +16,8 @@ export const useInteriorWallStore = create(
         insulationThickness: '',
         isTilesUsed: 'no',
         tileHeight: '',
+        exteriorFinish: '',
+        interiorFinish: '',
       },
       doorForm: {
         doorType: '',
@@ -58,6 +60,8 @@ export const useInteriorWallStore = create(
           insulationThickness: '',
           isTilesUsed: 'no',
           tileHeight: '',
+          exteriorFinish: '',
+          interiorFinish: '',
         }
       }),
       resetDoorForm: () => set({

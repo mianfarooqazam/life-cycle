@@ -44,6 +44,8 @@ export default function ExteriorWallsTable({ data, onEdit, onDelete, minWidth = 
                         <TableRow>
                             <TableCell sx={headerStyle}>Sr. No.</TableCell>
                             <TableCell sx={headerStyle}>Wall Material</TableCell>
+                            <TableCell sx={headerStyle}>Exterior Finish</TableCell>
+                            <TableCell sx={headerStyle}>Interior Finish</TableCell>
                             <TableCell sx={headerStyle}>Wall Area (ft²)</TableCell>
                             <TableCell sx={headerStyle}>Wall Volume (ft³)</TableCell>
                             <TableCell sx={headerStyle}>Curtain Wall</TableCell>
@@ -64,7 +66,7 @@ export default function ExteriorWallsTable({ data, onEdit, onDelete, minWidth = 
                     <TableBody>
                         {data.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={16} align="center" sx={{ py: 4 }}>
+                                <TableCell colSpan={18} align="center" sx={{ py: 4 }}>
                                     <Typography variant="body1" color="text.secondary">
                                         No exterior wall data available. Add some data to get started.
                                     </Typography>
@@ -78,6 +80,8 @@ export default function ExteriorWallsTable({ data, onEdit, onDelete, minWidth = 
                                 >
                                     <TableCell sx={cellStyle}>{idx + 1}</TableCell>
                                     <TableCell sx={cellStyle}>{row.wallMaterial || '-'}</TableCell>
+                                    <TableCell sx={cellStyle}>{row.exteriorFinish || '-'}</TableCell>
+                                    <TableCell sx={cellStyle}>{row.interiorFinish || '-'}</TableCell>
                                     <TableCell sx={cellStyle}>{row.wallArea || '-'}</TableCell>
                                     <TableCell sx={cellStyle}>{row.wallVolume || '-'}</TableCell>
                                     <TableCell sx={cellStyle}>{row.isCurtainWall === 'yes' ? 'Yes' : 'No'}</TableCell>
