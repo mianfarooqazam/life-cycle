@@ -69,7 +69,7 @@ export default function MaterialsCostTab() {
             }
 
             // Insulation
-            if (wall.isInsulationUsed === 'yes' && wall.insulationType) {
+            if (((wall.isInsulationUsed === 'yes' || wall.insulationUsed === 'yes') && wall.insulationType)) {
                 wallMaterials.push({
                     type: 'Insulation',
                     name: wall.insulationType, // Ensure name is set
@@ -123,7 +123,7 @@ export default function MaterialsCostTab() {
             }
 
             // Insulation
-            if (wall.isInsulationUsed === 'yes' && wall.insulationType) {
+            if (((wall.isInsulationUsed === 'yes' || wall.insulationUsed === 'yes') && wall.insulationType)) {
                 wallMaterials.push({
                     type: 'Insulation',
                     name: wall.insulationType, // Ensure name is set
@@ -339,8 +339,9 @@ export default function MaterialsCostTab() {
                 <strong>Note:</strong> All the values of labour rate is taken from market rate system (MRS-2022) Pakistan.
             </Alert>
             <Alert severity="info" sx={{ mt: 3 }}>
-                 If you want to delete materials, do it from respective tab.
+                 If you want to edit or delete materials, do it from respective tab. This tab just updates materials cost.
             </Alert>
+         
 
         </div>
     );
