@@ -33,67 +33,14 @@ export default function MaterialsCostTab() {
     // Build materials data based on what is present for the selected floor
     const materialsData = useMemo(() => {
         const data = [];
-        let wallCounter = 1;
+        let interiorWallCounter = 1;
+        let exteriorWallCounter = 1;
 
-        // Process Exterior Walls
-        exteriorWalls.forEach((wall, index) => {
-            const wallPrefix = `Exterior Wall ${wallCounter}`;
-            const wallMaterials = [];
-            
-            // Wall Material
-            if (wall.wallMaterial) {
-                wallMaterials.push({
-                    type: 'Wall Material',
-                    name: wall.wallMaterial,
-                    cost: wall.customWallMaterialCost || WallBrickBlock.find(m => m.name === wall.wallMaterial)?.costperitem || ''
-                });
-            }
-            
-            // Exterior Finish
-            if (wall.exteriorFinish) {
-                wallMaterials.push({
-                    type: 'Exterior Finish',
-                    name: wall.exteriorFinish,
-                    cost: wall.customExteriorFinishCost || ExteriorFinish.find(m => m.name === wall.exteriorFinish)?.costperitem || ''
-                });
-            }
-            
-            // Interior Finish
-            if (wall.interiorFinish) {
-                wallMaterials.push({
-                    type: 'Interior Finish',
-                    name: wall.interiorFinish,
-                    cost: wall.customInteriorFinishCost || InteriorFinish.find(m => m.name === wall.interiorFinish)?.costperitem || ''
-                });
-            }
-            
-            // Insulation
-            if (wall.isInsulationUsed === 'yes' && wall.insulationType) {
-                wallMaterials.push({
-                    type: 'Insulation',
-                    name: wall.insulationType,
-                    cost: wall.customInsulationCost || Insulation.find(m => m.name === wall.insulationType)?.costperitem || ''
-                });
-            }
-
-            if (wallMaterials.length > 0) {
-                data.push({
-                    id: `exterior-wall-${index}`,
-                    component: wallPrefix,
-                    materials: wallMaterials,
-                    wallId: wall.id,
-                    wallType: 'exterior'
-                });
-            }
-            
-            wallCounter++;
-        });
-
-        // Process Interior Walls
+        // Process Interior Walls FIRST
         interiorWalls.forEach((wall, index) => {
-            const wallPrefix = `Interior Wall ${wallCounter}`;
+            const wallPrefix = `Interior Wall ${interiorWallCounter}`;
             const wallMaterials = [];
-            
+
             // Wall Material
             if (wall.wallMaterial) {
                 wallMaterials.push({
@@ -102,7 +49,7 @@ export default function MaterialsCostTab() {
                     cost: wall.customWallMaterialCost || WallBrickBlock.find(m => m.name === wall.wallMaterial)?.costperitem || ''
                 });
             }
-            
+
             // Exterior Finish
             if (wall.exteriorFinish) {
                 wallMaterials.push({
@@ -111,7 +58,7 @@ export default function MaterialsCostTab() {
                     cost: wall.customExteriorFinishCost || ExteriorFinish.find(m => m.name === wall.exteriorFinish)?.costperitem || ''
                 });
             }
-            
+
             // Interior Finish
             if (wall.interiorFinish) {
                 wallMaterials.push({
@@ -120,12 +67,12 @@ export default function MaterialsCostTab() {
                     cost: wall.customInteriorFinishCost || InteriorFinish.find(m => m.name === wall.interiorFinish)?.costperitem || ''
                 });
             }
-            
+
             // Insulation
             if (wall.isInsulationUsed === 'yes' && wall.insulationType) {
                 wallMaterials.push({
                     type: 'Insulation',
-                    name: wall.insulationType,
+                    name: wall.insulationType, // Ensure name is set
                     cost: wall.customInsulationCost || Insulation.find(m => m.name === wall.insulationType)?.costperitem || ''
                 });
             }
@@ -139,8 +86,62 @@ export default function MaterialsCostTab() {
                     wallType: 'interior'
                 });
             }
-            
-            wallCounter++;
+
+            interiorWallCounter++;
+        });
+
+        // Process Exterior Walls SECOND
+        exteriorWalls.forEach((wall, index) => {
+            const wallPrefix = `Exterior Wall ${exteriorWallCounter}`;
+            const wallMaterials = [];
+
+            // Wall Material
+            if (wall.wallMaterial) {
+                wallMaterials.push({
+                    type: 'Wall Material',
+                    name: wall.wallMaterial,
+                    cost: wall.customWallMaterialCost || WallBrickBlock.find(m => m.name === wall.wallMaterial)?.costperitem || ''
+                });
+            }
+
+            // Exterior Finish
+            if (wall.exteriorFinish) {
+                wallMaterials.push({
+                    type: 'Exterior Finish',
+                    name: wall.exteriorFinish,
+                    cost: wall.customExteriorFinishCost || ExteriorFinish.find(m => m.name === wall.exteriorFinish)?.costperitem || ''
+                });
+            }
+
+            // Interior Finish
+            if (wall.interiorFinish) {
+                wallMaterials.push({
+                    type: 'Interior Finish',
+                    name: wall.interiorFinish,
+                    cost: wall.customInteriorFinishCost || InteriorFinish.find(m => m.name === wall.interiorFinish)?.costperitem || ''
+                });
+            }
+
+            // Insulation
+            if (wall.isInsulationUsed === 'yes' && wall.insulationType) {
+                wallMaterials.push({
+                    type: 'Insulation',
+                    name: wall.insulationType, // Ensure name is set
+                    cost: wall.customInsulationCost || Insulation.find(m => m.name === wall.insulationType)?.costperitem || ''
+                });
+            }
+
+            if (wallMaterials.length > 0) {
+                data.push({
+                    id: `exterior-wall-${index}`,
+                    component: wallPrefix,
+                    materials: wallMaterials,
+                    wallId: wall.id,
+                    wallType: 'exterior'
+                });
+            }
+
+            exteriorWallCounter++;
         });
 
         return data;

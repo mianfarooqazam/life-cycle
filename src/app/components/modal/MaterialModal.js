@@ -229,7 +229,7 @@ export default function MaterialModal({ open, onClose, onSave, editingMaterial }
                                 onChange={handleWallBrickBlockChange}
                                 variant="outlined"
                                 required
-                                disabled={loading || (editingMaterial && !editingMaterial.hasWallMaterial)}
+                                disabled={loading || !!editingMaterial || (editingMaterial && !editingMaterial.hasWallMaterial)}
                                 sx={{ flex: 1 }}
                             >
                                 {WallBrickBlock.map((block) => (
@@ -238,16 +238,18 @@ export default function MaterialModal({ open, onClose, onSave, editingMaterial }
                                     </MenuItem>
                                 ))}
                             </TextField>
-                            <TextField
-                                label="Cost (Rs.)"
-                                name="wallBrickBlockCost"
-                                type="number"
-                                value={formData.wallBrickBlockCost}
-                                onChange={handleInputChange}
-                                variant="outlined"
-                                disabled={loading || (editingMaterial && !editingMaterial.hasWallMaterial)}
-                                sx={{ width: '150px' }}
-                            />
+                            {(!editingMaterial || editingMaterial.hasWallMaterial) && (
+                                <TextField
+                                    label="Cost (Rs.)"
+                                    name="wallBrickBlockCost"
+                                    type="number"
+                                    value={formData.wallBrickBlockCost}
+                                    onChange={handleInputChange}
+                                    variant="outlined"
+                                    disabled={loading}
+                                    sx={{ width: '150px' }}
+                                />
+                            )}
                         </Box>
 
                         {/* Exterior Finish Section */}
@@ -260,7 +262,7 @@ export default function MaterialModal({ open, onClose, onSave, editingMaterial }
                                 onChange={handleExteriorFinishChange}
                                 variant="outlined"
                                 required
-                                disabled={loading || (editingMaterial && !editingMaterial.hasExteriorFinish)}
+                                disabled={loading || !!editingMaterial || (editingMaterial && !editingMaterial.hasExteriorFinish)}
                                 sx={{ flex: 1 }}
                             >
                                 {ExteriorFinish.map((finish) => (
@@ -269,16 +271,18 @@ export default function MaterialModal({ open, onClose, onSave, editingMaterial }
                                     </MenuItem>
                                 ))}
                             </TextField>
-                            <TextField
-                                label="Cost (Rs.)"
-                                name="exteriorFinishCost"
-                                type="number"
-                                value={formData.exteriorFinishCost}
-                                onChange={handleInputChange}
-                                variant="outlined"
-                                disabled={loading || (editingMaterial && !editingMaterial.hasExteriorFinish)}
-                                sx={{ width: '150px' }}
-                            />
+                            {(!editingMaterial || editingMaterial.hasExteriorFinish) && (
+                                <TextField
+                                    label="Cost (Rs.)"
+                                    name="exteriorFinishCost"
+                                    type="number"
+                                    value={formData.exteriorFinishCost}
+                                    onChange={handleInputChange}
+                                    variant="outlined"
+                                    disabled={loading}
+                                    sx={{ width: '150px' }}
+                                />
+                            )}
                         </Box>
 
                         {/* Interior Finish Section */}
@@ -291,7 +295,7 @@ export default function MaterialModal({ open, onClose, onSave, editingMaterial }
                                 onChange={handleInteriorFinishChange}
                                 variant="outlined"
                                 required
-                                disabled={loading || (editingMaterial && !editingMaterial.hasInteriorFinish)}
+                                disabled={loading || !!editingMaterial || (editingMaterial && !editingMaterial.hasInteriorFinish)}
                                 sx={{ flex: 1 }}
                             >
                                 {InteriorFinish.map((finish) => (
@@ -300,16 +304,18 @@ export default function MaterialModal({ open, onClose, onSave, editingMaterial }
                                     </MenuItem>
                                 ))}
                             </TextField>
-                            <TextField
-                                label="Cost (Rs.)"
-                                name="interiorFinishCost"
-                                type="number"
-                                value={formData.interiorFinishCost}
-                                onChange={handleInputChange}
-                                variant="outlined"
-                                disabled={loading || (editingMaterial && !editingMaterial.hasInteriorFinish)}
-                                sx={{ width: '150px' }}
-                            />
+                            {(!editingMaterial || editingMaterial.hasInteriorFinish) && (
+                                <TextField
+                                    label="Cost (Rs.)"
+                                    name="interiorFinishCost"
+                                    type="number"
+                                    value={formData.interiorFinishCost}
+                                    onChange={handleInputChange}
+                                    variant="outlined"
+                                    disabled={loading}
+                                    sx={{ width: '150px' }}
+                                />
+                            )}
                         </Box>
 
                         {/* Insulation Section */}
@@ -322,7 +328,7 @@ export default function MaterialModal({ open, onClose, onSave, editingMaterial }
                                 onChange={handleInsulationChange}
                                 variant="outlined"
                                 required
-                                disabled={loading || (editingMaterial && !editingMaterial.hasInsulation)}
+                                disabled={loading || !!editingMaterial || (editingMaterial && !editingMaterial.hasInsulation)}
                                 sx={{ flex: 1 }}
                             >
                                 {Insulation.map((insulation) => (
@@ -331,20 +337,22 @@ export default function MaterialModal({ open, onClose, onSave, editingMaterial }
                                     </MenuItem>
                                 ))}
                             </TextField>
-                            <TextField
-                                label="Cost (Rs.)"
-                                name="insulationCost"
-                                type="number"
-                                value={formData.insulationCost}
-                                onChange={handleInputChange}
-                                variant="outlined"
-                                disabled={loading || (editingMaterial && !editingMaterial.hasInsulation)}
-                                sx={{ width: '150px' }}
-                            />
+                            {(!editingMaterial || editingMaterial.hasInsulation) && (
+                                <TextField
+                                    label="Cost (Rs.)"
+                                    name="insulationCost"
+                                    type="number"
+                                    value={formData.insulationCost}
+                                    onChange={handleInputChange}
+                                    variant="outlined"
+                                    disabled={loading}
+                                    sx={{ width: '150px' }}
+                                />
+                            )}
                         </Box>
 
                         {/* Insulation Thickness */}
-                        {formData.insulation && formData.insulation !== 'No Insulation Used' && (
+                        {formData.insulation && formData.insulation !== 'No Insulation Used' && (!editingMaterial || editingMaterial.hasInsulation) && (
                             <TextField
                                 fullWidth
                                 label="Insulation Thickness (inch)"
@@ -355,7 +363,7 @@ export default function MaterialModal({ open, onClose, onSave, editingMaterial }
                                 margin="normal"
                                 variant="outlined"
                                 required
-                                disabled={loading || (editingMaterial && !editingMaterial.hasInsulation)}
+                                disabled={loading || !!editingMaterial}
                                 inputProps={{ min: "0", step: "0.1" }}
                             />
                         )}
