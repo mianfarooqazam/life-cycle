@@ -1,7 +1,6 @@
-export default function Cad() {
-    return (
-      <div className="p-2">
-        <h1>This is Cad Page</h1>
-      </div>
-    );
-  }
+"use client";
+import dynamic from "next/dynamic";
+const CadCanvas = dynamic(() => import("../components/canvas/CadCanvas"), { ssr: false });
+export default function CadPage() {
+  return <CadCanvas />;
+}
