@@ -1,7 +1,7 @@
 "use client";
 import { useState } from 'react';
-import { 
-    Box, 
+import {
+    Box,
     FormControl,
     RadioGroup,
     FormControlLabel,
@@ -21,7 +21,6 @@ import toast from 'react-hot-toast';
 
 import SaveButton from '@/app/components/button/SaveButton';
 import TextInput from '@/app/components/input/TextInput';
-import ExteriorWallsTable from '@/app/components/table/ExteriorWallsTable';
 import { useExteriorWallStore } from '@/app/store/exteriorWallStore';
 import { WallBrickBlock, ExteriorFinish, InteriorFinish, Insulation } from '@/app/data/Materials';
 
@@ -135,7 +134,7 @@ export default function ExteriorWallModal({ open, onClose, selectedFloorName, fl
         const doorArea = Number(calculateDoorArea());
         const windowArea = Number(calculateWindowArea());
         const wallArea = Number(calculateWallArea());
-        
+
         // Validate areas
         if (formData.isCurtainWall === 'no') {
             if (doorArea && doorArea >= wallArea) {
@@ -151,7 +150,7 @@ export default function ExteriorWallModal({ open, onClose, selectedFloorName, fl
                 return 'validation-error';
             }
         }
-        
+
         // Compose row data
         const newRow = {
             id: editingId || Date.now(),
@@ -187,8 +186,8 @@ export default function ExteriorWallModal({ open, onClose, selectedFloorName, fl
                     ? doorForm.doorType
                         ? doorForm.costPerDoor
                         : windowForm.windowType
-                        ? windowForm.costPerWindow
-                        : ''
+                            ? windowForm.costPerWindow
+                            : ''
                     : '',
             // Store all form values for editing
             length: formData.length,
@@ -374,7 +373,7 @@ export default function ExteriorWallModal({ open, onClose, selectedFloorName, fl
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
                                     <p className="text-lg font-bold text-gray-800">
-                                        Exterior Wall Area: <span className="text-[#5BB045]">{calculateWallArea() } ft²</span>
+                                        Exterior Wall Area: <span className="text-[#5BB045]">{calculateWallArea()} ft²</span>
                                     </p>
                                 </div>
                                 <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
@@ -462,8 +461,8 @@ export default function ExteriorWallModal({ open, onClose, selectedFloorName, fl
                                         </div>
                                         <div className="flex-1">
                                             <TextInput
-                                                label="Exterior Wall Insulation Thickness (inch)"
                                                 name="insulationThickness"
+                                                placeholder="Exterior Wall Insulation Thickness (inch)"
                                                 type="number"
                                                 value={formData.insulationThickness}
                                                 onChange={(e) => updateFormData({ insulationThickness: e.target.value })}
@@ -571,16 +570,16 @@ export default function ExteriorWallModal({ open, onClose, selectedFloorName, fl
                                                 inputProps={{ min: "1" }}
                                             />
                                         </Box>
-                                         <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-                                        <TextInput
-                                            label="Cost per Door"
-                                            name="costPerDoor"
-                                            type="number"
-                                            value={doorForm.costPerDoor}
-                                            onChange={(e) => updateDoorForm({ costPerDoor: e.target.value })}
-                                            required
-                                            inputProps={{ min: "0" }}
-                                        />
+                                        <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+                                            <TextInput
+                                                label="Cost per Door"
+                                                name="costPerDoor"
+                                                type="number"
+                                                value={doorForm.costPerDoor}
+                                                onChange={(e) => updateDoorForm({ costPerDoor: e.target.value })}
+                                                required
+                                                inputProps={{ min: "0" }}
+                                            />
                                         </Box>
                                     </Box>
                                     {/* Divider */}
@@ -641,22 +640,22 @@ export default function ExteriorWallModal({ open, onClose, selectedFloorName, fl
                                                 inputProps={{ min: "1" }}
                                             />
                                         </Box>
-                                         <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-                                        <TextInput
-                                            label="Cost per Window"
-                                            name="costPerWindow"
-                                            type="number"
-                                            value={windowForm.costPerWindow}
-                                            onChange={(e) => updateWindowForm({ costPerWindow: e.target.value })}
-                                            required
-                                            inputProps={{ min: "0" }}
-                                        />
+                                        <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+                                            <TextInput
+                                                label="Cost per Window"
+                                                name="costPerWindow"
+                                                type="number"
+                                                value={windowForm.costPerWindow}
+                                                onChange={(e) => updateWindowForm({ costPerWindow: e.target.value })}
+                                                required
+                                                inputProps={{ min: "0" }}
+                                            />
                                         </Box>
                                     </Box>
                                 </Box>
                                 {/* Display Door and Window Area */}
                                 {(doorForm.height && doorForm.width && doorForm.quantity) ||
-                                (windowForm.height && windowForm.width && windowForm.quantity) ? (
+                                    (windowForm.height && windowForm.width && windowForm.quantity) ? (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         {doorForm.height && doorForm.width && doorForm.quantity && (
                                             <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>

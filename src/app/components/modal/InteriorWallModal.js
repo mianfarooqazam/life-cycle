@@ -21,7 +21,6 @@ import toast from 'react-hot-toast';
 
 import SaveButton from '@/app/components/button/SaveButton';
 import TextInput from '@/app/components/input/TextInput';
-import InteriorWallsTable from '@/app/components/table/InteriorWallsTable';
 import { useInteriorWallStore } from '@/app/store/interiorWallStore';
 import { WallBrickBlock, ExteriorFinish, InteriorFinish, Insulation } from '@/app/data/Materials';
 
@@ -461,7 +460,7 @@ export default function InteriorWallModal({ open, onClose, selectedFloorName, fl
                                         </div>
                                         <div className="flex-1">
                                             <TextInput
-                                                label="Interior Wall Insulation Thickness (inch)"
+                                                placeholder="Interior Wall Insulation Thickness (inch)"
                                                 name="insulationThickness"
                                                 type="number"
                                                 value={formData.insulationThickness}
