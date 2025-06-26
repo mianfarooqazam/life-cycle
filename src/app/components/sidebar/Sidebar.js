@@ -1,7 +1,7 @@
 "use client";
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../context/AuthContext'; 
+import { useAuth } from '../../context/AuthContext';
 import {
     LayoutDashboard,
     PencilRuler,
@@ -12,6 +12,7 @@ import {
     LogOut,
     HelpCircle,
     Landmark,
+    Component
 } from 'lucide-react';
 
 function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor, size = 24, padding = 'p-3' }) {
@@ -19,8 +20,8 @@ function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor, size =
         <div className="relative group">
             <motion.div
                 className={`${padding} rounded-xl flex justify-center items-center cursor-pointer transition-all duration-200 ${active
-                        ? 'bg-white border-2 border-[#5BB045] shadow-lg'
-                        : 'bg-white shadow-md hover:shadow-lg'
+                    ? 'bg-white border-2 border-[#5BB045] shadow-lg'
+                    : 'bg-white shadow-md hover:shadow-lg'
                     }`}
                 whileHover={{ scale: active ? 1.25 : 1.1, rotate: 3 }}
                 whileTap={{ scale: 0.9 }}
@@ -52,7 +53,11 @@ export default function Sidebar({ activeSection, setActiveSection }) {
         { id: 'labour-cost', label: 'Labour Cost', icon: CircleDollarSign },
         { id: 'other-cost', label: 'Other Cost', icon: Unplug },
         { id: 'analysis', label: 'Analysis', icon: BarChart3 },
-    ];
+        { id: 'cad', label: 'Computer-Aided Architectural Plan', icon: Component },
+    ]; 
+
+
+
 
     const handleLogout = async () => {
         try {
@@ -89,7 +94,7 @@ export default function Sidebar({ activeSection, setActiveSection }) {
 
                 {/* Bottom section with logout, help and version */}
                 <div className="flex flex-col items-center gap-3 pb-4">
-                   
+
                     <IconWithTooltip
                         Icon={HelpCircle}
                         tooltipText="Help"
@@ -99,7 +104,7 @@ export default function Sidebar({ activeSection, setActiveSection }) {
                         size={18}
                         padding="p-2"
                     />
-                     <IconWithTooltip
+                    <IconWithTooltip
                         Icon={LogOut}
                         tooltipText="Logout"
                         active={false}
@@ -108,7 +113,7 @@ export default function Sidebar({ activeSection, setActiveSection }) {
                         size={18}
                         padding="p-2"
                     />
-                    
+
                     {/* Version */}
                     <div className="text-xs font-bold text-[#5BB045]">
                         v1.0.0

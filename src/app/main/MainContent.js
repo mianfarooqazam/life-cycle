@@ -1,10 +1,11 @@
-import Dashboard from "@/app/pages/Dashboard";
-import Dimensions from "@/app/pages/Dimensions";
-import Materials from "@/app/pages/Materials";
-import LabourCost from "@/app/pages/LabourCost";
-import OtherCost from "@/app/pages/OtherCost";
-import Analysis from "@/app/pages/Analysis";
-import BuildingPlan from "@/app/pages/BuildingPlan";
+import Dashboard from "../pages/Dashboard";
+import Dimensions from "../pages/Dimensions";
+import Materials from "../pages/Materials";
+import LabourCost from "../pages//LabourCost";
+import OtherCost from "../pages/OtherCost";
+import Analysis from "../pages/Analysis";
+import BuildingPlan from "../pages/BuildingPlan";
+import Cad from "../pages/Cad";
 
 export default function MainContent({ activeSection }) {
   const renderContent = () => {
@@ -23,6 +24,8 @@ export default function MainContent({ activeSection }) {
         return <OtherCost />;
       case 'analysis':
         return <Analysis />;
+        case 'cad':
+        return <Cad />;
       default:
         return <Dashboard />;
     }
