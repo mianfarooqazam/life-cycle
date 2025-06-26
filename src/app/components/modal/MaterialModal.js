@@ -121,14 +121,27 @@ export default function MaterialModal({ open, onClose, onSave, editingMaterial }
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validation
-        if (!formData.wallBrickBlock || !formData.exteriorFinish || !formData.interiorFinish || !formData.insulation) {
-            toast.error('Please select all materials');
-            return;
+        // Validation - only validate materials that are present
+        const requiredFields = [];
+        
+        if (editingMaterial?.hasWallMaterial) {
+            if (!formData.wallBrickBlock) requiredFields.push('Wall Brick Block');
+        }
+        if (editingMaterial?.hasExteriorFinish) {
+            if (!formData.exteriorFinish) requiredFields.push('Exterior Finish');
+        }
+        if (editingMaterial?.hasInteriorFinish) {
+            if (!formData.interiorFinish) requiredFields.push('Interior Finish');
+        }
+        if (editingMaterial?.hasInsulation) {
+            if (!formData.insulation) requiredFields.push('Insulation');
+            if (formData.insulation && formData.insulation !== 'No Insulation Used' && !formData.insulationThickness) {
+                requiredFields.push('Insulation Thickness');
+            }
         }
 
-        if (formData.insulation !== 'No Insulation Used' && !formData.insulationThickness) {
-            toast.error('Please enter insulation thickness');
+        if (requiredFields.length > 0) {
+            toast.error(`Please fill in: ${requiredFields.join(', ')}`);
             return;
         }
 
@@ -216,7 +229,7 @@ export default function MaterialModal({ open, onClose, onSave, editingMaterial }
                                 onChange={handleWallBrickBlockChange}
                                 variant="outlined"
                                 required
-                                disabled={loading}
+                                disabled={loading || (editingMaterial && !editingMaterial.hasWallMaterial)}
                                 sx={{ flex: 1 }}
                             >
                                 {WallBrickBlock.map((block) => (
@@ -232,7 +245,7 @@ export default function MaterialModal({ open, onClose, onSave, editingMaterial }
                                 value={formData.wallBrickBlockCost}
                                 onChange={handleInputChange}
                                 variant="outlined"
-                                disabled={loading}
+                                disabled={loading || (editingMaterial && !editingMaterial.hasWallMaterial)}
                                 sx={{ width: '150px' }}
                             />
                         </Box>
@@ -247,7 +260,7 @@ export default function MaterialModal({ open, onClose, onSave, editingMaterial }
                                 onChange={handleExteriorFinishChange}
                                 variant="outlined"
                                 required
-                                disabled={loading}
+                                disabled={loading || (editingMaterial && !editingMaterial.hasExteriorFinish)}
                                 sx={{ flex: 1 }}
                             >
                                 {ExteriorFinish.map((finish) => (
@@ -263,7 +276,7 @@ export default function MaterialModal({ open, onClose, onSave, editingMaterial }
                                 value={formData.exteriorFinishCost}
                                 onChange={handleInputChange}
                                 variant="outlined"
-                                disabled={loading}
+                                disabled={loading || (editingMaterial && !editingMaterial.hasExteriorFinish)}
                                 sx={{ width: '150px' }}
                             />
                         </Box>
@@ -278,7 +291,7 @@ export default function MaterialModal({ open, onClose, onSave, editingMaterial }
                                 onChange={handleInteriorFinishChange}
                                 variant="outlined"
                                 required
-                                disabled={loading}
+                                disabled={loading || (editingMaterial && !editingMaterial.hasInteriorFinish)}
                                 sx={{ flex: 1 }}
                             >
                                 {InteriorFinish.map((finish) => (
@@ -294,7 +307,7 @@ export default function MaterialModal({ open, onClose, onSave, editingMaterial }
                                 value={formData.interiorFinishCost}
                                 onChange={handleInputChange}
                                 variant="outlined"
-                                disabled={loading}
+                                disabled={loading || (editingMaterial && !editingMaterial.hasInteriorFinish)}
                                 sx={{ width: '150px' }}
                             />
                         </Box>
@@ -309,7 +322,7 @@ export default function MaterialModal({ open, onClose, onSave, editingMaterial }
                                 onChange={handleInsulationChange}
                                 variant="outlined"
                                 required
-                                disabled={loading}
+                                disabled={loading || (editingMaterial && !editingMaterial.hasInsulation)}
                                 sx={{ flex: 1 }}
                             >
                                 {Insulation.map((insulation) => (
@@ -325,7 +338,7 @@ export default function MaterialModal({ open, onClose, onSave, editingMaterial }
                                 value={formData.insulationCost}
                                 onChange={handleInputChange}
                                 variant="outlined"
-                                disabled={loading}
+                                disabled={loading || (editingMaterial && !editingMaterial.hasInsulation)}
                                 sx={{ width: '150px' }}
                             />
                         </Box>
@@ -342,7 +355,7 @@ export default function MaterialModal({ open, onClose, onSave, editingMaterial }
                                 margin="normal"
                                 variant="outlined"
                                 required
-                                disabled={loading}
+                                disabled={loading || (editingMaterial && !editingMaterial.hasInsulation)}
                                 inputProps={{ min: "0", step: "0.1" }}
                             />
                         )}

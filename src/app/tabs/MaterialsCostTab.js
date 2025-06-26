@@ -25,68 +25,124 @@ export default function MaterialsCostTab() {
     // Get wall data for selected floor
     const getExteriorWallsByFloor = useExteriorWallStore((state) => state.getWallsByFloor);
     const getInteriorWallsByFloor = useInteriorWallStore((state) => state.getWallsByFloor);
+    const updateExteriorWallData = useExteriorWallStore((state) => state.updateExteriorWallData);
+    const updateInteriorWallData = useInteriorWallStore((state) => state.updateInteriorWallData);
     const exteriorWalls = getExteriorWallsByFloor(selectedFloor);
     const interiorWalls = getInteriorWallsByFloor(selectedFloor);
 
     // Build materials data based on what is present for the selected floor
     const materialsData = useMemo(() => {
         const data = [];
-        // Exterior Wall Material
-        const exteriorWall = exteriorWalls.find(w => w.wallMaterial);
-        if (exteriorWall && exteriorWall.wallMaterial) {
-            data.push({
-                id: 'exterior-wall',
-                component: 'Exterior',
-                materialName: exteriorWall.wallMaterial,
-                cost: WallBrickBlock.find(m => m.name === exteriorWall.wallMaterial)?.costperitem || '',
-            });
-        }
-        // Interior Wall Material
-        const interiorWall = interiorWalls.find(w => w.wallMaterial);
-        if (interiorWall && interiorWall.wallMaterial) {
-            data.push({
-                id: 'interior-wall',
-                component: 'Interior',
-                materialName: interiorWall.wallMaterial,
-                cost: WallBrickBlock.find(m => m.name === interiorWall.wallMaterial)?.costperitem || '',
-            });
-        }
-        // Exterior Finish
-        if (exteriorWall && exteriorWall.exteriorFinish) {
-            data.push({
-                id: 'exterior-finish',
-                component: 'Exterior Finish',
-                materialName: exteriorWall.exteriorFinish,
-                cost: ExteriorFinish.find(m => m.name === exteriorWall.exteriorFinish)?.costperitem || '',
-            });
-        }
-        // Interior Finish
-        if (interiorWall && interiorWall.interiorFinish) {
-            data.push({
-                id: 'interior-finish',
-                component: 'Interior Finish',
-                materialName: interiorWall.interiorFinish,
-                cost: InteriorFinish.find(m => m.name === interiorWall.interiorFinish)?.costperitem || '',
-            });
-        }
-        // Insulation (Exterior)
-        if (exteriorWall && exteriorWall.insulationUsed === 'yes' && exteriorWall.insulation) {
-            data.push({
-                id: 'exterior-insulation',
-                component: 'Insulation (Exterior)',
-                materialName: exteriorWall.insulation,
-                cost: Insulation.find(m => m.name === exteriorWall.insulation)?.costperitem || '',
-            });
-        }
-        // Insulation (Interior)
-        if (interiorWall && interiorWall.insulationUsed === 'yes' && interiorWall.insulation) {
-            data.push({
-                id: 'interior-insulation',
-                component: 'Insulation (Interior)',
-                materialName: interiorWall.insulation,
-                cost: Insulation.find(m => m.name === interiorWall.insulation)?.costperitem || '',
-            });
-        }
+        let wallCounter = 1;
+
+        // Process Exterior Walls
+        exteriorWalls.forEach((wall, index) => {
+            const wallPrefix = `Exterior Wall ${wallCounter}`;
+            const wallMaterials = [];
+            
+            // Wall Material
+            if (wall.wallMaterial) {
+                wallMaterials.push({
+                    type: 'Wall Material',
+                    name: wall.wallMaterial,
+                    cost: wall.customWallMaterialCost || WallBrickBlock.find(m => m.name === wall.wallMaterial)?.costperitem || ''
+                });
+            }
+            
+            // Exterior Finish
+            if (wall.exteriorFinish) {
+                wallMaterials.push({
+                    type: 'Exterior Finish',
+                    name: wall.exteriorFinish,
+                    cost: wall.customExteriorFinishCost || ExteriorFinish.find(m => m.name === wall.exteriorFinish)?.costperitem || ''
+                });
+            }
+            
+            // Interior Finish
+            if (wall.interiorFinish) {
+                wallMaterials.push({
+                    type: 'Interior Finish',
+                    name: wall.interiorFinish,
+                    cost: wall.customInteriorFinishCost || InteriorFinish.find(m => m.name === wall.interiorFinish)?.costperitem || ''
+                });
+            }
+            
+            // Insulation
+            if (wall.isInsulationUsed === 'yes' && wall.insulationType) {
+                wallMaterials.push({
+                    type: 'Insulation',
+                    name: wall.insulationType,
+                    cost: wall.customInsulationCost || Insulation.find(m => m.name === wall.insulationType)?.costperitem || ''
+                });
+            }
+
+            if (wallMaterials.length > 0) {
+                data.push({
+                    id: `exterior-wall-${index}`,
+                    component: wallPrefix,
+                    materials: wallMaterials,
+                    wallId: wall.id,
+                    wallType: 'exterior'
+                });
+            }
+            
+            wallCounter++;
+        });
+
+        // Process Interior Walls
+        interiorWalls.forEach((wall, index) => {
+            const wallPrefix = `Interior Wall ${wallCounter}`;
+            const wallMaterials = [];
+            
+            // Wall Material
+            if (wall.wallMaterial) {
+                wallMaterials.push({
+                    type: 'Wall Material',
+                    name: wall.wallMaterial,
+                    cost: wall.customWallMaterialCost || WallBrickBlock.find(m => m.name === wall.wallMaterial)?.costperitem || ''
+                });
+            }
+            
+            // Exterior Finish
+            if (wall.exteriorFinish) {
+                wallMaterials.push({
+                    type: 'Exterior Finish',
+                    name: wall.exteriorFinish,
+                    cost: wall.customExteriorFinishCost || ExteriorFinish.find(m => m.name === wall.exteriorFinish)?.costperitem || ''
+                });
+            }
+            
+            // Interior Finish
+            if (wall.interiorFinish) {
+                wallMaterials.push({
+                    type: 'Interior Finish',
+                    name: wall.interiorFinish,
+                    cost: wall.customInteriorFinishCost || InteriorFinish.find(m => m.name === wall.interiorFinish)?.costperitem || ''
+                });
+            }
+            
+            // Insulation
+            if (wall.isInsulationUsed === 'yes' && wall.insulationType) {
+                wallMaterials.push({
+                    type: 'Insulation',
+                    name: wall.insulationType,
+                    cost: wall.customInsulationCost || Insulation.find(m => m.name === wall.insulationType)?.costperitem || ''
+                });
+            }
+
+            if (wallMaterials.length > 0) {
+                data.push({
+                    id: `interior-wall-${index}`,
+                    component: wallPrefix,
+                    materials: wallMaterials,
+                    wallId: wall.id,
+                    wallType: 'interior'
+                });
+            }
+            
+            wallCounter++;
+        });
+
         return data;
     }, [exteriorWalls, interiorWalls]);
 
@@ -98,18 +154,52 @@ export default function MaterialsCostTab() {
         if (editingRowIndex === null) return null;
         const row = materialsData[editingRowIndex];
         if (!row) return null;
-        // Map row to modal fields
-        return {
-            wallBrickBlock: row.component.includes('Wall Brick/Block') ? row.materialName : '',
-            wallBrickBlockCost: row.component.includes('Wall Brick/Block') ? row.cost : '',
-            exteriorFinish: row.component === 'Exterior Finish' ? row.materialName : '',
-            exteriorFinishCost: row.component === 'Exterior Finish' ? row.cost : '',
-            interiorFinish: row.component === 'Interior Finish' ? row.materialName : '',
-            interiorFinishCost: row.component === 'Interior Finish' ? row.cost : '',
-            insulation: row.component.includes('Insulation') ? row.materialName : '',
-            insulationCost: row.component.includes('Insulation') ? row.cost : '',
+        
+        // Initialize modal data
+        const modalData = {
+            wallBrickBlock: '',
+            wallBrickBlockCost: '',
+            exteriorFinish: '',
+            exteriorFinishCost: '',
+            interiorFinish: '',
+            interiorFinishCost: '',
+            insulation: '',
+            insulationCost: '',
             insulationThickness: '',
+            // Add flags to indicate which materials are present
+            hasWallMaterial: false,
+            hasExteriorFinish: false,
+            hasInteriorFinish: false,
+            hasInsulation: false
         };
+
+        // Map materials to modal fields and set flags
+        row.materials.forEach(material => {
+            switch (material.type) {
+                case 'Wall Material':
+                    modalData.wallBrickBlock = material.name;
+                    modalData.wallBrickBlockCost = material.cost;
+                    modalData.hasWallMaterial = true;
+                    break;
+                case 'Exterior Finish':
+                    modalData.exteriorFinish = material.name;
+                    modalData.exteriorFinishCost = material.cost;
+                    modalData.hasExteriorFinish = true;
+                    break;
+                case 'Interior Finish':
+                    modalData.interiorFinish = material.name;
+                    modalData.interiorFinishCost = material.cost;
+                    modalData.hasInteriorFinish = true;
+                    break;
+                case 'Insulation':
+                    modalData.insulation = material.name;
+                    modalData.insulationCost = material.cost;
+                    modalData.hasInsulation = true;
+                    break;
+            }
+        });
+
+        return modalData;
     };
 
     const handleEdit = (rowIndex) => {
@@ -118,7 +208,48 @@ export default function MaterialsCostTab() {
     };
 
     const handleSave = (formData) => {
-        // This can be implemented to update the zustand store if you want to allow editing
+        if (editingRowIndex === null) return;
+        
+        const row = materialsData[editingRowIndex];
+        if (!row) return;
+
+        // Find the original wall data
+        let originalWall;
+        if (row.wallType === 'exterior') {
+            originalWall = exteriorWalls.find(wall => wall.id === row.wallId);
+        } else {
+            originalWall = interiorWalls.find(wall => wall.id === row.wallId);
+        }
+
+        if (!originalWall) return;
+
+        // Create updated wall data with custom costs
+        const updatedWall = { ...originalWall };
+        
+        // Update custom costs based on what was changed
+        if (row.materials.some(m => m.type === 'Wall Material')) {
+            updatedWall.customWallMaterialCost = formData.wallBrickBlockCost;
+        }
+        
+        if (row.materials.some(m => m.type === 'Exterior Finish')) {
+            updatedWall.customExteriorFinishCost = formData.exteriorFinishCost;
+        }
+        
+        if (row.materials.some(m => m.type === 'Interior Finish')) {
+            updatedWall.customInteriorFinishCost = formData.interiorFinishCost;
+        }
+        
+        if (row.materials.some(m => m.type === 'Insulation')) {
+            updatedWall.customInsulationCost = formData.insulationCost;
+        }
+
+        // Update the wall data in the store
+        if (row.wallType === 'exterior') {
+            updateExteriorWallData(row.wallId, updatedWall);
+        } else {
+            updateInteriorWallData(row.wallId, updatedWall);
+        }
+
         setEditModalOpen(false);
         setEditingRowIndex(null);
     };
@@ -135,14 +266,15 @@ export default function MaterialsCostTab() {
                     <TableHead>
                         <TableRow sx={{ backgroundColor: '#f7f6fb' }}>
                             <TableCell sx={{ fontWeight: 'bold', color: '#000' }}>Component</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold', color: '#000' }}>Material Name</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold', color: '#000' }}>Materials</TableCell>
                             <TableCell sx={{ fontWeight: 'bold', color: '#000' }}>Cost (Rs.)</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold', color: '#000' }}>Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {materialsData.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={3} align="center">No materials added for this floor.</TableCell>
+                                <TableCell colSpan={4} align="center">No materials added for this floor.</TableCell>
                             </TableRow>
                         ) : (
                             materialsData.map((row, idx) => (
@@ -156,25 +288,38 @@ export default function MaterialsCostTab() {
                                     }}
                                 >
                                     <TableCell>{row.component}</TableCell>
-                                    <TableCell>{row.materialName}</TableCell>
                                     <TableCell>
                                         <div>
-                                            <div>{row.cost}</div>
-                                            <Typography
-                                                variant="caption"
-                                                sx={{
-                                                    color: '#2663eb',
-                                                    cursor: 'pointer',
-                                                    textDecoration: 'underline',
-                                                    '&:hover': {
-                                                        color: '#1557b0',
-                                                    },
-                                                }}
-                                                onClick={() => handleEdit(idx)}
-                                            >
-                                                Edit
-                                            </Typography>
+                                            {row.materials.map((material, materialIdx) => (
+                                                <div key={materialIdx} style={{ marginBottom: materialIdx < row.materials.length - 1 ? '8px' : '0' }}>
+                                                    <strong>{material.type}:</strong> {material.name}
+                                                </div>
+                                            ))}
                                         </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div>
+                                            {row.materials.map((material, materialIdx) => (
+                                                <div key={materialIdx} style={{ marginBottom: materialIdx < row.materials.length - 1 ? '8px' : '0' }}>
+                                                    {material.cost}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <IconButton
+                                            onClick={() => handleEdit(idx)}
+                                            sx={{
+                                                color: '#2663eb',
+                                                '&:hover': {
+                                                    backgroundColor: '#f0f4ff',
+                                                    color: '#1557b0',
+                                                },
+                                            }}
+                                            size="small"
+                                        >
+                                            <Edit size={16} />
+                                        </IconButton>
                                     </TableCell>
                                 </TableRow>
                             ))
