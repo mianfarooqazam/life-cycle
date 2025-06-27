@@ -4,6 +4,7 @@ import TitleHeader from "@/app/components/header/TitleHeader";
 import SaveButton from "@/app/components/button/SaveButton";
 import { Pencil, DoorClosed, Grid2x2, Move, Undo } from "lucide-react";
 import { motion } from "framer-motion";
+import CadCanvasModal from "@/app/components/modal/CadCanvasModal";
 
 function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor, size = 24, padding = 'p-2' }) {
   return (
@@ -35,8 +36,12 @@ export default function CadCanvas() {
   const [drawing, setDrawing] = useState(false);
   const [currentLine, setCurrentLine] = useState(null);
   const stageRef = useRef();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedLineIdx, setSelectedLineIdx] = useState(null);
 
   const handleMouseDown = (e) => {
+    // Only start drawing on left mouse button
+    if (e.evt && e.evt.button !== 0) return;
     if (!drawing) {
       const stage = stageRef.current;
       const pointer = stage.getPointerPosition();
@@ -120,6 +125,12 @@ export default function CadCanvas() {
                   stroke="#222"
                   strokeWidth={8}
                   lineCap="round"
+                  onContextMenu={e => {
+                    e.evt.preventDefault();
+                    setSelectedLineIdx(idx);
+                    setModalOpen(true);
+                  }}
+                  listening={true}
                 />
               ))}
               {currentLine && (
@@ -164,6 +175,7 @@ export default function CadCanvas() {
           <IconWithTooltip Icon={Undo} tooltipText="Undo" onClick={handleUndo} />
         </div>
       </div>
+      <CadCanvasModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </div>
   );
 }
