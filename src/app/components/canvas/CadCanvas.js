@@ -36,8 +36,8 @@ export default function CadCanvas() {
   const [drawing, setDrawing] = useState(false);
   const [currentLine, setCurrentLine] = useState(null);
   const stageRef = useRef();
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedLineIdx, setSelectedLineIdx] = useState(null);
+  const [modalOpenIdx, setModalOpenIdx] = useState(null);
+  const [wallDetails, setWallDetails] = useState([]);
 
   const handleMouseDown = (e) => {
     // Only start drawing on left mouse button
@@ -127,8 +127,7 @@ export default function CadCanvas() {
                   lineCap="round"
                   onContextMenu={e => {
                     e.evt.preventDefault();
-                    setSelectedLineIdx(idx);
-                    setModalOpen(true);
+                    setModalOpenIdx(idx);
                   }}
                   listening={true}
                 />
@@ -175,7 +174,21 @@ export default function CadCanvas() {
           <IconWithTooltip Icon={Undo} tooltipText="Undo" onClick={handleUndo} />
         </div>
       </div>
-      <CadCanvasModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      {lines.map((line, idx) => (
+        <CadCanvasModal
+          key={idx}
+          open={modalOpenIdx === idx}
+          onClose={() => setModalOpenIdx(null)}
+          details={wallDetails[idx] || {}}
+          setDetails={details => {
+            setWallDetails(prev => {
+              const updated = [...prev];
+              updated[idx] = details;
+              return updated;
+            });
+          }}
+        />
+      ))}
     </div>
   );
 }
