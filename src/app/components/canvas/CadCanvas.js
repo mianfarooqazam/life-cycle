@@ -1,8 +1,9 @@
 import React, { useRef, useState } from 'react';
 import { Stage, Layer, Line } from 'react-konva';
+import TitleHeader from '@/app/components/header/TitleHeader'; 
 
 export default function CadCanvas() {
-  const [lines, setLines] = useState([]); // Array of lines, each line is { points: [x1, y1, x2, y2] }
+  const [lines, setLines] = useState([]);
   const [drawing, setDrawing] = useState(false);
   const [currentLine, setCurrentLine] = useState(null);
   const stageRef = useRef();
@@ -38,8 +39,8 @@ export default function CadCanvas() {
   };
 
   return (
-    <div className="p-2">
-      <h1 className="mb-2">Architectural Floor Plan (Draw Walls)</h1>
+    <div className="grid grid-cols-1 p-2">
+      <TitleHeader className="text-lg font-bold mb-2 text-center">Computer-Aided Architectural Plan</TitleHeader>
       <button onClick={handleClear} className="mb-2 px-2 py-1 bg-red-500 text-white rounded">Clear Canvas</button>
       <div style={{ border: '1px solid #ccc', width: 800, height: 600, background: '#fafafa' }}>
         <Stage
