@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Stage, Layer, Line, Text } from "react-konva";
 import TitleHeader from "@/app/components/header/TitleHeader";
 import SaveButton from "@/app/components/button/SaveButton";
@@ -24,9 +24,9 @@ function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor, size =
         <Icon size={size} color={iconColor || (active ? '#5BB045' : 'black')} />
       </motion.div>
       {/* Tooltip */}
-      <div className="absolute left-full ml-3 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+      <div className="absolute right-full mr-3 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
         {tooltipText}
-        <div className="absolute right-full top-1/2 transform -translate-y-1/2 border-4 border-transparent border-r-gray-800"></div>
+        <div className="absolute left-full top-1/2 transform -translate-y-1/2 border-4 border-transparent border-l-gray-800"></div>
       </div>
     </div>
   );
@@ -35,6 +35,7 @@ function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor, size =
 export default function CadCanvas() {
   const stageRef = useRef();
   const [modalOpenIdx, setModalOpenIdx] = useState(null);
+  const [stageSize, setStageSize] = useState({ width: 800, height: 600 });
   
   const {
     lines,
@@ -49,6 +50,18 @@ export default function CadCanvas() {
     setHoveredLine,
     clearHoveredLine
   } = useCadStore();
+
+  useEffect(() => {
+    const updateStageSize = () => {
+      const maxWidth = Math.min(800, window.innerWidth * 0.9);
+      const maxHeight = Math.min(600, window.innerHeight * 0.7);
+      setStageSize({ width: maxWidth, height: maxHeight });
+    };
+
+    updateStageSize();
+    window.addEventListener('resize', updateStageSize);
+    return () => window.removeEventListener('resize', updateStageSize);
+  }, []);
 
   const handleMouseDown = (e) => {
     // Only start drawing on left mouse button
@@ -108,7 +121,7 @@ export default function CadCanvas() {
 
   return (
     
-    <div className="grid grid-cols-1 p-2">
+    <div className="grid grid-cols-1 p-2 overflow-x-hidden">
       <TitleHeader>
         Computer-Aided Architectural Plan
       </TitleHeader>
@@ -118,6 +131,8 @@ export default function CadCanvas() {
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "center",
+          maxWidth: "100%",
+          overflow: "hidden"
         }}
       >
         <div
@@ -126,15 +141,15 @@ export default function CadCanvas() {
             flexDirection: "column",
             alignItems: "center",
             border: "1px solid #ccc",
-            width: 800,
-            height: 600,
+            width: "min(800px, 90vw)",
+            height: "min(600px, 70vh)",
             background: "#fafafa",
             justifyContent: "space-between"
           }}
         >
           <Stage
-            width={800}
-            height={600}
+            width={stageSize.width}
+            height={stageSize.height}
             ref={stageRef}
             onMouseDown={handleMouseDown}
             onMousemove={handleMouseMove}
@@ -175,7 +190,7 @@ export default function CadCanvas() {
             flexDirection: "column",
             alignItems: "center",
             justifyContent:"flex-start",
-            height: 600,
+            height: "min(600px, 70vh)",
             marginLeft: 14,
             gap: 12,
           }}
