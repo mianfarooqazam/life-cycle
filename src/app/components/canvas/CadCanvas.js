@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Stage, Layer, Line, Text } from "react-konva";
 import TitleHeader from "@/app/components/header/TitleHeader";
 import SaveButton from "@/app/components/button/SaveButton";
-import { Pencil, DoorClosed, Grid2x2, Move, Undo } from "lucide-react";
+import { Pencil, DoorClosed, Grid2x2, Move, Undo, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
 import CadCanvasModal from "@/app/components/modal/CadCanvasModal";
 
@@ -180,12 +180,6 @@ export default function CadCanvas() {
               onClick={() => true}
               successMessage="Canvas saved!"
             />
-            <button
-              onClick={handleClear}
-              className="px-2 py-1 bg-red-500 text-white rounded"
-            >
-              Clear Canvas
-            </button>
           </div>
         </div>
         <div
@@ -195,15 +189,16 @@ export default function CadCanvas() {
             alignItems: "center",
             justifyContent:"flex-start",
             height: 600,
-            marginLeft: 24,
+            marginLeft: 14,
             gap: 12,
           }}
         >
-          <IconWithTooltip Icon={Pencil} tooltipText="Pencil (Draw)" />
+          <IconWithTooltip Icon={Pencil} tooltipText="Pen" />
           <IconWithTooltip Icon={DoorClosed} tooltipText="Door" />
           <IconWithTooltip Icon={Grid2x2} tooltipText="Window" />
           <IconWithTooltip Icon={Move} tooltipText="Move" />
           <IconWithTooltip Icon={Undo} tooltipText="Undo" onClick={handleUndo} />
+          <IconWithTooltip Icon={Trash2} tooltipText="Clear" onClick={handleClear} />
         </div>
       </div>
       {lines.map((line, idx) => (
