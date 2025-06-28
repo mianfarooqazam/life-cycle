@@ -15,7 +15,7 @@ export default function Home() {
         <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} />
         <Header />
         <MainContent activeSection={activeSection} />
-        <Rightbar />
+        <Rightbar activeSection={activeSection} />
       </div>
     </ProtectedRoute>
   );

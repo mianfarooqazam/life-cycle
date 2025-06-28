@@ -5,6 +5,7 @@ import SaveButton from "@/app/components/button/SaveButton";
 import { Pencil, DoorClosed, Grid2x2, Move, Undo, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
 import CadCanvasModal from "@/app/components/modal/CadCanvasModal";
+import { useCadStore } from "@/app/store/cadStore";
 
 function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor, size = 24, padding = 'p-2' }) {
   return (
@@ -32,12 +33,22 @@ function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor, size =
 }
 
 export default function CadCanvas() {
-  const [lines, setLines] = useState([]);
-  const [drawing, setDrawing] = useState(false);
-  const [currentLine, setCurrentLine] = useState(null);
   const stageRef = useRef();
   const [modalOpenIdx, setModalOpenIdx] = useState(null);
-  const [wallDetails, setWallDetails] = useState([]);
+  
+  const {
+    lines,
+    wallDetails,
+    currentLine,
+    drawing,
+    setCurrentLine,
+    setDrawing,
+    addLine,
+    updateWallDetails,
+    clearLines,
+    setHoveredLine,
+    clearHoveredLine
+  } = useCadStore();
 
   const handleMouseDown = (e) => {
     // Only start drawing on left mouse button
@@ -66,27 +77,39 @@ export default function CadCanvas() {
 
   const handleMouseUp = (e) => {
     if (drawing && currentLine && currentLine.points.length === 4) {
-      setLines([...lines, currentLine]);
+      addLine(currentLine);
       setCurrentLine(null);
       setDrawing(false);
     }
   };
 
   const handleClear = () => {
-    setLines([]);
-    setCurrentLine(null);
-    setDrawing(false);
+    clearLines();
   };
 
   const handleUndo = () => {
     if (lines.length > 0) {
-      setLines(lines.slice(0, -1));
+      // Remove the last line
+      const newLines = lines.slice(0, -1);
+      const newWallDetails = wallDetails.slice(0, -1);
+      useCadStore.getState().setLines(newLines);
+      useCadStore.getState().setWallDetails(newWallDetails);
     }
   };
 
+  const handleLineHover = (index) => {
+    const details = wallDetails[index];
+    setHoveredLine(index, details);
+  };
+
+  const handleLineLeave = () => {
+    clearHoveredLine();
+  };
+
   return (
+    
     <div className="grid grid-cols-1 p-2">
-      <TitleHeader className="text-lg font-bold mb-2 text-center">
+      <TitleHeader>
         Computer-Aided Architectural Plan
       </TitleHeader>
       <div
@@ -119,50 +142,20 @@ export default function CadCanvas() {
           >
             <Layer>
               {lines.map((line, idx) => (
-                <React.Fragment key={idx}>
-                  <Line
-                    points={line.points}
-                    stroke="#222"
-                    strokeWidth={8}
-                    lineCap="round"
-                    onContextMenu={e => {
-                      e.evt.preventDefault();
-                      setModalOpenIdx(idx);
-                    }}
-                    listening={true}
-                  />
-                  {wallDetails[idx] && wallDetails[idx].length && wallDetails[idx].height && wallDetails[idx].thickness && (
-                    (() => {
-                      const [x1, y1, x2, y2] = line.points;
-                      const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
-                      // Offset label by 16px perpendicular to the line
-                      const gap = 16;
-                      const dx = x2 - x1;
-                      const dy = y2 - y1;
-                      const length = Math.sqrt(dx * dx + dy * dy);
-                      const nx = -dy / length; // Perpendicular normalized x
-                      const ny = dx / length;  // Perpendicular normalized y
-                      const labelX = x1 + 0.5 * dx + nx * gap;
-                      const labelY = y1 + 0.5 * dy + ny * gap;
-                      const labelText = `${wallDetails[idx].wallType === 'external' ? 'External' : wallDetails[idx].wallType === 'internal' ? 'Internal' : ''} | L: ${wallDetails[idx].length}ft H:${wallDetails[idx].height}ft th: ${wallDetails[idx].thickness}in`;
-                      const textRef = React.createRef();
-                      return (
-                        <Text
-                          ref={textRef}
-                          x={labelX}
-                          y={labelY}
-                          text={labelText}
-                          fontSize={14}
-                          fill="#bebebe"
-                          fontStyle="bold"
-                          rotation={angle}
-                          offsetX={textRef.current ? textRef.current.width() / 2 : 0}
-                          offsetY={7}
-                        />
-                      );
-                    })()
-                  )}
-                </React.Fragment>
+                <Line
+                  key={idx}
+                  points={line.points}
+                  stroke="#222"
+                  strokeWidth={8}
+                  lineCap="round"
+                  onContextMenu={e => {
+                    e.evt.preventDefault();
+                    setModalOpenIdx(idx);
+                  }}
+                  onMouseEnter={() => handleLineHover(idx)}
+                  onMouseLeave={handleLineLeave}
+                  listening={true}
+                />
               ))}
               {currentLine && (
                 <Line
@@ -175,12 +168,6 @@ export default function CadCanvas() {
               )}
             </Layer>
           </Stage>
-          <div style={{ width: 800, display: "flex", justifyContent: "center", gap: 16, marginTop: 24 }}>
-            <SaveButton
-              onClick={() => true}
-              successMessage="Canvas saved!"
-            />
-          </div>
         </div>
         <div
           style={{
@@ -201,6 +188,12 @@ export default function CadCanvas() {
           <IconWithTooltip Icon={Trash2} tooltipText="Clear" onClick={handleClear} />
         </div>
       </div>
+      <div className="grid grid-cols-1 justify-items-end">
+        <SaveButton
+          onClick={() => true}
+          successMessage="Canvas saved!"
+        />
+      </div>
       {lines.map((line, idx) => (
         <CadCanvasModal
           key={idx}
@@ -208,11 +201,7 @@ export default function CadCanvas() {
           onClose={() => setModalOpenIdx(null)}
           details={wallDetails[idx] || {}}
           setDetails={details => {
-            setWallDetails(prev => {
-              const updated = [...prev];
-              updated[idx] = details;
-              return updated;
-            });
+            updateWallDetails(idx, details);
           }}
         />
       ))}

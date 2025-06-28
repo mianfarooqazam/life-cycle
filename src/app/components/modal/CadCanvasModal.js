@@ -59,6 +59,7 @@ export default function CadCanvasModal({ open, onClose, details = {}, setDetails
             return 'validation-error';
         }
         setDetails({ wallType, length, height, thickness });
+        toast.success("Wall details saved successfully!");
         onClose();
         return true;
     };
@@ -145,7 +146,7 @@ export default function CadCanvasModal({ open, onClose, details = {}, setDetails
                 <Divider />
                 {/* Footer */}
                 <Box sx={{ p: 3, display: 'flex', justifyContent: 'flex-end' }}>
-                    <SaveButton onClick={handleSave} successMessage="Wall details saved successfully!" />
+                    <SaveButton onClick={handleSave} />
                 </Box>
             </Paper>
         </Modal>
