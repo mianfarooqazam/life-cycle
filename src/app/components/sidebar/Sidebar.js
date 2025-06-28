@@ -15,11 +15,11 @@ import {
     Component
 } from 'lucide-react';
 
-function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor, size = 24, padding = 'p-3' }) {
+function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor, size = 24, padding = 'p-3', showBeta = false }) {
     return (
         <div className="relative group">
             <motion.div
-                className={`${padding} rounded-xl flex justify-center items-center cursor-pointer transition-all duration-200 ${active
+                className={`${padding} rounded-xl flex justify-center items-center cursor-pointer transition-all duration-200 relative ${active
                     ? 'bg-white border-2 border-[#5BB045] shadow-lg'
                     : 'bg-white shadow-md hover:shadow-lg'
                     }`}
@@ -30,6 +30,13 @@ function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor, size =
                 onClick={onClick}
             >
                 <Icon size={size} color={iconColor || (active ? '#5BB045' : 'black')} />
+                
+                {/* BETA Label */}
+                {showBeta && (
+                    <div className="absolute -bottom-2 -right-2 bg-green-500 text-white text-[10px] font-bold px-1 py-0.5 rounded-full">
+                        BETA
+                    </div>
+                )}
             </motion.div>
 
             {/* Tooltip */}
@@ -53,7 +60,7 @@ export default function Sidebar({ activeSection, setActiveSection }) {
         { id: 'labour-cost', label: 'Labour Cost', icon: CircleDollarSign },
         { id: 'other-cost', label: 'Other Cost', icon: Unplug },
         { id: 'analysis', label: 'Analysis', icon: BarChart3 },
-        { id: 'cad', label: 'Computer-Aided Architectural Plan', icon: Component },
+        { id: 'cad', label: 'Computer-Aided Architectural Plan', icon: Component, showBeta: true },
     ]; 
 
 
@@ -85,6 +92,7 @@ export default function Sidebar({ activeSection, setActiveSection }) {
                             tooltipText={item.label}
                             active={activeSection === item.id}
                             onClick={() => setActiveSection(item.id)}
+                            showBeta={item.showBeta}
                         />
                     ))}
                 </div>
