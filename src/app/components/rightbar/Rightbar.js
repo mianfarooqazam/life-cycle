@@ -124,21 +124,7 @@ export default function Rightbar({ activeSection }) {
           </div>
         )}
 
-        {/* Instructions */}
-        {!hoveredLineDetails && !boundaryWallDetails && (
-          <div className="p-4 rounded-md border-2 border-dashed border-gray-300" style={{ backgroundColor: "#fafafa" }}>
-            <h3 className="text-md font-semibold text-gray-700 mb-2">Instructions</h3>
-            <ul className="text-sm text-gray-600 space-y-1">
-              <li>• Click the pen icon to enter boundary wall mode</li>
-              <li>• Draw 4 connected lines to create a boundary</li>
-              <li>• Enter area and height to calculate wall lengths</li>
-              <li>• Hover over any line to see its details</li>
-              <li>• Right-click on a line to edit its properties</li>
-              <li>• Use the toolbar to draw and modify elements</li>
-              <li>• Save your work when finished</li>
-            </ul>
-          </div>
-        )}
+      
       </div>
     );
   };
