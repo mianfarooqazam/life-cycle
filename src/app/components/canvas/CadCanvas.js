@@ -20,10 +20,10 @@ function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor, size =
       >
         <Icon size={size} color={iconColor || "black"} />
       </motion.div>
-      {/* Tooltip - now smaller */}
-      <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+      {/* Tooltip - now to the right */}
+      <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 bg-gray-800 text-white px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
         {tooltipText}
-        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+        <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-800"></div>
       </div>
     </div>
   );
