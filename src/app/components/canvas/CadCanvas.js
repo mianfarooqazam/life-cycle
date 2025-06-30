@@ -170,6 +170,21 @@ export default function CadCanvas() {
       <TitleHeader>
         Computer-Aided Architectural Plan
       </TitleHeader>
+      {/* Icon Toolbar - now at the top and centered */}
+      <div style={{ display: 'flex', justifyContent: 'center', margin: '18px 0' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', gap: 12 }}>
+          <IconWithTooltip 
+            Icon={Pencil} 
+            tooltipText={boundaryWallMode ? "Boundary Wall Mode" : boundaryWallLines.length >= 4 ? "Internal Wall Mode" : "Pen"} 
+            onClick={handlePenClick}
+          />
+          <IconWithTooltip Icon={DoorClosed} tooltipText="Door" />
+          <IconWithTooltip Icon={Grid2x2} tooltipText="Window" />
+          <IconWithTooltip Icon={Move} tooltipText="Move" />
+          <IconWithTooltip Icon={Undo} tooltipText="Undo" onClick={handleUndo} />
+          <IconWithTooltip Icon={Trash2} tooltipText="Clear" onClick={handleClear} />
+        </div>
+      </div>
       <div
         style={{
           display: "flex",
@@ -245,30 +260,8 @@ export default function CadCanvas() {
             </Layer>
           </Stage>
         </div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent:"flex-start",
-            height: "min(600px, 70vh)",
-            marginLeft: 14,
-            gap: 12,
-          }}
-        >
-          <IconWithTooltip 
-            Icon={Pencil} 
-            tooltipText={boundaryWallMode ? "Boundary Wall Mode" : "Pen"} 
-            onClick={handlePenClick}
-          />
-          <IconWithTooltip Icon={DoorClosed} tooltipText="Door" />
-          <IconWithTooltip Icon={Grid2x2} tooltipText="Window" />
-          <IconWithTooltip Icon={Move} tooltipText="Move" />
-          <IconWithTooltip Icon={Undo} tooltipText="Undo" onClick={handleUndo} />
-          <IconWithTooltip Icon={Trash2} tooltipText="Clear" onClick={handleClear} />
-        </div>
       </div>
-      <div className="grid grid-cols-1 justify-items-end">
+      <div className="grid grid-cols-1 justify-items-end" style={{ marginTop: 32 }}>
         <SaveButton
           onClick={() => true}
           successMessage="Canvas saved!"
