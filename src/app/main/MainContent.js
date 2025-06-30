@@ -3,7 +3,6 @@ import Dimensions from "../pages/Dimensions";
 import Materials from "../pages/Materials";
 import LabourCost from "../pages//LabourCost";
 import OtherCost from "../pages/OtherCost";
-import Analysis from "../pages/Analysis";
 import BuildingPlan from "../pages/BuildingPlan";
 import Cad from "../pages/Cad";
 
@@ -22,8 +21,7 @@ export default function MainContent({ activeSection }) {
         return <LabourCost />;
       case 'other-cost':
         return <OtherCost />;
-      case 'analysis':
-        return <Analysis />;
+     
         case 'cad':
         return <Cad />;
       default:

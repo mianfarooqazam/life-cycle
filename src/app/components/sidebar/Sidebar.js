@@ -59,7 +59,6 @@ export default function Sidebar({ activeSection, setActiveSection }) {
         { id: 'materials', label: 'Materials', icon: BrickWall },
         { id: 'labour-cost', label: 'Labour Cost', icon: CircleDollarSign },
         { id: 'other-cost', label: 'Other Cost', icon: Unplug },
-        { id: 'analysis', label: 'Analysis', icon: BarChart3 },
         { id: 'cad', label: 'Computer-Aided Architectural Plan', icon: Component, showBeta: true },
     ]; 
 
