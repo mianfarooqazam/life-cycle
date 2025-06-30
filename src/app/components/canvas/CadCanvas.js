@@ -5,7 +5,6 @@ import SaveButton from "@/app/components/button/SaveButton";
 import { Pencil, DoorClosed, Grid2x2, Move, Undo, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
 import CadCanvasModal from "@/app/components/modal/CadCanvasModal";
-import BoundaryWallModal from "@/app/components/modal/BoundaryWallModal";
 import { useCadStore } from "@/app/store/cadStore";
 
 function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor, size = 24, padding = 'p-2' }) {
@@ -32,7 +31,6 @@ function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor, size =
 export default function CadCanvas() {
   const stageRef = useRef();
   const [modalOpenIdx, setModalOpenIdx] = useState(null);
-  const [boundaryWallModalOpen, setBoundaryWallModalOpen] = useState(false);
   const [stageSize, setStageSize] = useState({ width: 800, height: 600 });
   
   const {
@@ -40,18 +38,11 @@ export default function CadCanvas() {
     wallDetails,
     currentLine,
     drawing,
-    boundaryWallMode,
-    boundaryWallLines,
-    boundaryWallDetails,
     setCurrentLine,
     setDrawing,
-    setBoundaryWallMode,
     addLine,
-    addBoundaryWallLine,
     updateWallDetails,
-    setBoundaryWallDetails,
     clearLines,
-    clearBoundaryWallLines,
     setHoveredLine,
     clearHoveredLine
   } = useCadStore();
@@ -69,8 +60,6 @@ export default function CadCanvas() {
   }, []);
 
   const handleMouseDown = (e) => {
-    // The check for e.evt.button was removed to enable touch support,
-    // as touch events don't have this property.
     if (!drawing) {
       const stage = stageRef.current;
       const pointer = stage.getPointerPosition();
@@ -95,45 +84,18 @@ export default function CadCanvas() {
 
   const handleMouseUp = (e) => {
     if (drawing && currentLine && currentLine.points.length === 4) {
-      if (boundaryWallMode) {
-        addBoundaryWallLine(currentLine);
-        
-        // Check if we have 4 boundary wall lines
-        const newBoundaryWallLines = [...boundaryWallLines, currentLine];
-        if (newBoundaryWallLines.length === 4) {
-          // Open boundary wall modal to get area and height
-          setBoundaryWallModalOpen(true);
-        }
-      } else {
-        addLine(currentLine);
-      }
+      addLine(currentLine);
       setCurrentLine(null);
       setDrawing(false);
     }
   };
 
-  const handleBoundaryWallSave = (details) => {
-    setBoundaryWallDetails(details);
-    setBoundaryWallMode(false);
-    setBoundaryWallModalOpen(false);
-  };
-
-  const handlePenClick = () => {
-    setBoundaryWallMode(true);
-    clearBoundaryWallLines();
-  };
-
   const handleClear = () => {
     clearLines();
-    clearBoundaryWallLines();
   };
 
   const handleUndo = () => {
-    if (boundaryWallMode && boundaryWallLines.length > 0) {
-      // Remove the last boundary wall line
-      const newBoundaryWallLines = boundaryWallLines.slice(0, -1);
-      useCadStore.getState().setBoundaryWallLines(newBoundaryWallLines);
-    } else if (lines.length > 0) {
+    if (lines.length > 0) {
       // Remove the last line
       const newLines = lines.slice(0, -1);
       const newWallDetails = wallDetails.slice(0, -1);
@@ -145,19 +107,6 @@ export default function CadCanvas() {
   const handleLineHover = (index) => {
     const details = wallDetails[index];
     setHoveredLine(index, details);
-  };
-
-  const handleBoundaryWallHover = (index) => {
-    if (boundaryWallDetails) {
-      // Create boundary wall details for hover display
-      const boundaryDetails = {
-        wallType: 'boundary',
-        length: boundaryWallDetails.wallLength,
-        height: boundaryWallDetails.wallHeight,
-        area: boundaryWallDetails.totalArea, // plot area
-      };
-      setHoveredLine(`boundary-${index}`, boundaryDetails);
-    }
   };
 
   const handleLineLeave = () => {
@@ -175,8 +124,8 @@ export default function CadCanvas() {
         <div style={{ display: 'flex', flexDirection: 'row', gap: 12 }}>
           <IconWithTooltip 
             Icon={Pencil} 
-            tooltipText={boundaryWallMode ? "Boundary Wall Mode" : boundaryWallLines.length >= 4 ? "Internal Wall Mode" : "Pen"} 
-            onClick={handlePenClick}
+            tooltipText="Pen" 
+            onClick={() => true}
           />
           <IconWithTooltip Icon={DoorClosed} tooltipText="Door" />
           <IconWithTooltip Icon={Grid2x2} tooltipText="Window" />
@@ -250,30 +199,12 @@ export default function CadCanvas() {
               {/* Regular lines */}
               {lines.map((line, idx) => (
                 <Line
-                  key={`regular-${idx}`}
+                  key={idx}
                   points={line.points}
-                  stroke="#222"
-                  strokeWidth={8}
+                  stroke="#007bff"
+                  strokeWidth={6}
                   lineCap="round"
-                  onContextMenu={e => {
-                    e.evt.preventDefault();
-                    setModalOpenIdx(idx);
-                  }}
                   onMouseEnter={() => handleLineHover(idx)}
-                  onMouseLeave={handleLineLeave}
-                  listening={true}
-                />
-              ))}
-              
-              {/* Boundary wall lines */}
-              {boundaryWallLines.map((line, idx) => (
-                <Line
-                  key={`boundary-${idx}`}
-                  points={line.points}
-                  stroke="#5BB045"
-                  strokeWidth={10}
-                  lineCap="round"
-                  onMouseEnter={() => handleBoundaryWallHover(idx)}
                   onMouseLeave={handleLineLeave}
                   listening={true}
                 />
@@ -282,8 +213,8 @@ export default function CadCanvas() {
               {currentLine && (
                 <Line
                   points={currentLine.points}
-                  stroke={boundaryWallMode ? "#5BB045" : "#007bff"}
-                  strokeWidth={boundaryWallMode ? 8 : 6}
+                  stroke="#007bff"
+                  strokeWidth={6}
                   dash={[10, 5]}
                   lineCap="round"
                 />
@@ -311,13 +242,6 @@ export default function CadCanvas() {
           }}
         />
       ))}
-      
-      {/* Boundary wall modal */}
-      <BoundaryWallModal
-        open={boundaryWallModalOpen}
-        onClose={() => setBoundaryWallModalOpen(false)}
-        onSave={handleBoundaryWallSave}
-      />
     </div>
   );
 }
