@@ -142,7 +142,7 @@ export default function BoundaryWallModal({ open, onClose, onSave }) {
                 </Box>
                 {/* Footer */}
                 <Box sx={{ p: 3, display: 'flex', justifyContent: 'flex-end' }}>
-                    <SaveButton onClick={handleSave} />
+                    <SaveButton onClick={handleSave} successMessage="" />
                 </Box>
             </Paper>
         </Modal>

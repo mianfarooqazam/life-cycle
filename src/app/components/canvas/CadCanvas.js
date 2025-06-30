@@ -216,6 +216,34 @@ export default function CadCanvas() {
             onMouseup={handleMouseUp}
           >
             <Layer>
+              {/* Grid background */}
+              {(() => {
+                const gridSize = 40;
+                const lines = [];
+                // Vertical grid lines
+                for (let x = 0; x <= stageSize.width; x += gridSize) {
+                  lines.push(
+                    <Line
+                      key={`vgrid-${x}`}
+                      points={[x, 0, x, stageSize.height]}
+                      stroke="#e0e0e0"
+                      strokeWidth={1}
+                    />
+                  );
+                }
+                // Horizontal grid lines
+                for (let y = 0; y <= stageSize.height; y += gridSize) {
+                  lines.push(
+                    <Line
+                      key={`hgrid-${y}`}
+                      points={[0, y, stageSize.width, y]}
+                      stroke="#e0e0e0"
+                      strokeWidth={1}
+                    />
+                  );
+                }
+                return lines;
+              })()}
               {/* Regular lines */}
               {lines.map((line, idx) => (
                 <Line
