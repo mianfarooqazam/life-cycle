@@ -20,10 +20,10 @@ function IconWithTooltip({ Icon, tooltipText, onClick, active, iconColor, size =
       >
         <Icon size={size} color={iconColor || "black"} />
       </motion.div>
-      {/* Tooltip */}
-      <div className="absolute right-full mr-3 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+      {/* Tooltip - now smaller */}
+      <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
         {tooltipText}
-        <div className="absolute left-full top-1/2 transform -translate-y-1/2 border-4 border-transparent border-l-gray-800"></div>
+        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
       </div>
     </div>
   );
@@ -69,8 +69,8 @@ export default function CadCanvas() {
   }, []);
 
   const handleMouseDown = (e) => {
-    // Only start drawing on left mouse button
-    if (e.evt && e.evt.button !== 0) return;
+    // The check for e.evt.button was removed to enable touch support,
+    // as touch events don't have this property.
     if (!drawing) {
       const stage = stageRef.current;
       const pointer = stage.getPointerPosition();
@@ -214,6 +214,9 @@ export default function CadCanvas() {
             onMouseDown={handleMouseDown}
             onMousemove={handleMouseMove}
             onMouseup={handleMouseUp}
+            onTouchStart={handleMouseDown}
+            onTouchMove={handleMouseMove}
+            onTouchEnd={handleMouseUp}
           >
             <Layer>
               {/* Grid background */}

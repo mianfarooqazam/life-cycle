@@ -577,7 +577,7 @@ export default function Rightbar({ activeSection }) {
   if (activeSection === 'cad') {
     return (
       <div className="col-span-2 rounded-lg p-4" style={{ backgroundColor: '#f7f6fb' }}>
-        <TitleHeader>CAD Info Panel</TitleHeader>
+        <TitleHeader>CAD Panel</TitleHeader>
         {renderCadInfo()}
       </div>
     );
