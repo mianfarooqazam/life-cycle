@@ -7,6 +7,11 @@ export const useCadStore = create((set, get) => ({
   currentLine: null,
   drawing: false,
   
+  // Boundary wall state
+  boundaryWallMode: false,
+  boundaryWallDetails: null,
+  boundaryWallLines: [],
+  
   // Hover state for rightbar info
   hoveredLineIndex: null,
   hoveredLineDetails: null,
@@ -17,10 +22,20 @@ export const useCadStore = create((set, get) => ({
   setCurrentLine: (currentLine) => set({ currentLine }),
   setDrawing: (drawing) => set({ drawing }),
   
+  // Boundary wall actions
+  setBoundaryWallMode: (mode) => set({ boundaryWallMode: mode }),
+  setBoundaryWallDetails: (details) => set({ boundaryWallDetails: details }),
+  setBoundaryWallLines: (lines) => set({ boundaryWallLines: lines }),
+  
   // Add a new line
   addLine: (line) => set((state) => ({ 
     lines: [...state.lines, line],
     wallDetails: [...state.wallDetails, null]
+  })),
+  
+  // Add boundary wall line
+  addBoundaryWallLine: (line) => set((state) => ({ 
+    boundaryWallLines: [...state.boundaryWallLines, line]
   })),
   
   // Update wall details for a specific line
@@ -39,6 +54,9 @@ export const useCadStore = create((set, get) => ({
   
   // Clear all lines
   clearLines: () => set({ lines: [], wallDetails: [], currentLine: null, drawing: false }),
+  
+  // Clear boundary wall lines
+  clearBoundaryWallLines: () => set({ boundaryWallLines: [], boundaryWallDetails: null }),
   
   // Hover actions
   setHoveredLine: (index, details) => set({ 
@@ -61,11 +79,13 @@ export const useCadStore = create((set, get) => ({
     const totalInternalWalls = state.wallDetails.filter(details => 
       details && details.wallType === 'internal'
     ).length;
+    const totalBoundaryWalls = state.boundaryWallLines.length;
     
     return {
       totalLines,
       totalExternalWalls,
-      totalInternalWalls
+      totalInternalWalls,
+      totalBoundaryWalls
     };
   }
 })); 

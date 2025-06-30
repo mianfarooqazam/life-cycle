@@ -25,6 +25,8 @@ export default function Rightbar({ activeSection }) {
     wallDetails,
     hoveredLineIndex,
     hoveredLineDetails,
+    boundaryWallLines,
+    boundaryWallDetails,
     getTotalStats
   } = useCadStore();
 
@@ -60,6 +62,10 @@ export default function Rightbar({ activeSection }) {
               <span className="text-gray-600">Internal Walls:</span>
               <span className="font-semibold text-orange-600">{stats.totalInternalWalls}</span>
             </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Boundary Walls:</span>
+              <span className="font-semibold text-purple-600">{boundaryWallLines.length}</span>
+            </div>
           </div>
         </div>
 
@@ -71,36 +77,61 @@ export default function Rightbar({ activeSection }) {
               <div className="flex justify-between">
                 <span className="text-gray-600">Wall Type:</span>
                 <span className="font-semibold capitalize text-blue-600">
-                  {hoveredLineDetails.wallType === 'external' ? 'External' : 'Internal'} Wall
+                  {hoveredLineDetails.wallType === 'external' ? 'External' : 
+                   hoveredLineDetails.wallType === 'internal' ? 'Internal' : 
+                   hoveredLineDetails.wallType === 'boundary' ? 'Boundary' : 'Unknown'} Wall
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Length:</span>
-                <span className="font-semibold text-green-600">{hoveredLineDetails.length} ft</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Height:</span>
-                <span className="font-semibold text-green-600">{hoveredLineDetails.height} ft</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Thickness:</span>
-                <span className="font-semibold text-green-600">{hoveredLineDetails.thickness} in</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Area:</span>
-                <span className="font-semibold text-purple-600">
-                  {(parseFloat(hoveredLineDetails.length) * parseFloat(hoveredLineDetails.height)).toFixed(2)} ft²
-                </span>
-              </div>
+              {hoveredLineDetails.wallType === 'boundary' ? (
+                <>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Plot Area:</span>
+                    <span className="font-semibold text-green-600">{hoveredLineDetails.area} ft²</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Length:</span>
+                    <span className="font-semibold text-green-600">{Number(hoveredLineDetails.length).toFixed(2)} ft</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Height:</span>
+                    <span className="font-semibold text-green-600">{hoveredLineDetails.height} ft</span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Length:</span>
+                    <span className="font-semibold text-green-600">{Number(hoveredLineDetails.length).toFixed(2)} ft</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Height:</span>
+                    <span className="font-semibold text-green-600">{hoveredLineDetails.height} ft</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Thickness:</span>
+                    <span className="font-semibold text-green-600">{hoveredLineDetails.thickness} in</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Area:</span>
+                    <span className="font-semibold text-purple-600">
+                      {hoveredLineDetails.area ? hoveredLineDetails.area.toFixed(2) : 
+                       (parseFloat(hoveredLineDetails.length) * parseFloat(hoveredLineDetails.height)).toFixed(2)} ft²
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}
 
         {/* Instructions */}
-        {!hoveredLineDetails && (
+        {!hoveredLineDetails && !boundaryWallDetails && (
           <div className="p-4 rounded-md border-2 border-dashed border-gray-300" style={{ backgroundColor: "#fafafa" }}>
             <h3 className="text-md font-semibold text-gray-700 mb-2">Instructions</h3>
             <ul className="text-sm text-gray-600 space-y-1">
+              <li>• Click the pen icon to enter boundary wall mode</li>
+              <li>• Draw 4 connected lines to create a boundary</li>
+              <li>• Enter area and height to calculate wall lengths</li>
               <li>• Hover over any line to see its details</li>
               <li>• Right-click on a line to edit its properties</li>
               <li>• Use the toolbar to draw and modify elements</li>
