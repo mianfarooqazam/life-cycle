@@ -79,7 +79,14 @@ export default function BasementDetails() {
         insulationType: row.insulationType || '',
         insulationThickness: row.insulationThickness || '',
         exteriorFinish: row.exteriorFinish || '',
-        interiorFinish: row.interiorFinish || ''
+        interiorFinish: row.interiorFinish || '',
+        isTilesUsed: row.isTilesUsed || 'no',
+        tileHeight: row.tileHeight || '',
+        customWallMaterialCost: row.customWallMaterialCost || '',
+        customExteriorFinishCost: row.customExteriorFinishCost || '',
+        customInteriorFinishCost: row.customInteriorFinishCost || '',
+        customInsulationCost: row.customInsulationCost || '',
+        customTilesCost: row.customTilesCost || ''
       });
       updateDoorForm({
         doorType: row.doorType || '',
@@ -130,6 +137,9 @@ export default function BasementDetails() {
       insulationThickness: formData.insulationThickness,
       exteriorFinish: formData.exteriorFinish,
       interiorFinish: formData.interiorFinish,
+      isTilesUsed: formData.isTilesUsed,
+      tileHeight: formData.tileHeight,
+      tilesArea: useBasementStore.getState().calculateTilesArea(),
       component: [
         doorForm.doorType && doorForm.quantity ? `Door (${doorForm.quantity})` : null,
         windowForm.windowType && windowForm.quantity ? `Window (${windowForm.quantity})` : null
@@ -215,6 +225,7 @@ export default function BasementDetails() {
         calculateWallVolume={calculateWallVolume}
         calculateDoorArea={calculateDoorArea}
         calculateWindowArea={calculateWindowArea}
+        calculateTilesArea={useBasementStore.getState().calculateTilesArea}
       />
       <BasementWallTable
         data={basementWallsData}

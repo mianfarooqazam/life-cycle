@@ -19,6 +19,7 @@ import { useBuildingPlanStore } from '@/app/store/buildingPlanStore';
 import { useExteriorWallStore } from '@/app/store/exteriorWallStore';
 import { useInteriorWallStore } from '@/app/store/interiorWallStore';
 import { useMumtyWallStore } from '@/app/store/mumtyWallStore';
+import { useBasementStore } from '@/app/store/basementStore';
 
 export default function MaterialsCostTab() {
     // Get selected floor
@@ -33,6 +34,7 @@ export default function MaterialsCostTab() {
     // Get mumty wall data (no floor filter)
     const mumtyWallsData = useMumtyWallStore((state) => state.mumtyWallsData);
     const updateMumtyWallData = useMumtyWallStore((state) => state.updateMumtyWallData);
+    const basementWallsData = useBasementStore((state) => state.basementWallsData);
 
     // Build materials data based on what is present for the selected floor
     const materialsData = useMemo(() => {
@@ -40,6 +42,7 @@ export default function MaterialsCostTab() {
         let interiorWallCounter = 1;
         let exteriorWallCounter = 1;
         let mumtyWallCounter = 1;
+        let basementWallCounter = 1;
 
         // Process Interior Walls FIRST
         interiorWalls.forEach((wall, index) => {
@@ -203,8 +206,71 @@ export default function MaterialsCostTab() {
             mumtyWallCounter++;
         });
 
+        // Process Basement Walls FOURTH (no floor filter)
+        basementWallsData.forEach((wall, index) => {
+            const wallPrefix = `Basement Wall ${basementWallCounter}`;
+            const wallMaterials = [];
+
+            // Wall Material
+            if (wall.wallMaterial) {
+                wallMaterials.push({
+                    type: 'Wall Material',
+                    name: wall.wallMaterial,
+                    cost: wall.customWallMaterialCost || WallBrickBlock.find(m => m.name === wall.wallMaterial)?.costperitem || ''
+                });
+            }
+
+            // Exterior Finish
+            if (wall.exteriorFinish) {
+                wallMaterials.push({
+                    type: 'Exterior Finish',
+                    name: wall.exteriorFinish,
+                    cost: wall.customExteriorFinishCost || ExteriorFinish.find(m => m.name === wall.exteriorFinish)?.costperitem || ''
+                });
+            }
+
+            // Interior Finish
+            if (wall.interiorFinish) {
+                wallMaterials.push({
+                    type: 'Interior Finish',
+                    name: wall.interiorFinish,
+                    cost: wall.customInteriorFinishCost || InteriorFinish.find(m => m.name === wall.interiorFinish)?.costperitem || ''
+                });
+            }
+
+            // Insulation
+            if (((wall.isInsulationUsed === 'yes' || wall.insulationUsed === 'yes') && wall.insulationType)) {
+                wallMaterials.push({
+                    type: 'Insulation',
+                    name: wall.insulationType,
+                    cost: wall.customInsulationCost || Insulation.find(m => m.name === wall.insulationType)?.costperitem || ''
+                });
+            }
+
+            // Tiles
+            if (wall.isTilesUsed === 'yes' && wall.tileHeight && wall.tilesArea) {
+                wallMaterials.push({
+                    type: 'Tiles',
+                    name: `Height: ${wall.tileHeight} ft, Area: ${wall.tilesArea} ft²`,
+                    cost: wall.customTilesCost || ''
+                });
+            }
+
+            if (wallMaterials.length > 0) {
+                data.push({
+                    id: `basement-wall-${index}`,
+                    component: wallPrefix,
+                    materials: wallMaterials,
+                    wallId: wall.id,
+                    wallType: 'basement'
+                });
+            }
+
+            basementWallCounter++;
+        });
+
         return data;
-    }, [exteriorWalls, interiorWalls, mumtyWallsData]);
+    }, [exteriorWalls, interiorWalls, mumtyWallsData, basementWallsData]);
 
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [editingRowIndex, setEditingRowIndex] = useState(null);
@@ -222,6 +288,8 @@ export default function MaterialsCostTab() {
             originalWall = interiorWalls.find(wall => wall.id === row.wallId);
         } else if (row.wallType === 'mumty') {
             originalWall = mumtyWallsData.find(wall => wall.id === row.wallId);
+        } else if (row.wallType === 'basement') {
+            originalWall = basementWallsData.find(wall => wall.id === row.wallId);
         }
         
         // Initialize modal data
@@ -290,6 +358,8 @@ export default function MaterialsCostTab() {
             originalWall = interiorWalls.find(wall => wall.id === row.wallId);
         } else if (row.wallType === 'mumty') {
             originalWall = mumtyWallsData.find(wall => wall.id === row.wallId);
+        } else if (row.wallType === 'basement') {
+            originalWall = basementWallsData.find(wall => wall.id === row.wallId);
         }
 
         if (!originalWall) return;
@@ -321,6 +391,13 @@ export default function MaterialsCostTab() {
             updateInteriorWallData(row.wallId, updatedWall);
         } else if (row.wallType === 'mumty') {
             updateMumtyWallData(row.wallId, updatedWall);
+        } else if (row.wallType === 'basement') {
+            // Add support for custom costs for basement wall
+            if (row.materials.some(m => m.type === 'Tiles')) {
+                updatedWall.customTilesCost = formData.tilesCost;
+            }
+            // Call updateBasementWallData for basement walls
+            useBasementStore.getState().updateBasementWallData(row.wallId, updatedWall);
         }
 
         setEditModalOpen(false);

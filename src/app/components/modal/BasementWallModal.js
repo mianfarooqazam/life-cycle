@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   FormControl,
@@ -52,8 +52,23 @@ export default function BasementWallModal({
   calculateWallArea,
   calculateWallVolume,
   calculateDoorArea,
-  calculateWindowArea
+  calculateWindowArea,
+  calculateTilesArea
 }) {
+  const [tileHeightError, setTileHeightError] = useState('');
+
+  // Tile height validation
+  const handleTileHeightChange = (e) => {
+    const value = e.target.value;
+    const wallHeight = parseFloat(formData.height);
+    if (value && wallHeight && parseFloat(value) > wallHeight) {
+      setTileHeightError('Tile height cannot be greater than wall height');
+    } else {
+      setTileHeightError('');
+    }
+    updateFormData({ tileHeight: value });
+  };
+
   return (
     <Modal
       open={open}
@@ -232,7 +247,7 @@ export default function BasementWallModal({
                 </div>
                 <div className="flex-1">
                   <TextInput
-                    label="Basement Wall Insulation Thickness (inch)"
+                    placeholder="Basement Wall Insulation Thickness (inch)"
                     name="insulationThickness"
                     type="number"
                     value={formData.insulationThickness}
@@ -241,6 +256,46 @@ export default function BasementWallModal({
                     inputProps={{ min: "0", step: "0.1" }}
                   />
                 </div>
+              </div>
+            )}
+            {/* Tiles Used Radio Button */}
+            <div className="grid grid-cols-1">
+              <FormControl component="fieldset">
+                <FormLabel component="legend">Are Tiles Used in Wall?</FormLabel>
+                <RadioGroup
+                  row
+                  name="isTilesUsed"
+                  value={formData.isTilesUsed ?? 'no'}
+                  onChange={(e) => updateFormData({ isTilesUsed: e.target.value })}
+                >
+                  <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+                  <FormControlLabel value="no" control={<Radio />} label="No" />
+                </RadioGroup>
+              </FormControl>
+            </div>
+            {/* Tile Height Input */}
+            {formData.isTilesUsed === 'yes' && (
+              <div>
+                <TextInput
+                  label="Tile Height (ft)"
+                  name="tileHeight"
+                  type="number"
+                  value={formData.tileHeight}
+                  onChange={handleTileHeightChange}
+                  required
+                  inputProps={{ min: '0', step: '0.1', max: formData.height || undefined }}
+                  sx={{ maxWidth: 250 }}
+                  error={!!tileHeightError}
+                  helperText={tileHeightError}
+                />
+              </div>
+            )}
+            {/* Tiles Area Display */}
+            {formData.isTilesUsed === 'yes' && formData.tileHeight && !tileHeightError && (
+              <div className="p-4 rounded-md" style={{ backgroundColor: '#f7f6fb', maxWidth: 350 }}>
+                <p className="text-lg font-bold text-gray-800">
+                  Basement Wall Tiles Area: <span className="text-[#5BB045]">{calculateTilesArea()} ft²</span>
+                </p>
               </div>
             )}
             {/* Door and Window Inputs Side by Side */}

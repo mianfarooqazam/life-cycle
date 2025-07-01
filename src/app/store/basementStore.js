@@ -31,7 +31,9 @@ export const useBasementStore = create(
         insulationType: '',
         insulationThickness: '',
         exteriorFinish: '',
-        interiorFinish: ''
+        interiorFinish: '',
+        isTilesUsed: 'no',
+        tileHeight: ''
       },
       doorForm: {
         doorType: '',
@@ -89,7 +91,9 @@ export const useBasementStore = create(
           insulationType: '',
           insulationThickness: '',
           exteriorFinish: '',
-          interiorFinish: ''
+          interiorFinish: '',
+          isTilesUsed: 'no',
+          tileHeight: ''
         }
       }),
 
@@ -220,7 +224,19 @@ export const useBasementStore = create(
       })),
       // Update existing basement wall data
       updateBasementWallData: (id, updatedRow) => set((state) => ({
-        basementWallsData: state.basementWallsData.map(item => item.id === id ? updatedRow : item)
+        basementWallsData: state.basementWallsData.map(item =>
+          item.id === id
+            ? {
+                ...item,
+                ...updatedRow,
+                customWallMaterialCost: updatedRow.customWallMaterialCost ?? item.customWallMaterialCost,
+                customExteriorFinishCost: updatedRow.customExteriorFinishCost ?? item.customExteriorFinishCost,
+                customInteriorFinishCost: updatedRow.customInteriorFinishCost ?? item.customInteriorFinishCost,
+                customInsulationCost: updatedRow.customInsulationCost ?? item.customInsulationCost,
+                customTilesCost: updatedRow.customTilesCost ?? item.customTilesCost
+              }
+            : item
+        )
       })),
       // Delete basement wall data
       deleteBasementWallData: (id) => set((state) => ({
@@ -264,6 +280,16 @@ export const useBasementStore = create(
         const w = parseFloat(windowForm.width);
         const q = parseFloat(windowForm.quantity) || 1;
         if (h && w && q) return (h * w * q).toFixed(2);
+        return '';
+      },
+      calculateTilesArea: () => {
+        const { formData } = get();
+        const length = parseFloat(formData.length);
+        const tileHeight = parseFloat(formData.tileHeight);
+        const wallHeight = parseFloat(formData.height);
+        if (formData.isTilesUsed === 'yes' && length && tileHeight && wallHeight && tileHeight <= wallHeight) {
+          return (length * tileHeight).toFixed(2);
+        }
         return '';
       }
     }),

@@ -54,6 +54,9 @@ export default function BasementWallTable({
               <TableCell sx={headerStyle}>Insulation Used?</TableCell>
               <TableCell sx={headerStyle}>Insulation Type</TableCell>
               <TableCell sx={headerStyle}>Insulation Thickness (in)</TableCell>
+              <TableCell sx={headerStyle}>Tiles Used?</TableCell>
+              <TableCell sx={headerStyle}>Tile Height (ft)</TableCell>
+              <TableCell sx={headerStyle}>Tiles Area (ft²)</TableCell>
               <TableCell sx={headerStyle}>Component</TableCell>
               <TableCell sx={headerStyle}>Door Type</TableCell>
               <TableCell sx={headerStyle}>Window Type</TableCell>
@@ -77,6 +80,9 @@ export default function BasementWallTable({
                 <TableCell sx={cellStyle}>{row.insulationUsed === 'yes' ? 'Yes' : 'No'}</TableCell>
                 <TableCell sx={cellStyle}>{row.insulationType || '-'}</TableCell>
                 <TableCell sx={cellStyle}>{row.insulationThickness || '-'}</TableCell>
+                <TableCell sx={cellStyle}>{row.isTilesUsed === 'yes' ? 'Yes' : 'No'}</TableCell>
+                <TableCell sx={cellStyle}>{row.isTilesUsed === 'yes' ? row.tileHeight : '-'}</TableCell>
+                <TableCell sx={cellStyle}>{row.isTilesUsed === 'yes' ? row.tilesArea : '-'}</TableCell>
                 <TableCell sx={cellStyle}>{row.component || '-'}</TableCell>
                 <TableCell sx={cellStyle}>{row.doorType || '-'}</TableCell>
                 <TableCell sx={cellStyle}>{row.windowType || '-'}</TableCell>
