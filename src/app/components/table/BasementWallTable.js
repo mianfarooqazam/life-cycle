@@ -60,6 +60,7 @@ export default function BasementWallTable({
               <TableCell sx={headerStyle}>Component</TableCell>
               <TableCell sx={headerStyle}>Door Type</TableCell>
               <TableCell sx={headerStyle}>Window Type</TableCell>
+              <TableCell sx={headerStyle}>Window Quantity</TableCell>
               <TableCell sx={headerStyle}>Door/Window Area (ft²)</TableCell>
               <TableCell sx={headerStyle}>Cost</TableCell>
               <TableCell sx={headerStyle}>Action</TableCell>
@@ -86,6 +87,7 @@ export default function BasementWallTable({
                 <TableCell sx={cellStyle}>{row.component || '-'}</TableCell>
                 <TableCell sx={cellStyle}>{row.doorType || '-'}</TableCell>
                 <TableCell sx={cellStyle}>{row.windowType || '-'}</TableCell>
+                <TableCell sx={cellStyle}>{row.windowQuantity || '-'}</TableCell>
                 <TableCell sx={cellStyle}>
                   {(row.doorArea || row.windowArea) ? (
                     <>

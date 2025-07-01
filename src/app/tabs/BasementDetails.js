@@ -145,7 +145,8 @@ export default function BasementDetails() {
         windowForm.windowType && windowForm.quantity ? `Window (${windowForm.quantity})` : null
       ].filter(Boolean).join(' / '),
       doorType: doorForm.doorType,
-      windowType: doorForm.windowType,
+      windowType: windowForm.windowType || '',
+      windowQuantity: windowForm.quantity !== undefined ? windowForm.quantity : '',
       doorArea: calculateDoorArea(),
       windowArea: calculateWindowArea(),
       cost: doorForm.doorType ? doorForm.costPerDoor : windowForm.windowType ? windowForm.costPerWindow : '',
@@ -160,7 +161,6 @@ export default function BasementDetails() {
       windowHeight: windowForm.height,
       windowWidth: windowForm.width,
       windowThickness: windowForm.thickness,
-      windowQuantity: windowForm.quantity,
       windowCost: windowForm.costPerWindow,
     };
     if (editingId) {
