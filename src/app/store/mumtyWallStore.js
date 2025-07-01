@@ -6,11 +6,15 @@ export const useMumtyWallStore = create(
     (set, get) => ({
       // Form state
       formData: {
+        wallMaterial: '',
         length: '',
         height: '',
         thickness: '',
         isInsulationUsed: 'no',
-        insulationThickness: ''
+        insulationType: '',
+        insulationThickness: '',
+        exteriorFinish: '',
+        interiorFinish: ''
       },
       doorForm: {
         doorType: '',
@@ -43,11 +47,15 @@ export const useMumtyWallStore = create(
       })),
       resetFormData: () => set({
         formData: {
+          wallMaterial: '',
           length: '',
           height: '',
           thickness: '',
           isInsulationUsed: 'no',
-          insulationThickness: ''
+          insulationType: '',
+          insulationThickness: '',
+          exteriorFinish: '',
+          interiorFinish: ''
         }
       }),
       resetDoorForm: () => set({

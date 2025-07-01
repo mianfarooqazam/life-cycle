@@ -12,7 +12,10 @@ import {
     Modal,
     Typography,
     IconButton,
-    Divider
+    Divider,
+    MenuItem,
+    Select,
+    InputLabel
 } from '@mui/material';
 import { X } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -21,6 +24,7 @@ import SaveButton from '@/app/components/button/SaveButton';
 import TextInput from '@/app/components/input/TextInput';
 import MumtyWallsTable from '@/app/components/table/MumtyWallsTable';
 import { useMumtyWallStore } from '@/app/store/mumtyWallStore';
+import { WallBrickBlock, ExteriorFinish, InteriorFinish, Insulation } from '@/app/data/Materials';
 
 const modalStyle = {
     position: 'absolute',
@@ -72,11 +76,15 @@ export default function MumtyWalls() {
         const row = getEditingRow(id);
         if (row) {
             updateFormData({
+                wallMaterial: row.wallMaterial || '',
                 length: row.length || '',
                 height: row.height || '',
                 thickness: row.thickness || '',
                 isInsulationUsed: row.insulationUsed || 'no',
-                insulationThickness: row.insulationThickness || ''
+                insulationType: row.insulationType || '',
+                insulationThickness: row.insulationThickness || '',
+                exteriorFinish: row.exteriorFinish || '',
+                interiorFinish: row.interiorFinish || ''
             });
             updateDoorForm({
                 doorType: row.doorType || '',
@@ -130,10 +138,14 @@ export default function MumtyWalls() {
         // Compose row data
         const newRow = {
             id: editingId || Date.now(),
+            wallMaterial: formData.wallMaterial,
             wallArea: calculateWallArea(),
             wallVolume: calculateWallVolume(),
             insulationUsed: formData.isInsulationUsed,
+            insulationType: formData.insulationType,
             insulationThickness: formData.insulationThickness,
+            exteriorFinish: formData.exteriorFinish,
+            interiorFinish: formData.interiorFinish,
             component: [
                 doorForm.doorType && doorForm.quantity ? `Door (${doorForm.quantity})` : null,
                 windowForm.windowType && windowForm.quantity ? `Window (${windowForm.quantity})` : null
@@ -246,6 +258,57 @@ export default function MumtyWalls() {
                         <div className="grid grid-cols-1 gap-6">
                             {/* Mumty Wall Form */}
                             <div className="flex flex-col gap-4">
+                                {/* Wall Material and Finish Selection in one line */}
+                                <div className="flex flex-row gap-4">
+                                    <div className="flex-1">
+                                        <FormControl fullWidth>
+                                            <InputLabel id="wall-material-label">Wall Material</InputLabel>
+                                            <Select
+                                                labelId="wall-material-label"
+                                                id="wall-material"
+                                                value={formData.wallMaterial}
+                                                label="Wall Material"
+                                                onChange={(e) => updateFormData({ wallMaterial: e.target.value })}
+                                            >
+                                                {WallBrickBlock.map((item) => (
+                                                    <MenuItem key={item.name} value={item.name}>{item.name}</MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    </div>
+                                    <div className="flex-1">
+                                        <FormControl fullWidth>
+                                            <InputLabel id="exterior-finish-label">Exterior Finish</InputLabel>
+                                            <Select
+                                                labelId="exterior-finish-label"
+                                                id="exterior-finish"
+                                                value={formData.exteriorFinish}
+                                                label="Exterior Finish"
+                                                onChange={(e) => updateFormData({ exteriorFinish: e.target.value })}
+                                            >
+                                                {ExteriorFinish.map((item) => (
+                                                    <MenuItem key={item.name} value={item.name}>{item.name}</MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    </div>
+                                    <div className="flex-1">
+                                        <FormControl fullWidth>
+                                            <InputLabel id="interior-finish-label">Interior Finish</InputLabel>
+                                            <Select
+                                                labelId="interior-finish-label"
+                                                id="interior-finish"
+                                                value={formData.interiorFinish}
+                                                label="Interior Finish"
+                                                onChange={(e) => updateFormData({ interiorFinish: e.target.value })}
+                                            >
+                                                {InteriorFinish.map((item) => (
+                                                    <MenuItem key={item.name} value={item.name}>{item.name}</MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    </div>
+                                </div>
                                 {/* First row: Length & Height */}
                                 <div className="flex flex-row gap-4">
                                     <div className="flex-1">
@@ -319,19 +382,36 @@ export default function MumtyWalls() {
                                     </RadioGroup>
                                 </FormControl>
                             </div>
-                            {/* Insulation Thickness Input - now below radio button */}
+                            {/* Insulation Type and Thickness Input */}
                             {formData.isInsulationUsed === 'yes' && (
-                                <div>
-                                    <TextInput
-                                        label="Mumty Wall Insulation Thickness (inch)"
-                                        name="insulationThickness"
-                                        type="number"
-                                        value={formData.insulationThickness}
-                                        onChange={(e) => updateFormData({ insulationThickness: e.target.value })}
-                                        required
-                                        inputProps={{ min: "0", step: "0.1" }}
-                                        sx={{ maxWidth: 250 }}
-                                    />
+                                <div className="flex flex-row gap-4">
+                                    <div className="flex-1">
+                                        <FormControl fullWidth>
+                                            <InputLabel id="insulation-type-label">Insulation Type</InputLabel>
+                                            <Select
+                                                labelId="insulation-type-label"
+                                                id="insulation-type"
+                                                value={formData.insulationType}
+                                                label="Insulation Type"
+                                                onChange={(e) => updateFormData({ insulationType: e.target.value })}
+                                            >
+                                                {Insulation.map((item) => (
+                                                    <MenuItem key={item.name} value={item.name}>{item.name}</MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    </div>
+                                    <div className="flex-1">
+                                        <TextInput
+                                                placeholder="Exterior Wall Insulation Thickness (inch)"
+                                                name="insulationThickness"
+                                            type="number"
+                                            value={formData.insulationThickness}
+                                            onChange={(e) => updateFormData({ insulationThickness: e.target.value })}
+                                            required
+                                            inputProps={{ min: "0", step: "0.1" }}
+                                        />
+                                    </div>
                                 </div>
                             )}
 
