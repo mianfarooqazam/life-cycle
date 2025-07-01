@@ -18,6 +18,7 @@ import MaterialModal from '@/app/components/modal/MaterialModal';
 import { useBuildingPlanStore } from '@/app/store/buildingPlanStore';
 import { useExteriorWallStore } from '@/app/store/exteriorWallStore';
 import { useInteriorWallStore } from '@/app/store/interiorWallStore';
+import { useMumtyWallStore } from '@/app/store/mumtyWallStore';
 
 export default function MaterialsCostTab() {
     // Get selected floor
@@ -29,12 +30,16 @@ export default function MaterialsCostTab() {
     const updateInteriorWallData = useInteriorWallStore((state) => state.updateInteriorWallData);
     const exteriorWalls = getExteriorWallsByFloor(selectedFloor);
     const interiorWalls = getInteriorWallsByFloor(selectedFloor);
+    // Get mumty wall data (no floor filter)
+    const mumtyWallsData = useMumtyWallStore((state) => state.mumtyWallsData);
+    const updateMumtyWallData = useMumtyWallStore((state) => state.updateMumtyWallData);
 
     // Build materials data based on what is present for the selected floor
     const materialsData = useMemo(() => {
         const data = [];
         let interiorWallCounter = 1;
         let exteriorWallCounter = 1;
+        let mumtyWallCounter = 1;
 
         // Process Interior Walls FIRST
         interiorWalls.forEach((wall, index) => {
@@ -144,8 +149,62 @@ export default function MaterialsCostTab() {
             exteriorWallCounter++;
         });
 
+        // Process Mumty Walls THIRD (no floor filter)
+        mumtyWallsData.forEach((wall, index) => {
+            const wallPrefix = `Mumty Wall ${mumtyWallCounter}`;
+            const wallMaterials = [];
+
+            // Wall Material
+            if (wall.wallMaterial) {
+                wallMaterials.push({
+                    type: 'Wall Material',
+                    name: wall.wallMaterial,
+                    cost: wall.customWallMaterialCost || WallBrickBlock.find(m => m.name === wall.wallMaterial)?.costperitem || ''
+                });
+            }
+
+            // Exterior Finish
+            if (wall.exteriorFinish) {
+                wallMaterials.push({
+                    type: 'Exterior Finish',
+                    name: wall.exteriorFinish,
+                    cost: wall.customExteriorFinishCost || ExteriorFinish.find(m => m.name === wall.exteriorFinish)?.costperitem || ''
+                });
+            }
+
+            // Interior Finish
+            if (wall.interiorFinish) {
+                wallMaterials.push({
+                    type: 'Interior Finish',
+                    name: wall.interiorFinish,
+                    cost: wall.customInteriorFinishCost || InteriorFinish.find(m => m.name === wall.interiorFinish)?.costperitem || ''
+                });
+            }
+
+            // Insulation
+            if (((wall.isInsulationUsed === 'yes' || wall.insulationUsed === 'yes') && wall.insulationType)) {
+                wallMaterials.push({
+                    type: 'Insulation',
+                    name: wall.insulationType, // Ensure name is set
+                    cost: wall.customInsulationCost || Insulation.find(m => m.name === wall.insulationType)?.costperitem || ''
+                });
+            }
+
+            if (wallMaterials.length > 0) {
+                data.push({
+                    id: `mumty-wall-${index}`,
+                    component: wallPrefix,
+                    materials: wallMaterials,
+                    wallId: wall.id,
+                    wallType: 'mumty'
+                });
+            }
+
+            mumtyWallCounter++;
+        });
+
         return data;
-    }, [exteriorWalls, interiorWalls]);
+    }, [exteriorWalls, interiorWalls, mumtyWallsData]);
 
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [editingRowIndex, setEditingRowIndex] = useState(null);
@@ -159,8 +218,10 @@ export default function MaterialsCostTab() {
         let originalWall;
         if (row.wallType === 'exterior') {
             originalWall = exteriorWalls.find(wall => wall.id === row.wallId);
-        } else {
+        } else if (row.wallType === 'interior') {
             originalWall = interiorWalls.find(wall => wall.id === row.wallId);
+        } else if (row.wallType === 'mumty') {
+            originalWall = mumtyWallsData.find(wall => wall.id === row.wallId);
         }
         
         // Initialize modal data
@@ -225,8 +286,10 @@ export default function MaterialsCostTab() {
         let originalWall;
         if (row.wallType === 'exterior') {
             originalWall = exteriorWalls.find(wall => wall.id === row.wallId);
-        } else {
+        } else if (row.wallType === 'interior') {
             originalWall = interiorWalls.find(wall => wall.id === row.wallId);
+        } else if (row.wallType === 'mumty') {
+            originalWall = mumtyWallsData.find(wall => wall.id === row.wallId);
         }
 
         if (!originalWall) return;
@@ -254,8 +317,10 @@ export default function MaterialsCostTab() {
         // Update the wall data in the store
         if (row.wallType === 'exterior') {
             updateExteriorWallData(row.wallId, updatedWall);
-        } else {
+        } else if (row.wallType === 'interior') {
             updateInteriorWallData(row.wallId, updatedWall);
+        } else if (row.wallType === 'mumty') {
+            updateMumtyWallData(row.wallId, updatedWall);
         }
 
         setEditModalOpen(false);
