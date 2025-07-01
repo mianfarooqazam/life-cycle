@@ -42,6 +42,10 @@ export default function MumtyWallsTable({
     }
   };
 
+  if (!data || data.length === 0) {
+    return null;
+  }
+
   return (
     <div>
       <h2 className="text-lg font-bold mb-2 text-center">Mumty Wall</h2>
@@ -67,69 +71,59 @@ export default function MumtyWallsTable({
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={15} align="center" sx={{ py: 4 }}>
-                  <Typography variant="body1" color="text.secondary">
-                    No mumty wall data available. Add some data to get started.
-                  </Typography>
+            {data.map((row, idx) => (
+              <TableRow
+                key={row.id}
+                sx={{ backgroundColor: '#ffffff', '&:hover': { backgroundColor: '#f7f6fb' } }}
+              >
+                <TableCell sx={cellStyle}>{idx + 1}</TableCell>
+                <TableCell sx={cellStyle}>{row.wallMaterial || '-'}</TableCell>
+                <TableCell sx={cellStyle}>{row.exteriorFinish || '-'}</TableCell>
+                <TableCell sx={cellStyle}>{row.interiorFinish || '-'}</TableCell>
+                <TableCell sx={cellStyle}>{row.wallArea || '-'}</TableCell>
+                <TableCell sx={cellStyle}>{row.wallVolume || '-'}</TableCell>
+                <TableCell sx={cellStyle}>{row.insulationUsed === 'yes' ? 'Yes' : 'No'}</TableCell>
+                <TableCell sx={cellStyle}>{row.insulationType || '-'}</TableCell>
+                <TableCell sx={cellStyle}>{row.insulationThickness || '-'}</TableCell>
+                <TableCell sx={cellStyle}>{row.component || '-'}</TableCell>
+                <TableCell sx={cellStyle}>{row.doorType || '-'}</TableCell>
+                <TableCell sx={cellStyle}>{row.windowType || '-'}</TableCell>
+                <TableCell sx={cellStyle}>
+                  {(row.doorArea || row.windowArea) ? (
+                    <>
+                      {row.doorArea ? (
+                        <div>Door: {row.doorArea} ft²</div>
+                      ) : null}
+                      {row.windowArea ? (
+                        <div>Window: {row.windowArea} ft²</div>
+                      ) : null}
+                    </>
+                  ) : '-'}
+                </TableCell>
+                <TableCell sx={cellStyle}>
+                  {(row.doorType && row.doorCost) || (row.windowType && row.windowCost) ? (
+                    <>
+                      {row.doorType && row.doorCost && (
+                        <div>Door: Rs. {row.doorCost}</div>
+                      )}
+                      {row.windowType && row.windowCost && (
+                        <div>Window: Rs. {row.windowCost}</div>
+                      )}
+                    </>
+                  ) : '-'}
+                </TableCell>
+                <TableCell sx={cellStyle}>
+                  <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
+                    <IconButton color="primary" onClick={() => onEdit(row.id)} size="small" sx={{ mr: 1 }}>
+                      <Edit size={18} />
+                    </IconButton>
+                    <IconButton color="error" onClick={() => onDelete(row.id)} size="small">
+                      <Trash2 size={18} />
+                    </IconButton>
+                  </Box>
                 </TableCell>
               </TableRow>
-            ) : (
-              data.map((row, idx) => (
-                <TableRow
-                  key={row.id}
-                  sx={{ backgroundColor: '#ffffff', '&:hover': { backgroundColor: '#f7f6fb' } }}
-                >
-                  <TableCell sx={cellStyle}>{idx + 1}</TableCell>
-                  <TableCell sx={cellStyle}>{row.wallMaterial || '-'}</TableCell>
-                  <TableCell sx={cellStyle}>{row.exteriorFinish || '-'}</TableCell>
-                  <TableCell sx={cellStyle}>{row.interiorFinish || '-'}</TableCell>
-                  <TableCell sx={cellStyle}>{row.wallArea || '-'}</TableCell>
-                  <TableCell sx={cellStyle}>{row.wallVolume || '-'}</TableCell>
-                  <TableCell sx={cellStyle}>{row.insulationUsed === 'yes' ? 'Yes' : 'No'}</TableCell>
-                  <TableCell sx={cellStyle}>{row.insulationType || '-'}</TableCell>
-                  <TableCell sx={cellStyle}>{row.insulationThickness || '-'}</TableCell>
-                  <TableCell sx={cellStyle}>{row.component || '-'}</TableCell>
-                  <TableCell sx={cellStyle}>{row.doorType || '-'}</TableCell>
-                  <TableCell sx={cellStyle}>{row.windowType || '-'}</TableCell>
-                  <TableCell sx={cellStyle}>
-                    {(row.doorArea || row.windowArea) ? (
-                      <>
-                        {row.doorArea ? (
-                          <div>Door: {row.doorArea} ft²</div>
-                        ) : null}
-                        {row.windowArea ? (
-                          <div>Window: {row.windowArea} ft²</div>
-                        ) : null}
-                      </>
-                    ) : '-'}
-                  </TableCell>
-                  <TableCell sx={cellStyle}>
-                    {(row.doorType && row.doorCost) || (row.windowType && row.windowCost) ? (
-                      <>
-                        {row.doorType && row.doorCost && (
-                          <div>Door: Rs. {row.doorCost}</div>
-                        )}
-                        {row.windowType && row.windowCost && (
-                          <div>Window: Rs. {row.windowCost}</div>
-                        )}
-                      </>
-                    ) : '-'}
-                  </TableCell>
-                  <TableCell sx={cellStyle}>
-                    <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
-                      <IconButton color="primary" onClick={() => onEdit(row.id)} size="small" sx={{ mr: 1 }}>
-                        <Edit size={18} />
-                      </IconButton>
-                      <IconButton color="error" onClick={() => onDelete(row.id)} size="small">
-                        <Trash2 size={18} />
-                      </IconButton>
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
