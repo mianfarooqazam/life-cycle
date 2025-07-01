@@ -21,6 +21,36 @@ export const useBasementStore = create(
       basementData: [],
       editingId: null,
 
+      // New: Basement Wall state
+      formData: {
+        wallMaterial: '',
+        length: '',
+        height: '',
+        thickness: '',
+        isInsulationUsed: 'no',
+        insulationType: '',
+        insulationThickness: '',
+        exteriorFinish: '',
+        interiorFinish: ''
+      },
+      doorForm: {
+        doorType: '',
+        height: '',
+        width: '',
+        thickness: '',
+        quantity: '',
+        costPerDoor: ''
+      },
+      windowForm: {
+        windowType: '',
+        height: '',
+        width: '',
+        thickness: '',
+        quantity: '',
+        costPerWindow: ''
+      },
+      basementWallsData: [],
+
       // Update excavation data
       updateExcavationData: (data) => set((state) => ({
         excavationData: { ...state.excavationData, ...data }
@@ -50,14 +80,16 @@ export const useBasementStore = create(
 
       // Reset all form data
       resetFormData: () => set({
-        excavationData: {
+        formData: {
+          wallMaterial: '',
           length: '',
-          width: '',
-          depth: ''
-        },
-        finishingData: {
-          ceilingArea: '',
-          tilesArea: ''
+          height: '',
+          thickness: '',
+          isInsulationUsed: 'no',
+          insulationType: '',
+          insulationThickness: '',
+          exteriorFinish: '',
+          interiorFinish: ''
         }
       }),
 
@@ -150,6 +182,89 @@ export const useBasementStore = create(
           return 'Please fill in all finishing fields (ceiling area, tiles area)';
         }
         return 'Please fill all required fields!';
+      },
+
+      // Wall form helpers
+      updateFormData: (data) => set((state) => ({
+        formData: { ...state.formData, ...data }
+      })),
+      updateDoorForm: (data) => set((state) => ({
+        doorForm: { ...state.doorForm, ...data }
+      })),
+      updateWindowForm: (data) => set((state) => ({
+        windowForm: { ...state.windowForm, ...data }
+      })),
+      resetDoorForm: () => set({
+        doorForm: {
+          doorType: '',
+          height: '',
+          width: '',
+          thickness: '',
+          quantity: '',
+          costPerDoor: ''
+        }
+      }),
+      resetWindowForm: () => set({
+        windowForm: {
+          windowType: '',
+          height: '',
+          width: '',
+          thickness: '',
+          quantity: '',
+          costPerWindow: ''
+        }
+      }),
+      // Add new basement wall data
+      addBasementWallData: (row) => set((state) => ({
+        basementWallsData: [...state.basementWallsData, row]
+      })),
+      // Update existing basement wall data
+      updateBasementWallData: (id, updatedRow) => set((state) => ({
+        basementWallsData: state.basementWallsData.map(item => item.id === id ? updatedRow : item)
+      })),
+      // Delete basement wall data
+      deleteBasementWallData: (id) => set((state) => ({
+        basementWallsData: state.basementWallsData.filter(item => item.id !== id)
+      })),
+      // Get row for editing
+      getEditingRow: (id) => {
+        const { basementWallsData } = get();
+        return basementWallsData.find(row => row.id === id);
+      },
+      // Calculation helpers
+      calculateWallArea: () => {
+        const { formData } = get();
+        const length = parseFloat(formData.length);
+        const height = parseFloat(formData.height);
+        if (length && height) return (length * height).toFixed(2);
+        return '';
+      },
+      calculateWallVolume: () => {
+        const { formData } = get();
+        const length = parseFloat(formData.length);
+        const height = parseFloat(formData.height);
+        const thickness = parseFloat(formData.thickness);
+        if (length && height && thickness) {
+          const thicknessInFeet = thickness / 12;
+          return (length * height * thicknessInFeet).toFixed(2);
+        }
+        return '';
+      },
+      calculateDoorArea: () => {
+        const { doorForm } = get();
+        const h = parseFloat(doorForm.height);
+        const w = parseFloat(doorForm.width);
+        const q = parseFloat(doorForm.quantity) || 1;
+        if (h && w && q) return (h * w * q).toFixed(2);
+        return '';
+      },
+      calculateWindowArea: () => {
+        const { windowForm } = get();
+        const h = parseFloat(windowForm.height);
+        const w = parseFloat(windowForm.width);
+        const q = parseFloat(windowForm.quantity) || 1;
+        if (h && w && q) return (h * w * q).toFixed(2);
+        return '';
       }
     }),
     {
