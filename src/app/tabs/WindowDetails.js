@@ -3,6 +3,7 @@ import DoorWindowTable from '@/app/components/table/DoorWindowTable';
 import { useMumtyWallStore } from '@/app/store/mumtyWallStore';
 import { useExteriorWallStore } from '@/app/store/exteriorWallStore';
 import { useInteriorWallStore } from '@/app/store/interiorWallStore';
+import { useBasementStore } from '@/app/store/basementStore';
 
 export default function WindowDetails() {
   const headers = [
@@ -19,6 +20,7 @@ export default function WindowDetails() {
   const mumtyWallsData = useMumtyWallStore(state => state.mumtyWallsData);
   const exteriorWallsData = useExteriorWallStore(state => state.exteriorWallsData);
   const interiorWallsData = useInteriorWallStore(state => state.interiorWallsData);
+  const basementWallsData = useBasementStore(state => state.basementWallsData);
 
   // Filter and map to window data for the table
   const mumtyWindowData = mumtyWallsData
@@ -57,7 +59,19 @@ export default function WindowDetails() {
       totalCost: row.windowCost && row.windowQuantity ? (parseFloat(row.windowCost) * parseFloat(row.windowQuantity)) : ''
     }));
 
-  const windowData = [...mumtyWindowData, ...exteriorWindowData, ...interiorWindowData].map((item, idx) => ({ ...item, srNo: idx + 1 }));
+  const basementWindowData = basementWallsData
+    .filter(row => row.windowType)
+    .map((row, idx) => ({
+      id: row.id,
+      wallOrigin: 'Basement Wall',
+      component: 'Window',
+      type: row.windowType,
+      area: row.windowArea,
+      costPerUnit: row.windowCost,
+      totalCost: row.windowCost && row.windowQuantity ? (parseFloat(row.windowCost) * parseFloat(row.windowQuantity)) : ''
+    }));
+
+  const windowData = [...mumtyWindowData, ...exteriorWindowData, ...interiorWindowData, ...basementWindowData].map((item, idx) => ({ ...item, srNo: idx + 1 }));
 
   return (
     <div className="p-2">
