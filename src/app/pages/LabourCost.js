@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import TitleHeader from '@/app/components/header/TitleHeader'; 
-import { Toaster } from 'react-hot-toast';
 import {
   Table,
   TableBody,
@@ -78,7 +77,6 @@ export default function LabourCost() {
 
   return (
     <div className="grid grid-cols-1 p-2">
-      <Toaster />
       <TitleHeader>Labour Cost</TitleHeader>
       
       <TableContainer>

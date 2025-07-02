@@ -1,9 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import TitleHeader from '@/app/components/header/TitleHeader';
-import { Toaster } from 'react-hot-toast';
 import {
- 
   Box,
   Tabs,
   Tab,
@@ -19,7 +17,6 @@ export default function Materials() {
 
   return (
     <div className="grid grid-cols-1 p-2">
-      <Toaster />
       <TitleHeader>Materials</TitleHeader>
       <Box sx={{ backgroundColor: '#f7f6fb', mb: 2 }}>
         <Tabs

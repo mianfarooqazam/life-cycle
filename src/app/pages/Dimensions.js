@@ -32,7 +32,6 @@ import BeamDetails from '../tabs/BeamDetails';
 import InsulatedWallDetails from '../tabs/InsulatedWallDetails';
 import DoorDetails from '../tabs/DoorDetails';
 import WindowDetails from '../tabs/WindowDetails';
-import { Toaster } from 'react-hot-toast';
 
 export default function Dimensions() {
   const [activeTab, setActiveTab] = useState(0);
@@ -59,7 +58,6 @@ export default function Dimensions() {
 
   return (
     <div className="grid grid-cols-1 p-2">
-      <Toaster />
       <TitleHeader>Building Dimensions</TitleHeader>
       {/* Tabs Navigation */}
       <Box
