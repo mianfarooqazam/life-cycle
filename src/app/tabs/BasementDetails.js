@@ -433,11 +433,11 @@ export default function BasementDetails() {
                   </TableBody>
                 </Table>
               </TableContainer>
+              <Alert severity="info" sx={{ mt: 2 }}>
+                Strip details can be edited / deleted from Retaining Wall table.
+              </Alert>
             </>
           )}
-          <Alert severity="info" sx={{ mt: 2 }}>
-          Strip details can be edited / deleted from Retaining Wall table.
-        </Alert>
         </>
       )}
 
