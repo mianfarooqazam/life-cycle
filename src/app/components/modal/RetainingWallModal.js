@@ -13,6 +13,7 @@ import {
 import { X } from 'lucide-react';
 import SaveButton from '@/app/components/button/SaveButton';
 import TextInput from '@/app/components/input/TextInput';
+import { useBuildingPlanStore } from '@/app/store/buildingPlanStore';
 
 const modalStyle = {
   position: 'absolute',
@@ -37,13 +38,20 @@ export default function RetainingWallModal({
   formData,
   updateFormData,
   resetFormData,
-  calculateVolume
+  calculateVolume,
+  stripFormData,
+  updateStripFormData,
+  calculateStripVolume
 }) {
+  const foundationType = useBuildingPlanStore((state) => state.foundationType);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     updateFormData({ [name]: value });
   };
-
+  const handleStripInputChange = (e) => {
+    const { name, value } = e.target;
+    updateStripFormData({ [name]: value });
+  };
   return (
     <Modal open={open} onClose={onClose} aria-labelledby="retaining-wall-modal-title">
       <Paper sx={modalStyle}>
@@ -108,8 +116,38 @@ export default function RetainingWallModal({
               required
               inputProps={{ min: '0', step: '0.1' }}
             />
+            {/* Strip Foundation Section */}
+            {foundationType === 'strip' && (
+              <>
+                <Typography variant="subtitle1" sx={{ fontWeight: 600, mt: 2 }}>Foundation Type: Strip</Typography>
+                <TextInput
+                  label="Strip Depth (ft)"
+                  name="depth"
+                  type="number"
+                  value={stripFormData.depth}
+                  onChange={handleStripInputChange}
+                  inputProps={{ min: '0', step: '0.1' }}
+                />
+                <TextInput
+                  label="Strip Width (ft)"
+                  name="width"
+                  type="number"
+                  value={stripFormData.width}
+                  onChange={handleStripInputChange}
+                  inputProps={{ min: '0', step: '0.1' }}
+                />
+                {formData.length && stripFormData.depth && stripFormData.width && (
+                  <div className="p-4 rounded-md mb-2" style={{ backgroundColor: '#f7f6fb' }}>
+                    <p className="text-lg font-bold text-gray-800">
+                      Strip Volume: <span className="text-[#5BB045]">{calculateStripVolume()} ft³</span>
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
+            {/* Always show Retaining Wall Volume if fields are filled */}
             {formData.length && formData.height && formData.thickness && (
-              <div className="p-4 rounded-md" style={{ backgroundColor: '#f7f6fb' }}>
+              <div className="p-4 rounded-md mb-2" style={{ backgroundColor: '#f7f6fb' }}>
                 <p className="text-lg font-bold text-gray-800">
                   Retaining Wall Volume: <span className="text-[#5BB045]">{calculateVolume()} ft³</span>
                 </p>

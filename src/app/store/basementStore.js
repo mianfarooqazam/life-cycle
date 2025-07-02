@@ -69,6 +69,12 @@ export const useBasementStore = create(
         thickness: '' // in inches
       },
 
+      // Strip Foundation state for retaining wall
+      stripFormData: {
+        depth: '', // in ft
+        width: ''  // in ft
+      },
+
       // Update excavation data
       updateExcavationData: (data) => set((state) => ({
         excavationData: { ...state.excavationData, ...data }
@@ -386,6 +392,27 @@ export const useBasementStore = create(
           // Convert thickness from inches to feet
           const thicknessInFeet = thickness / 12;
           return (area * thicknessInFeet).toFixed(2);
+        }
+        return '0.00';
+      },
+
+      // Strip Foundation helpers
+      updateStripFormData: (data) => set((state) => ({
+        stripFormData: { ...state.stripFormData, ...data }
+      })),
+      resetStripFormData: () => set({
+        stripFormData: {
+          depth: '',
+          width: ''
+        }
+      }),
+      calculateStripVolume: () => {
+        const { retainingFormData, stripFormData } = get();
+        const length = parseFloat(retainingFormData.length);
+        const depth = parseFloat(stripFormData.depth);
+        const width = parseFloat(stripFormData.width);
+        if (length && depth && width) {
+          return (length * depth * width).toFixed(2);
         }
         return '0.00';
       },

@@ -37,6 +37,24 @@ export default function BasementDetails() {
     raftFoundationData,
     updateRaftFoundationData,
     calculateRaftVolume,
+    retainingFormData,
+    retainingWallsData,
+    retainingEditingId,
+    updateRetainingFormData,
+    resetRetainingFormData,
+    addRetainingWallData,
+    updateRetainingWallData,
+    deleteRetainingWallData,
+    setRetainingEditingId,
+    clearRetainingEditingId,
+    getRetainingEditingRow,
+    calculateRetainingVolume,
+    validateRetainingForm,
+    getRetainingErrorMessage,
+    stripFormData,
+    updateStripFormData,
+    resetStripFormData,
+    calculateStripVolume
   } = useBasementStore();
 
   const [mainModalOpen, setMainModalOpen] = useState(false);
@@ -62,23 +80,6 @@ export default function BasementDetails() {
     calculateWindowArea,
   } = useBasementStore();
 
-  // Retaining wall logic (now from useBasementStore)
-  const {
-    retainingFormData,
-    retainingWallsData,
-    retainingEditingId,
-    updateRetainingFormData,
-    resetRetainingFormData,
-    addRetainingWallData,
-    updateRetainingWallData,
-    deleteRetainingWallData,
-    setRetainingEditingId,
-    clearRetainingEditingId,
-    getRetainingEditingRow,
-    calculateRetainingVolume,
-    validateRetainingForm,
-    getRetainingErrorMessage
-  } = useBasementStore();
   const [retainingModalOpen, setRetainingModalOpen] = useState(false);
 
   const handleExcavationChange = (e) => {
@@ -217,13 +218,20 @@ export default function BasementDetails() {
         height: row.height || '',
         thickness: row.thickness || ''
       });
+      // Populate strip form data if foundationType is 'strip'
+      if (foundationType === 'strip') {
+        updateStripFormData({
+          depth: row.stripDepth || '',
+          width: row.stripWidth || ''
+        });
+      }
     }
     setRetainingModalOpen(true);
   };
 
   const handleRetainingSave = () => {
     if (!validateRetainingForm()) return false;
-    const newRow = {
+    let newRow = {
       id: retainingEditingId || Date.now(),
       wallType: retainingFormData.wallType,
       length: retainingFormData.length,
@@ -231,6 +239,15 @@ export default function BasementDetails() {
       thickness: retainingFormData.thickness,
       volume: calculateRetainingVolume()
     };
+    // Add strip data if foundationType is 'strip'
+    if (foundationType === 'strip') {
+      newRow = {
+        ...newRow,
+        stripDepth: stripFormData.depth,
+        stripWidth: stripFormData.width,
+        stripVolume: calculateStripVolume()
+      };
+    }
     if (retainingEditingId) {
       updateRetainingWallData(retainingEditingId, newRow);
       clearRetainingEditingId();
@@ -238,6 +255,7 @@ export default function BasementDetails() {
       addRetainingWallData(newRow);
     }
     resetRetainingFormData();
+    resetStripFormData();
     setRetainingModalOpen(false);
     return true;
   };
@@ -323,30 +341,34 @@ export default function BasementDetails() {
       {(foundationType === 'raft' || foundationType === 'strip') && (
         <>
           <h2 className="text-lg font-bold mb-2 text-center mt-8">Basement Details ({foundationType === 'raft' ? ' Raft Foundation ' : ' Strip Foundation '})</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-            <TextInput
-              label="Raft Area (ft²)"
-              name="area"
-              type="number"
-              value={raftFoundationData.area}
-              onChange={handleRaftFoundationChange}
-              inputProps={{ min: '0', step: '0.1' }}
-            />
-            <TextInput
-              label="Raft Thickness (inches)"
-              name="thickness"
-              type="number"
-              value={raftFoundationData.thickness}
-              onChange={handleRaftFoundationChange}
-              inputProps={{ min: '0', step: '0.1' }}
-            />
-          </div>
-          {(raftFoundationData.area && raftFoundationData.thickness) && (
-            <div className="p-4 rounded-md mb-6" style={{ backgroundColor: '#f7f6fb' }}>
-              <p className="text-lg font-bold text-gray-800">
-                Raft volume: <span className="text-[#5BB045]">{calculateRaftVolume()} ft³</span>
-              </p>
-            </div>
+          {foundationType === 'raft' && (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                <TextInput
+                  label="Raft Area (ft²)"
+                  name="area"
+                  type="number"
+                  value={raftFoundationData.area}
+                  onChange={handleRaftFoundationChange}
+                  inputProps={{ min: '0', step: '0.1' }}
+                />
+                <TextInput
+                  label="Raft Thickness (inches)"
+                  name="thickness"
+                  type="number"
+                  value={raftFoundationData.thickness}
+                  onChange={handleRaftFoundationChange}
+                  inputProps={{ min: '0', step: '0.1' }}
+                />
+              </div>
+              {(raftFoundationData.area && raftFoundationData.thickness) && (
+                <div className="p-4 rounded-md mb-6" style={{ backgroundColor: '#f7f6fb' }}>
+                  <p className="text-lg font-bold text-gray-800">
+                    Raft volume: <span className="text-[#5BB045]">{calculateRaftVolume()} ft³</span>
+                  </p>
+                </div>
+              )}
+            </>
           )}
         </>
       )}
@@ -413,6 +435,9 @@ export default function BasementDetails() {
         updateFormData={updateRetainingFormData}
         resetFormData={resetRetainingFormData}
         calculateVolume={calculateRetainingVolume}
+        stripFormData={stripFormData}
+        updateStripFormData={updateStripFormData}
+        calculateStripVolume={calculateStripVolume}
       />
       {retainingWallsData.length > 0 && (
         <>
