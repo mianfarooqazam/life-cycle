@@ -495,7 +495,7 @@ export default function BasementWallModal({
               <SaveButton
                 onClick={onSave}
                 successMessage="Basement Wall Data Saved Successfully! 🎉"
-                errorMessage="Please fill all required fields!"
+                // errorMessage="Please fill all required fields!"
               />
             </div>
           </div>
