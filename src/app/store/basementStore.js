@@ -197,19 +197,16 @@ export const useBasementStore = create(
 
       // Validate both forms
       validateForm: () => {
-        const { excavationData, finishingData } = get();
-        return !!(excavationData.length && excavationData.width && excavationData.depth && 
-                 finishingData.ceilingArea && finishingData.tilesArea);
+        const { excavationData } = get();
+        // Only require excavation fields, not finishing fields
+        return !!(excavationData.length && excavationData.width && excavationData.depth);
       },
 
       // Get error message
       getErrorMessage: () => {
-        const { excavationData, finishingData } = get();
+        const { excavationData } = get();
         if (!excavationData.length || !excavationData.width || !excavationData.depth) {
           return 'Please fill in all excavation fields (length, width, depth)';
-        }
-        if (!finishingData.ceilingArea || !finishingData.tilesArea) {
-          return 'Please fill in all finishing fields (ceiling area, tiles area)';
         }
         return 'Please fill all required fields!';
       },

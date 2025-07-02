@@ -19,6 +19,7 @@ import BasementWallModal from '@/app/components/modal/BasementWallModal';
 import BasementWallTable from '@/app/components/table/BasementWallTable';
 import RetainingWallModal from '@/app/components/modal/RetainingWallModal';
 import RetainingWallTable from '@/app/components/table/RetainingWallTable';
+import toast from 'react-hot-toast';
 
 export default function BasementDetails() {
   const foundationType = useBuildingPlanStore((state) => state.foundationType);
@@ -141,25 +142,52 @@ export default function BasementDetails() {
     setMainModalOpen(true);
   };
 
-  // Save handler for Basement Wall Modal
+  // Save handler for Basement Details main page
   const handleSave = () => {
+    const missingFields = [];
+    if (!excavationData.length) missingFields.push('excavation length');
+    if (!excavationData.width) missingFields.push('excavation width');
+    if (!excavationData.depth) missingFields.push('excavation depth');
+    if (missingFields.length > 0) {
+      toast.error('Please enter: ' + missingFields.join(', '));
+      return false;
+    }
+    // No further validation for wall fields here
+    return true;
+  };
+
+  // Save handler for Basement Wall Modal (modal-only validation)
+  const handleWallModalSave = () => {
+    const missingFields = [];
+    if (!formData.wallMaterial) missingFields.push('wall material');
+    if (!formData.length) missingFields.push('basement wall length');
+    if (!formData.height) missingFields.push('basement wall height');
+    if (!formData.thickness) missingFields.push('basement wall thickness');
+    if (foundationType === 'strip') {
+      if (!formData.stripWidth) missingFields.push('strip width');
+      if (!formData.stripDepth) missingFields.push('strip depth');
+    }
+    if (missingFields.length > 0) {
+      toast.error('Please enter: ' + missingFields.join(', '));
+      return false;
+    }
     // Calculate total door and window area
     const doorArea = Number(calculateDoorArea());
     const windowArea = Number(calculateWindowArea());
     const wallArea = Number(calculateWallArea());
-    // Validate areas
     if (doorArea && doorArea >= wallArea) {
+      toast.error('Door area cannot be equal to or greater than wall area!');
       return false;
     }
     if (windowArea && windowArea >= wallArea) {
+      toast.error('Window area cannot be equal to or greater than wall area!');
       return false;
     }
     if (doorArea && windowArea && (doorArea + windowArea) >= wallArea) {
+      toast.error('Combined door and window area cannot be equal to or greater than wall area!');
       return false;
     }
-    if (!formData.length || !formData.height || !formData.thickness) {
-      return false;
-    }
+    // Save wall data as before
     const newRow = {
       id: editingId || Date.now(),
       wallMaterial: formData.wallMaterial,
@@ -323,7 +351,7 @@ export default function BasementDetails() {
       <BasementWallModal
         open={mainModalOpen}
         onClose={() => setMainModalOpen(false)}
-        onSave={handleSave}
+        onSave={handleWallModalSave}
         editingRow={editingId ? getEditingRow(editingId) : null}
         formData={formData}
         doorForm={doorForm}
@@ -524,7 +552,6 @@ export default function BasementDetails() {
         <SaveButton
           onClick={handleSave}
           successMessage={editingId ? "Basement Data Updated Successfully! 🎉" : "Basement Data Saved Successfully! 🎉"}
-          errorMessage={getErrorMessage()}
         />
       </div>
     </div>

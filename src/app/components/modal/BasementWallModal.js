@@ -494,7 +494,7 @@ export default function BasementWallModal({
             <div className="grid grid-cols-1 justify-items-end">
               <SaveButton
                 onClick={onSave}
-                successMessage="Mumty Wall Data Saved Successfully! 🎉"
+                successMessage="Basement Wall Data Saved Successfully! 🎉"
                 errorMessage="Please fill all required fields!"
               />
             </div>
