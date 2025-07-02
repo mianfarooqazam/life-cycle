@@ -22,21 +22,17 @@ import { useMumtyWallStore } from '@/app/store/mumtyWallStore';
 import { useBasementStore } from '@/app/store/basementStore';
 
 export default function MaterialsCostTab() {
-    // Get selected floor
-    const selectedFloor = useBuildingPlanStore((state) => state.selectedFloor);
-    // Get wall data for selected floor
-    const getExteriorWallsByFloor = useExteriorWallStore((state) => state.getWallsByFloor);
-    const getInteriorWallsByFloor = useInteriorWallStore((state) => state.getWallsByFloor);
+    // Get all wall data from all floors instead of just selected floor
+    const exteriorWallsData = useExteriorWallStore((state) => state.exteriorWallsData);
+    const interiorWallsData = useInteriorWallStore((state) => state.interiorWallsData);
     const updateExteriorWallData = useExteriorWallStore((state) => state.updateExteriorWallData);
     const updateInteriorWallData = useInteriorWallStore((state) => state.updateInteriorWallData);
-    const exteriorWalls = getExteriorWallsByFloor(selectedFloor);
-    const interiorWalls = getInteriorWallsByFloor(selectedFloor);
     // Get mumty wall data (no floor filter)
     const mumtyWallsData = useMumtyWallStore((state) => state.mumtyWallsData);
     const updateMumtyWallData = useMumtyWallStore((state) => state.updateMumtyWallData);
     const basementWallsData = useBasementStore((state) => state.basementWallsData);
 
-    // Build materials data based on what is present for the selected floor
+    // Build materials data based on what is present for ALL floors
     const materialsData = useMemo(() => {
         const data = [];
         let interiorWallCounter = 1;
@@ -45,8 +41,9 @@ export default function MaterialsCostTab() {
         let basementWallCounter = 1;
 
         // Process Interior Walls FIRST
-        interiorWalls.forEach((wall, index) => {
-            const wallPrefix = `Interior Wall ${interiorWallCounter}`;
+        interiorWallsData.forEach((wall, index) => {
+            const floorText = wall.floorNumber ? ` (Floor ${wall.floorNumber})` : '';
+            const wallPrefix = `Interior Wall ${interiorWallCounter}${floorText}`;
             const wallMaterials = [];
 
             // Wall Material
@@ -99,8 +96,9 @@ export default function MaterialsCostTab() {
         });
 
         // Process Exterior Walls SECOND
-        exteriorWalls.forEach((wall, index) => {
-            const wallPrefix = `Exterior Wall ${exteriorWallCounter}`;
+        exteriorWallsData.forEach((wall, index) => {
+            const floorText = wall.floorNumber ? ` (Floor ${wall.floorNumber})` : '';
+            const wallPrefix = `Exterior Wall ${exteriorWallCounter}${floorText}`;
             const wallMaterials = [];
 
             // Wall Material
@@ -270,7 +268,7 @@ export default function MaterialsCostTab() {
         });
 
         return data;
-    }, [exteriorWalls, interiorWalls, mumtyWallsData, basementWallsData]);
+    }, [exteriorWallsData, interiorWallsData, mumtyWallsData, basementWallsData]);
 
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [editingRowIndex, setEditingRowIndex] = useState(null);
@@ -283,9 +281,9 @@ export default function MaterialsCostTab() {
         
         let originalWall;
         if (row.wallType === 'exterior') {
-            originalWall = exteriorWalls.find(wall => wall.id === row.wallId);
+            originalWall = exteriorWallsData.find(wall => wall.id === row.wallId);
         } else if (row.wallType === 'interior') {
-            originalWall = interiorWalls.find(wall => wall.id === row.wallId);
+            originalWall = interiorWallsData.find(wall => wall.id === row.wallId);
         } else if (row.wallType === 'mumty') {
             originalWall = mumtyWallsData.find(wall => wall.id === row.wallId);
         } else if (row.wallType === 'basement') {
@@ -353,9 +351,9 @@ export default function MaterialsCostTab() {
         // Find the original wall data
         let originalWall;
         if (row.wallType === 'exterior') {
-            originalWall = exteriorWalls.find(wall => wall.id === row.wallId);
+            originalWall = exteriorWallsData.find(wall => wall.id === row.wallId);
         } else if (row.wallType === 'interior') {
-            originalWall = interiorWalls.find(wall => wall.id === row.wallId);
+            originalWall = interiorWallsData.find(wall => wall.id === row.wallId);
         } else if (row.wallType === 'mumty') {
             originalWall = mumtyWallsData.find(wall => wall.id === row.wallId);
         } else if (row.wallType === 'basement') {
