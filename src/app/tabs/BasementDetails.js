@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import TextInput from '@/app/components/input/TextInput';
 import SaveButton from '@/app/components/button/SaveButton';
 import { useBasementStore } from '@/app/store/basementStore';
+import { useBuildingPlanStore } from '@/app/store/buildingPlanStore';
 import {
   Button,
 
@@ -14,6 +15,7 @@ import RetainingWallModal from '@/app/components/modal/RetainingWallModal';
 import RetainingWallTable from '@/app/components/table/RetainingWallTable';
 
 export default function BasementDetails() {
+  const foundationType = useBuildingPlanStore((state) => state.foundationType);
   const {
     excavationData,
     finishingData,
@@ -31,7 +33,10 @@ export default function BasementDetails() {
     calculateTotalCeilingArea,
     calculateTotalTilesArea,
     validateForm,
-    getErrorMessage
+    getErrorMessage,
+    raftFoundationData,
+    updateRaftFoundationData,
+    calculateRaftVolume,
   } = useBasementStore();
 
   const [mainModalOpen, setMainModalOpen] = useState(false);
@@ -241,6 +246,12 @@ export default function BasementDetails() {
     deleteRetainingWallData(id);
   };
 
+  // Handler for raft foundation input changes
+  const handleRaftFoundationChange = (e) => {
+    const { name, value } = e.target;
+    updateRaftFoundationData({ [name]: value });
+  };
+
   return (
     <div className="p-2">
       {/* Basement Excavation Section */}
@@ -307,6 +318,38 @@ export default function BasementDetails() {
         onEdit={handleEdit}
         onDelete={handleDelete}
       />
+
+      {/* Basement Details (Raft/Strip Foundation) Section */}
+      {(foundationType === 'raft' || foundationType === 'strip') && (
+        <>
+          <h2 className="text-lg font-bold mb-2 text-center mt-8">Basement Details ({foundationType === 'raft' ? ' Raft Foundation ' : ' Strip Foundation '})</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+            <TextInput
+              label="Raft Area (ft²)"
+              name="area"
+              type="number"
+              value={raftFoundationData.area}
+              onChange={handleRaftFoundationChange}
+              inputProps={{ min: '0', step: '0.1' }}
+            />
+            <TextInput
+              label="Raft Thickness (inches)"
+              name="thickness"
+              type="number"
+              value={raftFoundationData.thickness}
+              onChange={handleRaftFoundationChange}
+              inputProps={{ min: '0', step: '0.1' }}
+            />
+          </div>
+          {(raftFoundationData.area && raftFoundationData.thickness) && (
+            <div className="p-4 rounded-md mb-6" style={{ backgroundColor: '#f7f6fb' }}>
+              <p className="text-lg font-bold text-gray-800">
+                Raft volume: <span className="text-[#5BB045]">{calculateRaftVolume()} ft³</span>
+              </p>
+            </div>
+          )}
+        </>
+      )}
 
       {/* Basement Finishing Section */}
       <h2 className="text-lg font-bold mb-2 text-center mt-8">Basement Finishing</h2>

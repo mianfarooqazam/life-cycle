@@ -63,6 +63,12 @@ export const useBasementStore = create(
       retainingWallsData: [],
       retainingEditingId: null,
 
+      // Raft Foundation state
+      raftFoundationData: {
+        area: '', // in ft²
+        thickness: '' // in inches
+      },
+
       // Update excavation data
       updateExcavationData: (data) => set((state) => ({
         excavationData: { ...state.excavationData, ...data }
@@ -360,6 +366,28 @@ export const useBasementStore = create(
           return 'Please fill in all required fields (type, length, height, thickness)';
         }
         return 'Please fill all required fields!';
+      },
+
+      // Raft Foundation helpers
+      updateRaftFoundationData: (data) => set((state) => ({
+        raftFoundationData: { ...state.raftFoundationData, ...data }
+      })),
+      resetRaftFoundationData: () => set({
+        raftFoundationData: {
+          area: '',
+          thickness: ''
+        }
+      }),
+      calculateRaftVolume: () => {
+        const { raftFoundationData } = get();
+        const area = parseFloat(raftFoundationData.area);
+        const thickness = parseFloat(raftFoundationData.thickness);
+        if (area && thickness) {
+          // Convert thickness from inches to feet
+          const thicknessInFeet = thickness / 12;
+          return (area * thicknessInFeet).toFixed(2);
+        }
+        return '0.00';
       },
     }),
     {
