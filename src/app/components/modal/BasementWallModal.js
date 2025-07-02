@@ -53,7 +53,9 @@ export default function BasementWallModal({
   calculateWallVolume,
   calculateDoorArea,
   calculateWindowArea,
-  calculateTilesArea
+  calculateTilesArea,
+  foundationType,
+  calculateStripVolumeForWall
 }) {
   const [tileHeightError, setTileHeightError] = useState('');
 
@@ -297,6 +299,36 @@ export default function BasementWallModal({
                   Basement Wall Tiles Area: <span className="text-[#5BB045]">{calculateTilesArea()} ft²</span>
                 </p>
               </div>
+            )}
+            {/* Strip Foundation Fields for Basement Wall */}
+            {foundationType === 'strip' && (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2">
+                  <TextInput
+                    label="Strip Depth (ft)"
+                    name="stripDepth"
+                    type="number"
+                    value={formData.stripDepth}
+                    onChange={(e) => updateFormData({ stripDepth: e.target.value })}
+                    inputProps={{ min: '0', step: '0.1' }}
+                  />
+                  <TextInput
+                    label="Strip Width (ft)"
+                    name="stripWidth"
+                    type="number"
+                    value={formData.stripWidth}
+                    onChange={(e) => updateFormData({ stripWidth: e.target.value })}
+                    inputProps={{ min: '0', step: '0.1' }}
+                  />
+                </div>
+                {formData.length && formData.stripDepth && formData.stripWidth && (
+                  <div className="p-4 rounded-md mt-2" style={{ backgroundColor: '#f7f6fb' }}>
+                    <p className="text-lg font-bold text-gray-800">
+                      Strip Volume: <span className="text-[#5BB045]">{calculateStripVolumeForWall()} ft³</span>
+                    </p>
+                  </div>
+                )}
+              </>
             )}
             {/* Door and Window Inputs Side by Side */}
             <Box sx={{ display: 'flex', gap: 4, alignItems: 'flex-start', mt: 2 }}>

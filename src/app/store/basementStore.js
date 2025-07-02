@@ -33,7 +33,9 @@ export const useBasementStore = create(
         exteriorFinish: '',
         interiorFinish: '',
         isTilesUsed: 'no',
-        tileHeight: ''
+        tileHeight: '',
+        stripDepth: '', // in ft
+        stripWidth: '', // in ft
       },
       doorForm: {
         doorType: '',
@@ -115,7 +117,9 @@ export const useBasementStore = create(
           exteriorFinish: '',
           interiorFinish: '',
           isTilesUsed: 'no',
-          tileHeight: ''
+          tileHeight: '',
+          stripDepth: '',
+          stripWidth: '',
         }
       }),
 
@@ -311,6 +315,16 @@ export const useBasementStore = create(
         const wallHeight = parseFloat(formData.height);
         if (formData.isTilesUsed === 'yes' && length && tileHeight && wallHeight && tileHeight <= wallHeight) {
           return (length * tileHeight).toFixed(2);
+        }
+        return '';
+      },
+      calculateStripVolumeForWall: () => {
+        const { formData } = get();
+        const length = parseFloat(formData.length);
+        const stripDepth = parseFloat(formData.stripDepth);
+        const stripWidth = parseFloat(formData.stripWidth);
+        if (length && stripDepth && stripWidth) {
+          return (length * stripDepth * stripWidth).toFixed(2);
         }
         return '';
       },

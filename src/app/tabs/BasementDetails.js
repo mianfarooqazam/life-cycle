@@ -195,6 +195,9 @@ export default function BasementDetails() {
       windowWidth: windowForm.width,
       windowThickness: windowForm.thickness,
       windowCost: windowForm.costPerWindow,
+      stripDepth: formData.stripDepth,
+      stripWidth: formData.stripWidth,
+      stripVolume: useBasementStore.getState().calculateStripVolumeForWall(),
     };
     if (editingId) {
       updateBasementWallData(editingId, newRow);
@@ -336,6 +339,8 @@ export default function BasementDetails() {
         calculateDoorArea={calculateDoorArea}
         calculateWindowArea={calculateWindowArea}
         calculateTilesArea={useBasementStore.getState().calculateTilesArea}
+        foundationType={foundationType}
+        calculateStripVolumeForWall={useBasementStore.getState().calculateStripVolumeForWall}
       />
       <BasementWallTable
         data={basementWallsData}
@@ -377,38 +382,58 @@ export default function BasementDetails() {
             </>
           )}
           {foundationType === 'strip' && (
-            <TableContainer sx={{ mt: 4 }}>
-              <Table sx={{ minWidth: 700 }} stickyHeader>
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', color: '#000', padding: '16px 8px', minWidth: 80, whiteSpace: 'nowrap' }}>Sr. No.</TableCell>
-                    <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', color: '#000', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Wall Ref</TableCell>
-                    <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', color: '#000', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Strip Depth (ft)</TableCell>
-                    <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', color: '#000', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Strip Width (ft)</TableCell>
-                    <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', color: '#000', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Strip Volume (ft³)</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {retainingWallsData.filter(row => row.stripDepth && row.stripWidth && row.stripVolume).length === 0 ? (
+            <>
+             
+              <TableContainer sx={{ mt: 2 }}>
+                <Table sx={{ minWidth: 700 }} stickyHeader>
+                  <TableHead>
                     <TableRow>
-                      <TableCell colSpan={5} align="center" sx={{ py: 4, textAlign: 'center' }}>
-                        No strip foundation data available. Add some data to get started.
-                      </TableCell>
+                      <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', color: '#000', padding: '16px 8px', minWidth: 80, whiteSpace: 'nowrap' }}>Sr. No.</TableCell>
+                      <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', color: '#000', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Source</TableCell>
+                      <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', color: '#000', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Wall Ref</TableCell>
+                      <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', color: '#000', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Strip Depth (ft)</TableCell>
+                      <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', color: '#000', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Strip Width (ft)</TableCell>
+                      <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', color: '#000', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Strip Volume (ft³)</TableCell>
                     </TableRow>
-                  ) : (
-                    retainingWallsData.filter(row => row.stripDepth && row.stripWidth && row.stripVolume).map((row, idx) => (
-                      <TableRow key={row.id} sx={{ backgroundColor: '#ffffff', '&:hover': { backgroundColor: '#f7f6fb' } }}>
-                        <TableCell sx={{ textAlign: 'center', fontWeight: 'medium', padding: '12px 8px', whiteSpace: 'nowrap' }}>{idx + 1}</TableCell>
-                        <TableCell sx={{ textAlign: 'center', fontWeight: 'medium', padding: '12px 8px', whiteSpace: 'nowrap' }}>{row.wallType ? `Retaining ${row.wallType === 'brick' ? 'Brick' : 'Concrete'}` : ''}</TableCell>
-                        <TableCell sx={{ textAlign: 'center', fontWeight: 'medium', padding: '12px 8px', whiteSpace: 'nowrap' }}>{row.stripDepth}</TableCell>
-                        <TableCell sx={{ textAlign: 'center', fontWeight: 'medium', padding: '12px 8px', whiteSpace: 'nowrap' }}>{row.stripWidth}</TableCell>
-                        <TableCell sx={{ textAlign: 'center', fontWeight: 'medium', padding: '12px 8px', whiteSpace: 'nowrap' }}>{row.stripVolume}</TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                  </TableHead>
+                  <TableBody>
+                    {(() => {
+                      const stripRows = [
+                        ...basementWallsData.filter(row => row.stripDepth && row.stripWidth && row.stripVolume).map(row => ({
+                          ...row,
+                          _source: 'Basement Wall',
+                          _ref: row.wallMaterial || '-'
+                        })),
+                        ...retainingWallsData.filter(row => row.stripDepth && row.stripWidth && row.stripVolume).map(row => ({
+                          ...row,
+                          _source: 'Retaining Wall',
+                          _ref: row.wallType ? `Retaining ${row.wallType === 'brick' ? 'Brick' : 'Concrete'}` : '-'
+                        }))
+                      ];
+                      if (stripRows.length === 0) {
+                        return (
+                          <TableRow>
+                            <TableCell colSpan={6} align="center" sx={{ py: 4, textAlign: 'center' }}>
+                              No strip foundation data available.
+                            </TableCell>
+                          </TableRow>
+                        );
+                      }
+                      return stripRows.map((row, idx) => (
+                        <TableRow key={row.id + row._source} sx={{ backgroundColor: '#ffffff', '&:hover': { backgroundColor: '#f7f6fb' } }}>
+                          <TableCell sx={{ textAlign: 'center', fontWeight: 'medium', padding: '12px 8px', whiteSpace: 'nowrap' }}>{idx + 1}</TableCell>
+                          <TableCell sx={{ textAlign: 'center', fontWeight: 'medium', padding: '12px 8px', whiteSpace: 'nowrap' }}>{row._source}</TableCell>
+                          <TableCell sx={{ textAlign: 'center', fontWeight: 'medium', padding: '12px 8px', whiteSpace: 'nowrap' }}>{row._ref}</TableCell>
+                          <TableCell sx={{ textAlign: 'center', fontWeight: 'medium', padding: '12px 8px', whiteSpace: 'nowrap' }}>{row.stripDepth}</TableCell>
+                          <TableCell sx={{ textAlign: 'center', fontWeight: 'medium', padding: '12px 8px', whiteSpace: 'nowrap' }}>{row.stripWidth}</TableCell>
+                          <TableCell sx={{ textAlign: 'center', fontWeight: 'medium', padding: '12px 8px', whiteSpace: 'nowrap' }}>{row.stripVolume}</TableCell>
+                        </TableRow>
+                      ));
+                    })()}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </>
           )}
           <Alert severity="info" sx={{ mt: 2 }}>
           Strip details can be edited / deleted from Retaining Wall table.
