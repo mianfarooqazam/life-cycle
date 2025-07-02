@@ -53,6 +53,16 @@ export const useBasementStore = create(
       },
       basementWallsData: [],
 
+      // Retaining Wall state
+      retainingFormData: {
+        wallType: '', // 'brick' or 'concrete'
+        length: '',
+        height: '',
+        thickness: ''
+      },
+      retainingWallsData: [],
+      retainingEditingId: null,
+
       // Update excavation data
       updateExcavationData: (data) => set((state) => ({
         excavationData: { ...state.excavationData, ...data }
@@ -291,7 +301,66 @@ export const useBasementStore = create(
           return (length * tileHeight).toFixed(2);
         }
         return '';
-      }
+      },
+
+      // Retaining Wall helpers
+      updateRetainingFormData: (data) => set((state) => ({
+        retainingFormData: { ...state.retainingFormData, ...data }
+      })),
+      resetRetainingFormData: () => set({
+        retainingFormData: {
+          wallType: '',
+          length: '',
+          height: '',
+          thickness: ''
+        }
+      }),
+      addRetainingWallData: (newData) => set((state) => ({
+        retainingWallsData: [...state.retainingWallsData, newData]
+      })),
+      updateRetainingWallData: (id, updatedData) => set((state) => ({
+        retainingWallsData: state.retainingWallsData.map(item =>
+          item.id === id ? updatedData : item
+        )
+      })),
+      deleteRetainingWallData: (id) => set((state) => {
+        const filteredData = state.retainingWallsData.filter(item => item.id !== id);
+        // Update serial numbers
+        const updatedData = filteredData.map((item, index) => ({
+          ...item,
+          srNo: index + 1
+        }));
+        return { retainingWallsData: updatedData };
+      }),
+      setRetainingEditingId: (id) => set({ retainingEditingId: id }),
+      clearRetainingEditingId: () => set({ retainingEditingId: null }),
+      getRetainingEditingRow: (id) => {
+        const { retainingWallsData } = get();
+        return retainingWallsData.find(row => row.id === id);
+      },
+      calculateRetainingVolume: () => {
+        const { retainingFormData } = get();
+        const length = parseFloat(retainingFormData.length);
+        const height = parseFloat(retainingFormData.height);
+        const thickness = parseFloat(retainingFormData.thickness);
+        if (length && height && thickness) {
+          // Convert thickness from inches to feet (divide by 12)
+          const thicknessInFeet = thickness / 12;
+          return (length * height * thicknessInFeet).toFixed(2);
+        }
+        return '0.00';
+      },
+      validateRetainingForm: () => {
+        const { retainingFormData } = get();
+        return !!(retainingFormData.wallType && retainingFormData.length && retainingFormData.height && retainingFormData.thickness);
+      },
+      getRetainingErrorMessage: () => {
+        const { retainingFormData } = get();
+        if (!retainingFormData.wallType || !retainingFormData.length || !retainingFormData.height || !retainingFormData.thickness) {
+          return 'Please fill in all required fields (type, length, height, thickness)';
+        }
+        return 'Please fill all required fields!';
+      },
     }),
     {
       name: 'basement-storage'

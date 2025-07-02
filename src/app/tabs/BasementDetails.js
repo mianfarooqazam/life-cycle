@@ -12,7 +12,6 @@ import BasementWallModal from '@/app/components/modal/BasementWallModal';
 import BasementWallTable from '@/app/components/table/BasementWallTable';
 import RetainingWallModal from '@/app/components/modal/RetainingWallModal';
 import RetainingWallTable from '@/app/components/table/RetainingWallTable';
-import { useRetainingWallStore } from '@/app/store/retainingWallStore';
 
 export default function BasementDetails() {
   const {
@@ -58,23 +57,23 @@ export default function BasementDetails() {
     calculateWindowArea,
   } = useBasementStore();
 
-  // Retaining wall logic
+  // Retaining wall logic (now from useBasementStore)
   const {
-    formData: retainingFormData,
+    retainingFormData,
     retainingWallsData,
-    editingId: retainingEditingId,
-    updateFormData: updateRetainingFormData,
-    resetFormData: resetRetainingFormData,
+    retainingEditingId,
+    updateRetainingFormData,
+    resetRetainingFormData,
     addRetainingWallData,
     updateRetainingWallData,
     deleteRetainingWallData,
-    setEditingId: setRetainingEditingId,
-    clearEditingId: clearRetainingEditingId,
-    getEditingRow: getRetainingEditingRow,
-    calculateVolume: calculateRetainingVolume,
-    validateForm: validateRetainingForm,
-    getErrorMessage: getRetainingErrorMessage
-  } = useRetainingWallStore();
+    setRetainingEditingId,
+    clearRetainingEditingId,
+    getRetainingEditingRow,
+    calculateRetainingVolume,
+    validateRetainingForm,
+    getRetainingErrorMessage
+  } = useBasementStore();
   const [retainingModalOpen, setRetainingModalOpen] = useState(false);
 
   const handleExcavationChange = (e) => {
