@@ -10,6 +10,9 @@ import {
 
 import BasementWallModal from '@/app/components/modal/BasementWallModal';
 import BasementWallTable from '@/app/components/table/BasementWallTable';
+import RetainingWallModal from '@/app/components/modal/RetainingWallModal';
+import RetainingWallTable from '@/app/components/table/RetainingWallTable';
+import { useRetainingWallStore } from '@/app/store/retainingWallStore';
 
 export default function BasementDetails() {
   const {
@@ -54,6 +57,25 @@ export default function BasementDetails() {
     calculateDoorArea,
     calculateWindowArea,
   } = useBasementStore();
+
+  // Retaining wall logic
+  const {
+    formData: retainingFormData,
+    retainingWallsData,
+    editingId: retainingEditingId,
+    updateFormData: updateRetainingFormData,
+    resetFormData: resetRetainingFormData,
+    addRetainingWallData,
+    updateRetainingWallData,
+    deleteRetainingWallData,
+    setEditingId: setRetainingEditingId,
+    clearEditingId: clearRetainingEditingId,
+    getEditingRow: getRetainingEditingRow,
+    calculateVolume: calculateRetainingVolume,
+    validateForm: validateRetainingForm,
+    getErrorMessage: getRetainingErrorMessage
+  } = useRetainingWallStore();
+  const [retainingModalOpen, setRetainingModalOpen] = useState(false);
 
   const handleExcavationChange = (e) => {
     const { name, value } = e.target;
@@ -181,8 +203,62 @@ export default function BasementDetails() {
     deleteBasementWallData(id);
   };
 
+  const handleRetainingEdit = (id) => {
+    setRetainingEditingId(id);
+    const row = getRetainingEditingRow(id);
+    if (row) {
+      updateRetainingFormData({
+        wallType: row.wallType || '',
+        length: row.length || '',
+        height: row.height || '',
+        thickness: row.thickness || ''
+      });
+    }
+    setRetainingModalOpen(true);
+  };
+
+  const handleRetainingSave = () => {
+    if (!validateRetainingForm()) return false;
+    const newRow = {
+      id: retainingEditingId || Date.now(),
+      wallType: retainingFormData.wallType,
+      length: retainingFormData.length,
+      height: retainingFormData.height,
+      thickness: retainingFormData.thickness,
+      volume: calculateRetainingVolume()
+    };
+    if (retainingEditingId) {
+      updateRetainingWallData(retainingEditingId, newRow);
+      clearRetainingEditingId();
+    } else {
+      addRetainingWallData(newRow);
+    }
+    resetRetainingFormData();
+    setRetainingModalOpen(false);
+    return true;
+  };
+
+  const handleRetainingDelete = (id) => {
+    deleteRetainingWallData(id);
+  };
+
   return (
     <div className="p-2">
+      {/* Basement Excavation Section */}
+      <h2 className="text-lg font-bold mb-2 text-center">Basement Excavation</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+        <TextInput label="Excavation Length (ft)" name="length" type="number" value={excavationData.length} onChange={handleExcavationChange} inputProps={{ min: '0', step: '0.1' }} />
+        <TextInput label="Excavation Width (ft)" name="width" type="number" value={excavationData.width} onChange={handleExcavationChange} inputProps={{ min: '0', step: '0.1' }} />
+        <TextInput label="Excavation Depth (ft)" name="depth" type="number" value={excavationData.depth} onChange={handleExcavationChange} inputProps={{ min: '0', step: '0.1' }} />
+      </div>
+      {(excavationData.length && excavationData.width && excavationData.depth) && (
+        <div className="p-4 rounded-md mb-6" style={{ backgroundColor: '#f7f6fb' }}>
+          <p className="text-lg font-bold text-gray-800">
+            Basement excavation volume: <span className="text-[#5BB045]">{calculateExcavationVolume()} ft³</span>
+          </p>
+        </div>
+      )}
+
       {/* Basement Wall Section */}
       <Button
         variant="contained"
@@ -232,33 +308,12 @@ export default function BasementDetails() {
         onEdit={handleEdit}
         onDelete={handleDelete}
       />
-      {/* Basement Excavation Section */}
-      <h2 className="text-lg font-bold mb-2 text-center mt-8">Basement Excavation</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-        <TextInput label="Excavation Length (ft)" name="length" type="number" value={excavationData.length} onChange={handleExcavationChange} inputProps={{ min: '0', step: '0.1' }} />
-        <TextInput label="Excavation Width (ft)" name="width" type="number" value={excavationData.width} onChange={handleExcavationChange} inputProps={{ min: '0', step: '0.1' }} />
-        <TextInput label="Excavation Depth (ft)" name="depth" type="number" value={excavationData.depth} onChange={handleExcavationChange} inputProps={{ min: '0', step: '0.1' }} />
-      </div>
-      {(excavationData.length && excavationData.width && excavationData.depth) && (
-        <div className="p-4 rounded-md mb-6" style={{ backgroundColor: '#f7f6fb' }}>
-          <p className="text-lg font-bold text-gray-800">
-            Basement excavation volume: <span className="text-[#5BB045]">{calculateExcavationVolume()} ft³</span>
-          </p>
-        </div>
-      )}
+
       {/* Basement Finishing Section */}
       <h2 className="text-lg font-bold mb-2 text-center mt-8">Basement Finishing</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
         <TextInput label="Basement Ceiling Area (ft²)" name="ceilingArea" type="number" value={finishingData.ceilingArea} onChange={handleFinishingChange} inputProps={{ min: '0', step: '0.1' }} />
         <TextInput label="Basement Tiles Area (ft²)" name="tilesArea" type="number" value={finishingData.tilesArea} onChange={handleFinishingChange} inputProps={{ min: '0', step: '0.1' }} />
-      </div>
-      {/* Save Button */}
-      <div className="grid grid-cols-1 justify-items-end mt-6">
-        <SaveButton
-          onClick={handleSave}
-          successMessage={editingId ? "Basement Data Updated Successfully! 🎉" : "Basement Data Saved Successfully! 🎉"}
-          errorMessage={getErrorMessage()}
-        />
       </div>
       {/* Display saved data summary */}
       {basementData.length > 0 && (
@@ -280,6 +335,63 @@ export default function BasementDetails() {
           </div>
         </div>
       )}
+
+      {/* Retaining Wall Section (moved after finishing) */}
+      <Button
+        variant="contained"
+        onClick={() => { resetRetainingFormData(); clearRetainingEditingId(); setRetainingModalOpen(true); }}
+        sx={{
+          backgroundColor: '#5BB045',
+          color: '#fff',
+          fontWeight: 600,
+          py: 1.5,
+          px: 3,
+          borderRadius: 2,
+          textTransform: 'none',
+          boxShadow: '0 2px 8px rgba(91, 176, 69, 0.3)',
+          transition: 'all 0.3s ease',
+          mt: 2,
+          mb: 4,
+          '&:hover': {
+            backgroundColor: '#4a9537',
+            color: '#fff',
+            transform: 'translateY(-2px)',
+            boxShadow: '0 4px 16px rgba(91, 176, 69, 0.4)',
+          }
+        }}
+      >
+        Open Retaining Wall Form
+      </Button>
+      <RetainingWallModal
+        open={retainingModalOpen}
+        onClose={() => setRetainingModalOpen(false)}
+        onSave={handleRetainingSave}
+        editingRow={retainingEditingId ? getRetainingEditingRow(retainingEditingId) : null}
+        formData={retainingFormData}
+        updateFormData={updateRetainingFormData}
+        resetFormData={resetRetainingFormData}
+        calculateVolume={calculateRetainingVolume}
+      />
+      {retainingWallsData.length > 0 && (
+        <>
+          <h2 className="text-lg font-bold mb-2 text-center ">Retaining Wall</h2>
+          <div style={{ marginTop: 24, marginBottom: 24 }}>
+            <RetainingWallTable
+              data={retainingWallsData}
+              onEdit={handleRetainingEdit}
+              onDelete={handleRetainingDelete}
+            />
+          </div>
+        </>
+      )}
+      {/* Save Button (moved to end) */}
+      <div className="grid grid-cols-1 justify-items-end mt-6">
+        <SaveButton
+          onClick={handleSave}
+          successMessage={editingId ? "Basement Data Updated Successfully! 🎉" : "Basement Data Saved Successfully! 🎉"}
+          errorMessage={getErrorMessage()}
+        />
+      </div>
     </div>
   );
 }
