@@ -21,23 +21,16 @@ export default function RetainingWallTable({ data, onEdit, onDelete, minWidth = 
   const foundationType = useBuildingPlanStore((state) => state.foundationType);
 
   return (
-    <TableContainer>
+    <TableContainer sx={{ mt: 4 }}>
       <Table sx={{ minWidth }} stickyHeader>
         <TableHead>
           <TableRow>
             <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 80, whiteSpace: 'nowrap' }}>Sr. No.</TableCell>
             <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', minWidth: 120, whiteSpace: 'nowrap' }}>Type</TableCell>
-            <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', minWidth: 120, whiteSpace: 'nowrap' }}>Retaining Wall Length (ft)</TableCell>
-            <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', minWidth: 120, whiteSpace: 'nowrap' }}>Retaining Wall Height (ft)</TableCell>
-            <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', minWidth: 120, whiteSpace: 'nowrap' }}>Retaining Wall Thickness (in)</TableCell>
-            {foundationType === 'strip' && (
-              <>
-                <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', minWidth: 120, whiteSpace: 'nowrap' }}>Strip Depth (ft)</TableCell>
-                <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', minWidth: 120, whiteSpace: 'nowrap' }}>Strip Width (ft)</TableCell>
-                <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', minWidth: 120, whiteSpace: 'nowrap' }}>Strip Volume (ft³)</TableCell>
-              </>
-            )}
-            <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', minWidth: 120, whiteSpace: 'nowrap' }}>Retaining Wall Volume (ft³)</TableCell>
+            <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', minWidth: 120, whiteSpace: 'nowrap' }}>Length (ft)</TableCell>
+            <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', minWidth: 120, whiteSpace: 'nowrap' }}>Height (ft)</TableCell>
+            <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', minWidth: 120, whiteSpace: 'nowrap' }}>Thickness (in)</TableCell>
+            <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', minWidth: 120, whiteSpace: 'nowrap' }}>Volume (ft³)</TableCell>
             <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', minWidth: 80, whiteSpace: 'nowrap' }}>Action</TableCell>
           </TableRow>
         </TableHead>
@@ -52,13 +45,6 @@ export default function RetainingWallTable({ data, onEdit, onDelete, minWidth = 
               <TableCell sx={cellStyle}>{row.length}</TableCell>
               <TableCell sx={cellStyle}>{row.height}</TableCell>
               <TableCell sx={cellStyle}>{row.thickness}</TableCell>
-              {foundationType === 'strip' && (
-                <>
-                  <TableCell sx={cellStyle}>{row.stripDepth || ''}</TableCell>
-                  <TableCell sx={cellStyle}>{row.stripWidth || ''}</TableCell>
-                  <TableCell sx={cellStyle}>{row.stripVolume || ''}</TableCell>
-                </>
-              )}
               <TableCell sx={cellStyle}>{row.volume}</TableCell>
               <TableCell sx={cellStyle}>
                 <IconButton color="primary" onClick={() => onEdit(row.id)} size="small" sx={{ mr: 1 }}>

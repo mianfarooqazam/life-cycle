@@ -6,7 +6,13 @@ import { useBasementStore } from '@/app/store/basementStore';
 import { useBuildingPlanStore } from '@/app/store/buildingPlanStore';
 import {
   Button,
-
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Alert,
 } from '@mui/material';
 
 import BasementWallModal from '@/app/components/modal/BasementWallModal';
@@ -370,6 +376,43 @@ export default function BasementDetails() {
               )}
             </>
           )}
+          {foundationType === 'strip' && (
+            <TableContainer sx={{ mt: 4 }}>
+              <Table sx={{ minWidth: 700 }} stickyHeader>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', color: '#000', padding: '16px 8px', minWidth: 80, whiteSpace: 'nowrap' }}>Sr. No.</TableCell>
+                    <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', color: '#000', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Wall Ref</TableCell>
+                    <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', color: '#000', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Strip Depth (ft)</TableCell>
+                    <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', color: '#000', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Strip Width (ft)</TableCell>
+                    <TableCell sx={{ backgroundColor: '#f7f6fb', fontWeight: 'bold', textAlign: 'center', color: '#000', padding: '16px 8px', minWidth: 120, whiteSpace: 'nowrap' }}>Strip Volume (ft³)</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {retainingWallsData.filter(row => row.stripDepth && row.stripWidth && row.stripVolume).length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} align="center" sx={{ py: 4, textAlign: 'center' }}>
+                        No strip foundation data available. Add some data to get started.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    retainingWallsData.filter(row => row.stripDepth && row.stripWidth && row.stripVolume).map((row, idx) => (
+                      <TableRow key={row.id} sx={{ backgroundColor: '#ffffff', '&:hover': { backgroundColor: '#f7f6fb' } }}>
+                        <TableCell sx={{ textAlign: 'center', fontWeight: 'medium', padding: '12px 8px', whiteSpace: 'nowrap' }}>{idx + 1}</TableCell>
+                        <TableCell sx={{ textAlign: 'center', fontWeight: 'medium', padding: '12px 8px', whiteSpace: 'nowrap' }}>{row.wallType ? `Retaining ${row.wallType === 'brick' ? 'Brick' : 'Concrete'}` : ''}</TableCell>
+                        <TableCell sx={{ textAlign: 'center', fontWeight: 'medium', padding: '12px 8px', whiteSpace: 'nowrap' }}>{row.stripDepth}</TableCell>
+                        <TableCell sx={{ textAlign: 'center', fontWeight: 'medium', padding: '12px 8px', whiteSpace: 'nowrap' }}>{row.stripWidth}</TableCell>
+                        <TableCell sx={{ textAlign: 'center', fontWeight: 'medium', padding: '12px 8px', whiteSpace: 'nowrap' }}>{row.stripVolume}</TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+          <Alert severity="info" sx={{ mt: 2 }}>
+          Strip details can be edited / deleted from Retaining Wall table.
+        </Alert>
         </>
       )}
 

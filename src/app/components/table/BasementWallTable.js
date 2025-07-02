@@ -41,7 +41,7 @@ export default function BasementWallTable({
   return (
     <div>
       <h2 className="text-lg font-bold mb-2 text-center">Basement Wall</h2>
-      <TableContainer>
+      <TableContainer sx={{ mt: 4 }}>
         <Table sx={{ minWidth }} stickyHeader>
           <TableHead>
             <TableRow>
