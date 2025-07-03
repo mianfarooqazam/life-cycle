@@ -114,30 +114,113 @@ export default function MaterialsQuantityTab() {
 
   // Calculate actual material quantities for all wall types (for total view)
   const getTotalMaterials = () => {
-    const allWalls = [
-      ...(exteriorWallsData || []),
-      ...(interiorWallsData || [])
-      // Add other wall types here if needed (e.g., mumtyWallsData, basementWallsData, etc.)
-    ];
-    if (allWalls.length === 0) {
+    // Gather all wall-like data arrays
+    const allExteriorWalls = exteriorWallsData || [];
+    const allInteriorWalls = interiorWallsData || [];
+    const allBasementWalls = basementWallsData || [];
+    const allMumtyWalls = mumtyWallsData || [];
+    const allParapetWalls = parapetWallsData || [];
+    const allSepticTanks = septicTankData || [];
+    const allWaterTanks = waterTankData || [];
+
+    let totalBricks = 0;
+    let totalCementBags = 0;
+    let totalSand = 0;
+
+    // Helper for wall arrays with wallMaterial and wallVolume
+    const sumWallArray = (walls, getVolume, getMaterial) => {
+      walls.forEach(wall => {
+        let brickType = WallBrickBlock.find(b => b.name === getMaterial(wall)) || WallBrickBlock[0];
+        const wallVolume = getVolume(wall);
+        if (brickType && wallVolume > 0) {
+          const result = calculateWallMaterials(wallVolume, brickType);
+          totalBricks += result.numBricks;
+          totalCementBags += result.cementBags;
+          totalSand += result.sandVolume;
+        }
+      });
+    };
+
+    // Exterior Walls
+    sumWallArray(
+      allExteriorWalls,
+      wall => wall.wallVolume,
+      wall => wall.wallMaterial
+    );
+    // Interior Walls
+    sumWallArray(
+      allInteriorWalls,
+      wall => wall.wallVolume,
+      wall => wall.wallMaterial
+    );
+    // Basement Walls
+    sumWallArray(
+      allBasementWalls,
+      wall => wall.wallVolume,
+      wall => wall.wallMaterial
+    );
+    // Mumty Walls
+    sumWallArray(
+      allMumtyWalls,
+      wall => wall.wallVolume,
+      wall => wall.wallMaterial
+    );
+    // Parapet Walls (calculate volume from dimensions)
+    sumWallArray(
+      allParapetWalls,
+      wall => {
+        const length = parseFloat(wall.length);
+        const height = parseFloat(wall.height);
+        const thickness = parseFloat(wall.thickness);
+        return length && height && thickness ? length * height * (thickness / 12) : 0;
+      },
+      wall => wall.wallMaterial
+    );
+    // Septic Tank Walls (calculate volume from dimensions)
+    sumWallArray(
+      allSepticTanks,
+      wall => {
+        const length = parseFloat(wall.wallLength);
+        const height = parseFloat(wall.wallHeight);
+        const thickness = parseFloat(wall.wallThickness);
+        return length && height && thickness ? length * height * (thickness / 12) : 0;
+      },
+      wall => wall.wallMaterial
+    );
+    // Water Tank Walls (above ground)
+    sumWallArray(
+      allWaterTanks,
+      tank => {
+        const length = parseFloat(tank.wallLength);
+        const height = parseFloat(tank.wallHeight);
+        const thickness = parseFloat(tank.wallThickness);
+        return length && height && thickness ? length * height * (thickness / 12) : 0;
+      },
+      tank => tank.wallMaterial
+    );
+    // Underground Water Tank Walls
+    sumWallArray(
+      allWaterTanks,
+      tank => {
+        const length = parseFloat(tank.undergroundWallLength);
+        const height = parseFloat(tank.undergroundWallHeight);
+        const thickness = parseFloat(tank.undergroundWallThickness);
+        return length && height && thickness ? length * height * (thickness / 12) : 0;
+      },
+      tank => tank.undergroundWallMaterial
+    );
+
+    if (
+      totalBricks === 0 &&
+      totalCementBags === 0 &&
+      totalSand === 0
+    ) {
       return [
         { material: 'No. of Bricks/blocks', quantity: '-' },
         { material: 'Cement (bags)', quantity: '-' },
         { material: 'Sand (ft³)', quantity: '-' }
       ];
     }
-    let totalBricks = 0;
-    let totalCementBags = 0;
-    let totalSand = 0;
-    allWalls.forEach(wall => {
-      const brickType = getBrickBlockType(wall.wallMaterial);
-      if (brickType && wall.wallVolume) {
-        const result = calculateWallMaterials(wall.wallVolume, brickType);
-        totalBricks += result.numBricks;
-        totalCementBags += result.cementBags;
-        totalSand += result.sandVolume;
-      }
-    });
     return [
       { material: 'No. of Bricks/blocks', quantity: totalBricks > 0 ? totalBricks.toLocaleString() : '-' },
       { material: 'Cement (bags)', quantity: totalCementBags > 0 ? totalCementBags.toFixed(2) : '-' },
