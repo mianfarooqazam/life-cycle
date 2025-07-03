@@ -17,6 +17,8 @@ import { useInteriorWallStore } from '../store/interiorWallStore';
 import { useBasementStore } from '../store/basementStore';
 import { useMumtyWallStore } from '../store/mumtyWallStore';
 import { useParapetWallsStore } from '../store/parapetWallsStore';
+import { useSepticTankStore } from '../store/septicTankStore';
+import { useWaterTankStore } from '../store/waterTankStore';
 import { WallBrickBlock, ExteriorFinish, InteriorFinish, Insulation } from '../data/Materials';
 import { calculateWallMaterials } from '../utils/buildingPlanCalc';
 
@@ -29,6 +31,8 @@ export default function MaterialsQuantityTab() {
   const basementWallsData = useBasementStore((state) => state.basementWallsData);
   const mumtyWallsData = useMumtyWallStore((state) => state.mumtyWallsData);
   const parapetWallsData = useParapetWallsStore((state) => state.parapetWallsData);
+  const septicTankData = useSepticTankStore((state) => state.septicTankData);
+  const waterTankData = useWaterTankStore((state) => state.waterTankData);
 
   // Grouped view options for dropdown
   const viewOptions = [
@@ -55,6 +59,19 @@ export default function MaterialsQuantityTab() {
       label: 'Parapet',
       options: [
         { value: 'parapet-wall', label: 'Parapet Wall' }
+      ]
+    },
+    {
+      label: 'Septic Tank',
+      options: [
+        { value: 'septic-tank-wall', label: 'Septic Tank Wall' }
+      ]
+    },
+    {
+      label: 'Water Tank',
+      options: [
+        { value: 'water-tank-wall', label: 'Water Tank Wall' },
+        { value: 'underground-water-tank-wall', label: 'Underground Water Tank Wall' }
       ]
     },
     { value: 'total', label: 'Total' }
@@ -238,6 +255,116 @@ export default function MaterialsQuantityTab() {
     ];
   };
 
+  // Calculate actual material quantities for septic tank wall view
+  const getSepticTankWallMaterials = () => {
+    const allWalls = [...(septicTankData || [])];
+    if (allWalls.length === 0) {
+      return [
+        { material: 'No. of Bricks/blocks', quantity: '-' },
+        { material: 'Cement (bags)', quantity: '-' },
+        { material: 'Sand (ft³)', quantity: '-' }
+      ];
+    }
+    let totalBricks = 0;
+    let totalCementBags = 0;
+    let totalSand = 0;
+    allWalls.forEach(wall => {
+      // Use wallMaterial if present, else default to Clay Brick
+      let brickType = WallBrickBlock.find(b => b.name === wall.wallMaterial) || WallBrickBlock[0];
+      // Calculate wall volume from wallLength, wallHeight, wallThickness (in ft³)
+      const length = parseFloat(wall.wallLength);
+      const height = parseFloat(wall.wallHeight);
+      const thickness = parseFloat(wall.wallThickness);
+      let wallVolume = 0;
+      if (length && height && thickness) {
+        wallVolume = length * height * (thickness / 12); // thickness in feet
+      }
+      if (brickType && wallVolume > 0) {
+        const result = calculateWallMaterials(wallVolume, brickType);
+        totalBricks += result.numBricks;
+        totalCementBags += result.cementBags;
+        totalSand += result.sandVolume;
+      }
+    });
+    return [
+      { material: 'No. of Bricks/blocks', quantity: totalBricks > 0 ? totalBricks.toLocaleString() : '-' },
+      { material: 'Cement (bags)', quantity: totalCementBags > 0 ? totalCementBags.toFixed(2) : '-' },
+      { material: 'Sand (ft³)', quantity: totalSand > 0 ? totalSand.toFixed(2) : '-' }
+    ];
+  };
+
+  // Calculate actual material quantities for water tank wall view
+  const getWaterTankWallMaterials = () => {
+    const allTanks = [...(waterTankData || [])];
+    if (allTanks.length === 0) {
+      return [
+        { material: 'No. of Bricks/blocks', quantity: '-' },
+        { material: 'Cement (bags)', quantity: '-' },
+        { material: 'Sand (ft³)', quantity: '-' }
+      ];
+    }
+    let totalBricks = 0;
+    let totalCementBags = 0;
+    let totalSand = 0;
+    allTanks.forEach(tank => {
+      let brickType = WallBrickBlock.find(b => b.name === tank.wallMaterial) || WallBrickBlock[0];
+      const length = parseFloat(tank.wallLength);
+      const height = parseFloat(tank.wallHeight);
+      const thickness = parseFloat(tank.wallThickness);
+      let wallVolume = 0;
+      if (length && height && thickness) {
+        wallVolume = length * height * (thickness / 12);
+      }
+      if (brickType && wallVolume > 0) {
+        const result = calculateWallMaterials(wallVolume, brickType);
+        totalBricks += result.numBricks;
+        totalCementBags += result.cementBags;
+        totalSand += result.sandVolume;
+      }
+    });
+    return [
+      { material: 'No. of Bricks/blocks', quantity: totalBricks > 0 ? totalBricks.toLocaleString() : '-' },
+      { material: 'Cement (bags)', quantity: totalCementBags > 0 ? totalCementBags.toFixed(2) : '-' },
+      { material: 'Sand (ft³)', quantity: totalSand > 0 ? totalSand.toFixed(2) : '-' }
+    ];
+  };
+
+  // Calculate actual material quantities for underground water tank wall view
+  const getUndergroundWaterTankWallMaterials = () => {
+    const allTanks = [...(waterTankData || [])];
+    if (allTanks.length === 0) {
+      return [
+        { material: 'No. of Bricks/blocks', quantity: '-' },
+        { material: 'Cement (bags)', quantity: '-' },
+        { material: 'Sand (ft³)', quantity: '-' }
+      ];
+    }
+    let totalBricks = 0;
+    let totalCementBags = 0;
+    let totalSand = 0;
+    allTanks.forEach(tank => {
+      let brickType = WallBrickBlock.find(b => b.name === tank.undergroundWallMaterial) || WallBrickBlock[0];
+      const length = parseFloat(tank.undergroundWallLength);
+      const height = parseFloat(tank.undergroundWallHeight);
+      const thickness = parseFloat(tank.undergroundWallThickness);
+      let wallVolume = 0;
+      if (length && height && thickness) {
+        wallVolume = length * height * (thickness / 12);
+      }
+      if (brickType && wallVolume > 0) {
+        const result = calculateWallMaterials(wallVolume, brickType);
+        totalBricks += result.numBricks;
+        totalCementBags += result.cementBags;
+        totalSand += result.sandVolume;
+      }
+    });
+    return [
+      { material: 'No. of Bricks/blocks', quantity: totalBricks > 0 ? totalBricks.toLocaleString() : '-' },
+      { material: 'Cement (bags)', quantity: totalCementBags > 0 ? totalCementBags.toFixed(2) : '-' },
+      { material: 'Sand (ft³)', quantity: totalSand > 0 ? totalSand.toFixed(2) : '-' }
+    ];
+  };
+
   const getMaterialsData = (view) => {
     switch (view) {
       case 'building-floor':
@@ -254,6 +381,12 @@ export default function MaterialsQuantityTab() {
         return getMumtyWallMaterials();
       case 'parapet-wall':
         return getParapetWallMaterials();
+      case 'septic-tank-wall':
+        return getSepticTankWallMaterials();
+      case 'water-tank-wall':
+        return getWaterTankWallMaterials();
+      case 'underground-water-tank-wall':
+        return getUndergroundWaterTankWallMaterials();
       case 'total':
         return getTotalMaterials();
       default:
