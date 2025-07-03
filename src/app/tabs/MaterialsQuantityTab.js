@@ -15,6 +15,8 @@ import {
 import { useExteriorWallStore } from '../store/exteriorWallStore';
 import { useInteriorWallStore } from '../store/interiorWallStore';
 import { useBasementStore } from '../store/basementStore';
+import { useMumtyWallStore } from '../store/mumtyWallStore';
+import { useParapetWallsStore } from '../store/parapetWallsStore';
 import { WallBrickBlock, ExteriorFinish, InteriorFinish, Insulation } from '../data/Materials';
 import { calculateWallMaterials } from '../utils/buildingPlanCalc';
 
@@ -25,6 +27,8 @@ export default function MaterialsQuantityTab() {
   const exteriorWallsData = useExteriorWallStore((state) => state.exteriorWallsData);
   const interiorWallsData = useInteriorWallStore((state) => state.interiorWallsData);
   const basementWallsData = useBasementStore((state) => state.basementWallsData);
+  const mumtyWallsData = useMumtyWallStore((state) => state.mumtyWallsData);
+  const parapetWallsData = useParapetWallsStore((state) => state.parapetWallsData);
 
   // Grouped view options for dropdown
   const viewOptions = [
@@ -39,6 +43,18 @@ export default function MaterialsQuantityTab() {
       options: [
         { value: 'basement-wall', label: 'Basement Walls' },
         { value: 'basement-detail', label: 'Basement Detail' }
+      ]
+    },
+    {
+      label: 'Mumty',
+      options: [
+        { value: 'mumty-wall', label: 'Mumty Wall' }
+      ]
+    },
+    {
+      label: 'Parapet',
+      options: [
+        { value: 'parapet-wall', label: 'Parapet Wall' }
       ]
     },
     { value: 'total', label: 'Total' }
@@ -148,6 +164,80 @@ export default function MaterialsQuantityTab() {
     ];
   };
 
+  // Calculate actual material quantities for mumty wall view
+  const getMumtyWallMaterials = () => {
+    const allWalls = [...(mumtyWallsData || [])];
+    if (allWalls.length === 0) {
+      return [
+        { material: 'No. of Bricks/blocks', quantity: '-' },
+        { material: 'Cement (bags)', quantity: '-' },
+        { material: 'Sand (ft³)', quantity: '-' }
+      ];
+    }
+    let totalBricks = 0;
+    let totalCementBags = 0;
+    let totalSand = 0;
+    allWalls.forEach(wall => {
+      let brickType = WallBrickBlock.find(b => b.name === wall.wallMaterial);
+      if (wall.brickvolumewithoutmortar && wall.brickvolumewithmortar) {
+        brickType = {
+          ...brickType,
+          brickvolumewithoutmortar: wall.brickvolumewithoutmortar,
+          brickvolumewithmortar: wall.brickvolumewithmortar
+        };
+      }
+      if (brickType && wall.wallVolume) {
+        const result = calculateWallMaterials(wall.wallVolume, brickType);
+        totalBricks += result.numBricks;
+        totalCementBags += result.cementBags;
+        totalSand += result.sandVolume;
+      }
+    });
+    return [
+      { material: 'No. of Bricks/blocks', quantity: totalBricks > 0 ? totalBricks.toLocaleString() : '-' },
+      { material: 'Cement (bags)', quantity: totalCementBags > 0 ? totalCementBags.toFixed(2) : '-' },
+      { material: 'Sand (ft³)', quantity: totalSand > 0 ? totalSand.toFixed(2) : '-' }
+    ];
+  };
+
+  // Calculate actual material quantities for parapet wall view
+  const getParapetWallMaterials = () => {
+    const allWalls = [...(parapetWallsData || [])];
+    if (allWalls.length === 0) {
+      return [
+        { material: 'No. of Bricks/blocks', quantity: '-' },
+        { material: 'Cement (bags)', quantity: '-' },
+        { material: 'Sand (ft³)', quantity: '-' }
+      ];
+    }
+    let totalBricks = 0;
+    let totalCementBags = 0;
+    let totalSand = 0;
+    allWalls.forEach(wall => {
+      // Use wallMaterial if present, else default to Clay Brick
+      let brickType = WallBrickBlock.find(b => b.name === wall.wallMaterial) || WallBrickBlock[0];
+      // Calculate wall volume from length, height, thickness (in ft³)
+      const length = parseFloat(wall.length);
+      const height = parseFloat(wall.height);
+      const thickness = parseFloat(wall.thickness);
+      let wallVolume = 0;
+      if (length && height && thickness) {
+        wallVolume = length * height * (thickness / 12); // thickness in feet
+      }
+      if (brickType && wallVolume > 0) {
+        const result = calculateWallMaterials(wallVolume, brickType);
+        totalBricks += result.numBricks;
+        totalCementBags += result.cementBags;
+        totalSand += result.sandVolume;
+      }
+    });
+    return [
+      { material: 'No. of Bricks/blocks', quantity: totalBricks > 0 ? totalBricks.toLocaleString() : '-' },
+      { material: 'Cement (bags)', quantity: totalCementBags > 0 ? totalCementBags.toFixed(2) : '-' },
+      { material: 'Sand (ft³)', quantity: totalSand > 0 ? totalSand.toFixed(2) : '-' }
+    ];
+  };
+
   const getMaterialsData = (view) => {
     switch (view) {
       case 'building-floor':
@@ -160,6 +250,10 @@ export default function MaterialsQuantityTab() {
           { material: 'Cement (bags)', quantity: '-' },
           { material: 'Sand (ft³)', quantity: '-' }
         ];
+      case 'mumty-wall':
+        return getMumtyWallMaterials();
+      case 'parapet-wall':
+        return getParapetWallMaterials();
       case 'total':
         return getTotalMaterials();
       default:
