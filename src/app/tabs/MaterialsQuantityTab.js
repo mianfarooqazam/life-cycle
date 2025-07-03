@@ -26,20 +26,21 @@ export default function MaterialsQuantityTab() {
   const interiorWallsData = useInteriorWallStore((state) => state.interiorWallsData);
   const basementWallsData = useBasementStore((state) => state.basementWallsData);
 
+  // Grouped view options for dropdown
   const viewOptions = [
-    // { value: 'basement-raft', label: 'Basement Raft' },
-    // { value: 'basement-strip', label: 'Basement Strip' },
-    // { value: 'retaining-wall-brick', label: 'Retaining Wall (Brick)' },
-    // { value: 'retaining-wall-concrete', label: 'Retaining Wall (Concrete)' },
-    { value: 'building-floor', label: 'Floor Walls' },
-    { value: 'basement-wall', label: 'Basement Walls' },
-    // { value: 'ground-slab', label: 'Ground Slab' },
-    // { value: 'mumty-wall', label: 'Mumty Wall' },
-    // { value: 'parapet-walls', label: 'Parapet Walls' },
-    // { value: 'water-tank', label: 'Water Tank' },
-    // { value: 'septic-tank', label: 'Septic Tank' },
-    // { value: 'column', label: 'Column' },
-    // { value: 'beam', label: 'Beam' },
+    {
+      label: 'Building Floor',
+      options: [
+        { value: 'building-floor', label: 'Floor Walls' }
+      ]
+    },
+    {
+      label: 'Basement',
+      options: [
+        { value: 'basement-wall', label: 'Basement Walls' },
+        { value: 'basement-detail', label: 'Basement Detail' }
+      ]
+    },
     { value: 'total', label: 'Total' }
   ];
 
@@ -153,9 +154,14 @@ export default function MaterialsQuantityTab() {
         return getBuildingFloorMaterials();
       case 'basement-wall':
         return getBasementWallMaterials();
+      case 'basement-detail':
+        return [
+          { material: 'No. of Bricks/blocks', quantity: '-' },
+          { material: 'Cement (bags)', quantity: '-' },
+          { material: 'Sand (ft³)', quantity: '-' }
+        ];
       case 'total':
         return getTotalMaterials();
-      // For all other views, display '-' for all materials
       default:
         return [
           { material: 'No. of Bricks/blocks', quantity: '-' },
@@ -180,15 +186,34 @@ export default function MaterialsQuantityTab() {
             label="Select View"
             onChange={handleViewChange}
           >
-            {viewOptions.map((option) => (
-              <MenuItem
-                key={option.value}
-                value={option.value}
-                sx={{ fontWeight: option.value === 'total' ? 'bold' : 'normal' }}
-              >
-                {option.label}
-              </MenuItem>
-            ))}
+            {viewOptions.map((option) => {
+              if (option.options) {
+                // Render group heading and its options
+                return [
+                  <MenuItem key={option.label} disabled sx={{ fontWeight: 'bold', opacity: 1 }}>
+                    {option.label}
+                  </MenuItem>,
+                  option.options.map((subOption) => (
+                    <MenuItem
+                      key={subOption.value}
+                      value={subOption.value}
+                      sx={{ pl: 3, fontWeight: subOption.value === 'total' ? 'bold' : 'normal' }}
+                    >
+                      {subOption.label}
+                    </MenuItem>
+                  ))
+                ];
+              }
+              return (
+                <MenuItem
+                  key={option.value}
+                  value={option.value}
+                  sx={{ fontWeight: option.value === 'total' ? 'bold' : 'normal' }}
+                >
+                  {option.label}
+                </MenuItem>
+              );
+            })}
           </Select>
         </FormControl>
       </Box>
