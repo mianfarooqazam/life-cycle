@@ -12,129 +12,155 @@ import {
   MenuItem,
   Box
 } from '@mui/material';
+import { useExteriorWallStore } from '../store/exteriorWallStore';
+import { useInteriorWallStore } from '../store/interiorWallStore';
+import { useBasementStore } from '../store/basementStore';
+import { WallBrickBlock, ExteriorFinish, InteriorFinish, Insulation } from '../data/Materials';
+import { calculateWallMaterials } from '../utils/buildingPlanCalc';
 
 export default function MaterialsQuantityTab() {
   const [selectedView, setSelectedView] = useState('total');
 
+  // Get wall data from store
+  const exteriorWallsData = useExteriorWallStore((state) => state.exteriorWallsData);
+  const interiorWallsData = useInteriorWallStore((state) => state.interiorWallsData);
+  const basementWallsData = useBasementStore((state) => state.basementWallsData);
+
   const viewOptions = [
-    { value: 'basement-raft', label: 'Basement Raft' },
-    { value: 'basement-strip', label: 'Basement Strip' },
-    { value: 'retaining-wall-brick', label: 'Retaining Wall (Brick)' },
-    { value: 'retaining-wall-concrete', label: 'Retaining Wall (Concrete)' },
-    { value: 'building-floor', label: 'Building Floor' },
-    { value: 'ground-slab', label: 'Ground Slab' },
-    { value: 'mumty-wall', label: 'Mumty Wall' },
-    { value: 'parapet-walls', label: 'Parapet Walls' },
-    { value: 'water-tank', label: 'Water Tank' },
-    { value: 'septic-tank', label: 'Septic Tank' },
-    { value: 'column', label: 'Column' },
-    { value: 'beam', label: 'Beam' },
+    // { value: 'basement-raft', label: 'Basement Raft' },
+    // { value: 'basement-strip', label: 'Basement Strip' },
+    // { value: 'retaining-wall-brick', label: 'Retaining Wall (Brick)' },
+    // { value: 'retaining-wall-concrete', label: 'Retaining Wall (Concrete)' },
+    { value: 'building-floor', label: 'Floor Walls' },
+    { value: 'basement-wall', label: 'Basement Walls' },
+    // { value: 'ground-slab', label: 'Ground Slab' },
+    // { value: 'mumty-wall', label: 'Mumty Wall' },
+    // { value: 'parapet-walls', label: 'Parapet Walls' },
+    // { value: 'water-tank', label: 'Water Tank' },
+    // { value: 'septic-tank', label: 'Septic Tank' },
+    // { value: 'column', label: 'Column' },
+    // { value: 'beam', label: 'Beam' },
     { value: 'total', label: 'Total' }
   ];
 
-  const getMaterialsData = (view) => {
-    const allMaterials = {
-      bricks: { material: "No. of Bricks", quantity: "5,000" },
-      bricksRetaining: { material: "No. of Bricks (Retaining Wall)", quantity: "2,000" },
-      cement: { material: "Cement (bags)", quantity: "50" },
-      sand: { material: "Sand (ft³)", quantity: "100" },
-      crush: { material: "Crush (ft³)", quantity: "75" },
-      steel: { material: "Steel (ton)", quantity: "2.5" }
-    };
+  // Helper to get brick/block type object by name
+  const getBrickBlockType = (name) => WallBrickBlock.find(b => b.name === name);
 
+  // Calculate actual material quantities for building floor (all floors, both wall types)
+  const getBuildingFloorMaterials = () => {
+    const allWalls = [
+      ...(exteriorWallsData || []),
+      ...(interiorWallsData || [])
+    ];
+    if (allWalls.length === 0) {
+      return [
+        { material: 'No. of Bricks/blocks', quantity: '-' },
+        { material: 'Cement (bags)', quantity: '-' },
+        { material: 'Sand (ft³)', quantity: '-' }
+      ];
+    }
+    let totalBricks = 0;
+    let totalCementBags = 0;
+    let totalSand = 0;
+    allWalls.forEach(wall => {
+      const brickType = getBrickBlockType(wall.wallMaterial);
+      if (brickType && wall.wallVolume) {
+        const result = calculateWallMaterials(wall.wallVolume, brickType);
+        totalBricks += result.numBricks;
+        totalCementBags += result.cementBags;
+        totalSand += result.sandVolume;
+      }
+    });
+    return [
+      { material: 'No. of Bricks/blocks', quantity: totalBricks > 0 ? totalBricks.toLocaleString() : '-' },
+      { material: 'Cement (bags)', quantity: totalCementBags > 0 ? totalCementBags.toFixed(2) : '-' },
+      { material: 'Sand (ft³)', quantity: totalSand > 0 ? totalSand.toFixed(2) : '-' }
+    ];
+  };
+
+  // Calculate actual material quantities for all wall types (for total view)
+  const getTotalMaterials = () => {
+    const allWalls = [
+      ...(exteriorWallsData || []),
+      ...(interiorWallsData || [])
+      // Add other wall types here if needed (e.g., mumtyWallsData, basementWallsData, etc.)
+    ];
+    if (allWalls.length === 0) {
+      return [
+        { material: 'No. of Bricks/blocks', quantity: '-' },
+        { material: 'Cement (bags)', quantity: '-' },
+        { material: 'Sand (ft³)', quantity: '-' }
+      ];
+    }
+    let totalBricks = 0;
+    let totalCementBags = 0;
+    let totalSand = 0;
+    allWalls.forEach(wall => {
+      const brickType = getBrickBlockType(wall.wallMaterial);
+      if (brickType && wall.wallVolume) {
+        const result = calculateWallMaterials(wall.wallVolume, brickType);
+        totalBricks += result.numBricks;
+        totalCementBags += result.cementBags;
+        totalSand += result.sandVolume;
+      }
+    });
+    return [
+      { material: 'No. of Bricks/blocks', quantity: totalBricks > 0 ? totalBricks.toLocaleString() : '-' },
+      { material: 'Cement (bags)', quantity: totalCementBags > 0 ? totalCementBags.toFixed(2) : '-' },
+      { material: 'Sand (ft³)', quantity: totalSand > 0 ? totalSand.toFixed(2) : '-' }
+    ];
+  };
+
+  // Calculate actual material quantities for basement wall view
+  const getBasementWallMaterials = () => {
+    const allWalls = [...(basementWallsData || [])];
+    if (allWalls.length === 0) {
+      return [
+        { material: 'No. of Bricks/blocks', quantity: '-' },
+        { material: 'Cement (bags)', quantity: '-' },
+        { material: 'Sand (ft³)', quantity: '-' }
+      ];
+    }
+    let totalBricks = 0;
+    let totalCementBags = 0;
+    let totalSand = 0;
+    allWalls.forEach(wall => {
+      let brickType = WallBrickBlock.find(b => b.name === wall.wallMaterial);
+      if (wall.brickvolumewithoutmortar && wall.brickvolumewithmortar) {
+        brickType = {
+          ...brickType,
+          brickvolumewithoutmortar: wall.brickvolumewithoutmortar,
+          brickvolumewithmortar: wall.brickvolumewithmortar
+        };
+      }
+      if (brickType && wall.wallVolume) {
+        const result = calculateWallMaterials(wall.wallVolume, brickType);
+        totalBricks += result.numBricks;
+        totalCementBags += result.cementBags;
+        totalSand += result.sandVolume;
+      }
+    });
+    return [
+      { material: 'No. of Bricks/blocks', quantity: totalBricks > 0 ? totalBricks.toLocaleString() : '-' },
+      { material: 'Cement (bags)', quantity: totalCementBags > 0 ? totalCementBags.toFixed(2) : '-' },
+      { material: 'Sand (ft³)', quantity: totalSand > 0 ? totalSand.toFixed(2) : '-' }
+    ];
+  };
+
+  const getMaterialsData = (view) => {
     switch (view) {
-      case 'basement-raft':
-        return [
-          allMaterials.bricks,
-          allMaterials.cement,
-          allMaterials.sand,
-          allMaterials.steel,
-          allMaterials.crush
-        ];
-      case 'basement-strip':
-        return [
-          allMaterials.bricks,
-          allMaterials.cement,
-          allMaterials.sand,
-          allMaterials.crush
-        ];
-      case 'retaining-wall-brick':
-        return [
-          allMaterials.bricksRetaining,
-          allMaterials.cement,
-          allMaterials.sand
-        ];
-      case 'retaining-wall-concrete':
-        return [
-          allMaterials.cement,
-          allMaterials.sand,
-          allMaterials.steel,
-          allMaterials.crush
-        ];
       case 'building-floor':
-        return [
-          allMaterials.bricks,
-          allMaterials.cement,
-          allMaterials.sand
-        ];
-      case 'ground-slab':
-        return [
-          allMaterials.cement,
-          allMaterials.sand,
-          allMaterials.steel,
-          allMaterials.crush
-        ];
-      case 'mumty-wall':
-        return [
-          allMaterials.bricks,
-          allMaterials.cement,
-          allMaterials.sand
-        ];
-      case 'parapet-walls':
-        return [
-          allMaterials.bricks,
-          allMaterials.cement,
-          allMaterials.sand
-        ];
-      case 'water-tank':
-        return [
-          allMaterials.bricks,
-          allMaterials.cement,
-          allMaterials.sand,
-          allMaterials.steel,
-          allMaterials.crush
-        ];
-      case 'septic-tank':
-        return [
-          allMaterials.bricks,
-          allMaterials.cement,
-          allMaterials.sand,
-          allMaterials.steel,
-          allMaterials.crush
-        ];
-      case 'column':
-        return [
-          allMaterials.cement,
-          allMaterials.sand,
-          allMaterials.steel,
-          allMaterials.crush
-        ];
-      case 'beam':
-        return [
-          allMaterials.cement,
-          allMaterials.sand,
-          allMaterials.steel,
-          allMaterials.crush
-        ];
+        return getBuildingFloorMaterials();
+      case 'basement-wall':
+        return getBasementWallMaterials();
       case 'total':
+        return getTotalMaterials();
+      // For all other views, display '-' for all materials
       default:
         return [
-          allMaterials.bricks,
-          allMaterials.bricksRetaining,
-          allMaterials.cement,
-          allMaterials.sand,
-          allMaterials.crush,
-          allMaterials.steel
+          { material: 'No. of Bricks/blocks', quantity: '-' },
+          { material: 'Cement (bags)', quantity: '-' },
+          { material: 'Sand (ft³)', quantity: '-' }
         ];
     }
   };
