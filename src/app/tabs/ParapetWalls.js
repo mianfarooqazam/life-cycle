@@ -58,6 +58,7 @@ export default function ParapetWalls() {
         try {
             const area = calculateArea();
             const volume = calculateVolume();
+            const plasterArea = useParapetWallsStore.getState().calculatePlasterArea();
             
             const dataToSave = {
                 id: editingId || Date.now().toString(),
@@ -67,6 +68,7 @@ export default function ParapetWalls() {
                 thickness: formData.thickness,
                 area: area,
                 volume: volume,
+                plasterArea: plasterArea,
                 timestamp: new Date().toISOString()
             };
 
@@ -92,7 +94,8 @@ export default function ParapetWalls() {
     // Calculate totals for display
     const totalCalculations = {
         totalArea: calculateTotalArea(),
-        totalVolume: calculateTotalVolume()
+        totalVolume: calculateTotalVolume(),
+        totalPlasterArea: Math.round(parapetWallsData.reduce((total, item) => total + parseFloat(item.plasterArea || 0), 0)).toString()
     };
 
     return (
@@ -133,7 +136,7 @@ export default function ParapetWalls() {
 
             {/* Calculated Values */}
             {formData.length && formData.height && formData.thickness && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
                     <p className="text-lg font-bold text-gray-800">
                         Parapet Wall Area: <span className="text-[#5BB045]">{calculateArea()} ft²</span>
@@ -143,6 +146,12 @@ export default function ParapetWalls() {
                 <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
                     <p className="text-lg font-bold text-gray-800">
                         Parapet Wall Volume: <span className="text-[#5BB045]">{calculateVolume()} ft³</span>
+                    </p>
+                </div>
+
+                <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
+                    <p className="text-lg font-bold text-gray-800">
+                        Parapet Plaster Area: <span className="text-[#5BB045]">{useParapetWallsStore.getState().calculatePlasterArea()} ft²</span>
                     </p>
                 </div>
             </div>

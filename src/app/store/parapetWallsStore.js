@@ -95,6 +95,16 @@ export const useParapetWallsStore = create(
         return parapetWallsData.reduce((total, item) => total + parseFloat(item.volume), 0).toFixed(2);
       },
 
+      // Calculate plaster area
+      calculatePlasterArea: () => {
+        const { formData } = get();
+        const volume = parseFloat(get().calculateVolume());
+        if (volume) {
+          return Math.round((volume / 0.75) * 2).toString();
+        }
+        return '0';
+      },
+
       // Validate form
       validateForm: () => {
         const { formData } = get();

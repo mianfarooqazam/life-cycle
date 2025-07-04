@@ -109,6 +109,16 @@ export default function ParapetWallsTable({
               fontWeight: 'bold',
               textAlign: 'center',
               padding: '16px 8px',
+              minWidth: 140,
+              whiteSpace: 'nowrap',
+            }}>
+              Parapet Plaster Area (ft²)
+            </TableCell>
+            <TableCell sx={{
+              backgroundColor: "#f7f6fb", 
+              fontWeight: 'bold',
+              textAlign: 'center',
+              padding: '16px 8px',
               minWidth: 120,
               whiteSpace: 'nowrap',
             }}>
@@ -133,6 +143,7 @@ export default function ParapetWallsTable({
               <TableCell sx={cellStyle}>{row.thickness}</TableCell>
               <TableCell sx={cellStyle}>{row.area}</TableCell>
               <TableCell sx={cellStyle}>{row.volume}</TableCell>
+              <TableCell sx={cellStyle}>{row.plasterArea}</TableCell>
               <TableCell sx={cellStyle}>
                 <IconButton 
                   color="primary" 
@@ -165,6 +176,9 @@ export default function ParapetWallsTable({
               </TableCell>
               <TableCell sx={totalCellStyle}>
                 {totalCalculations.totalVolume.toLocaleString()}
+              </TableCell>
+              <TableCell sx={totalCellStyle}>
+                {totalCalculations.totalPlasterArea ? totalCalculations.totalPlasterArea.toLocaleString() : ''}
               </TableCell>
               <TableCell sx={totalCellStyle}></TableCell>
             </TableRow>
