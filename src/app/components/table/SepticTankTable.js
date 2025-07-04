@@ -31,6 +31,7 @@ export default function SepticTankTable({
             <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', padding: '16px 8px', minWidth: 90, whiteSpace: 'nowrap' }}>Sr. No.</TableCell>
             <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', minWidth: 140, whiteSpace: 'nowrap' }}>Excavation Vol (ft³)</TableCell>
             <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', minWidth: 120, whiteSpace: 'nowrap' }}>Wall Vol (ft³)</TableCell>
+            <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', minWidth: 120, whiteSpace: 'nowrap' }}>Plaster Area (ft²)</TableCell>
             <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', minWidth: 140, whiteSpace: 'nowrap' }}>Top Slab Vol (ft³)</TableCell>
             <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', minWidth: 140, whiteSpace: 'nowrap' }}>Bottom Slab Vol (ft³)</TableCell>
             <TableCell sx={{ backgroundColor: "#f7f6fb", fontWeight: 'bold', textAlign: 'center', minWidth: 80, whiteSpace: 'nowrap' }}>Action</TableCell>
@@ -45,6 +46,7 @@ export default function SepticTankTable({
               <TableCell sx={cellStyle}>{row.srNo}</TableCell>
               <TableCell sx={cellStyle}>{row.excavationVolume}</TableCell>
               <TableCell sx={cellStyle}>{row.wallVolume}</TableCell>
+              <TableCell sx={cellStyle}>{row.plasterArea}</TableCell>
               <TableCell sx={cellStyle}>{row.topSlabVolume}</TableCell>
               <TableCell sx={cellStyle}>{row.bottomSlabVolume}</TableCell>
               <TableCell sx={cellStyle}>

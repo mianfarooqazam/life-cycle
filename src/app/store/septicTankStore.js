@@ -111,6 +111,14 @@ export const useSepticTankStore = create(
         }
         return '0.00';
       },
+      // Calculate plaster area (round figure, based on wall volume)
+      calculatePlasterArea: () => {
+        const wallVolume = parseFloat(get().calculateWallVolume());
+        if (wallVolume) {
+          return Math.round((wallVolume / 0.75) * 2).toString();
+        }
+        return '0';
+      },
       // Validate form (at least one section filled)
       validateForm: () => {
         const { excavationLength, excavationWidth, excavationDepth, wallLength, wallHeight, wallThickness, topSlabArea, topSlabThickness, bottomSlabArea, bottomSlabThickness } = get().formData;

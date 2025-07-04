@@ -36,6 +36,7 @@ export default function SepticTank() {
       return false;
     }
     try {
+      const plasterArea = useSepticTankStore.getState().calculatePlasterArea();
       const newData = {
         id: editingId || Date.now(),
         srNo: editingId ? septicTankData.find(item => item.id === editingId)?.srNo : septicTankData.length + 1,
@@ -44,6 +45,7 @@ export default function SepticTank() {
         wallVolume: calculateWallVolume(),
         topSlabVolume: calculateTopSlabVolume(),
         bottomSlabVolume: calculateBottomSlabVolume(),
+        plasterArea: plasterArea,
         timestamp: new Date().toISOString()
       };
       if (editingId) {
@@ -106,6 +108,9 @@ export default function SepticTank() {
         <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
           <p className="text-lg font-bold text-gray-800">
             Septic tank wall volume: <span className="text-[#5BB045]">{calculateWallVolume()} ft³</span>
+          </p>
+          <p className="text-lg font-bold text-gray-800 mt-2">
+            Septic tank wall plaster area: <span className="text-[#5BB045]">{useSepticTankStore.getState().calculatePlasterArea()} ft²</span>
           </p>
         </div>
       )}
