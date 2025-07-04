@@ -47,6 +47,7 @@ export default function ExteriorWallsTable({ data, onEdit, onDelete, minWidth = 
                             <TableCell sx={headerStyle}>Exterior Finish</TableCell>
                             <TableCell sx={headerStyle}>Interior Finish</TableCell>
                             <TableCell sx={headerStyle}>Wall Area (ft²)</TableCell>
+                            <TableCell sx={headerStyle}>Plaster Area (ft²)</TableCell>
                             <TableCell sx={headerStyle}>Wall Volume (ft³)</TableCell>
                             <TableCell sx={headerStyle}>Curtain Wall</TableCell>
                             <TableCell sx={headerStyle}>Glass Thickness (mm)</TableCell>
@@ -84,6 +85,7 @@ export default function ExteriorWallsTable({ data, onEdit, onDelete, minWidth = 
                                     <TableCell sx={cellStyle}>{row.exteriorFinish || '-'}</TableCell>
                                     <TableCell sx={cellStyle}>{row.interiorFinish || '-'}</TableCell>
                                     <TableCell sx={cellStyle}>{row.wallArea || '-'}</TableCell>
+                                    <TableCell sx={cellStyle}>{row.plasterArea !== undefined ? row.plasterArea : (row.wallVolume ? Math.round((Number(row.wallVolume) / 0.75) * 2) : '-')}</TableCell>
                                     <TableCell sx={cellStyle}>{row.wallVolume || '-'}</TableCell>
                                     <TableCell sx={cellStyle}>{row.isCurtainWall === 'yes' ? 'Yes' : 'No'}</TableCell>
                                     <TableCell sx={cellStyle}>{row.isCurtainWall === 'yes' ? (row.glassThickness ? `${row.glassThickness} mm` : '-') : '-'}</TableCell>

@@ -111,6 +111,7 @@ export default function BuildingFloor() {
         exteriorFinish: row.exteriorFinish || '',
         interiorFinish: row.interiorFinish || '',
         insulationType: row.insulationType || '',
+        plasterArea: (() => { const wallVolume = Number(calculateWallVolume()); return wallVolume ? Math.round((wallVolume / 0.75) * 2) : 0; })(),
       });
       updateExteriorDoorForm({
         doorType: row.doorType || '',
@@ -152,6 +153,7 @@ export default function BuildingFloor() {
         exteriorFinish: row.exteriorFinish || '',
         interiorFinish: row.interiorFinish || '',
         insulationType: row.insulationType || '',
+        plasterArea: (() => { const wallVolume = Number(calculateWallVolume()); return wallVolume ? Math.round((wallVolume / 0.75) * 2) : 0; })(),
       });
       updateInteriorDoorForm({
         doorType: row.doorType || '',

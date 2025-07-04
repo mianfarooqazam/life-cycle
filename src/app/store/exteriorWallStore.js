@@ -157,6 +157,10 @@ export const useExteriorWallStore = create(
         }
         return '';
       },
+      calculatePlasterArea: () => {
+        const wallVolume = Number(get().calculateWallVolume());
+        return wallVolume ? Math.round((wallVolume / 0.75) * 2) : 0;
+      },
     }),
     {
       name: 'exterior-wall-storage'
