@@ -200,18 +200,28 @@ export default function BasementWallModal({
             </div>
             {/* Calculated Values */}
             {formData.length && formData.height && formData.thickness && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
+                    <p className="text-lg font-bold text-gray-800">
+                      Basement Wall Area: <span className="text-[#5BB045]">{calculateWallArea()} ft²</span>
+                    </p>
+                  </div>
+                  <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
+                    <p className="text-lg font-bold text-gray-800">
+                      Basement Wall Volume: <span className="text-[#5BB045]">{calculateWallVolume()} ft³</span>
+                    </p>
+                  </div>
+                </div>
+                <div className="p-4 rounded-md mt-2" style={{ backgroundColor: "#f7f6fb", maxWidth: 350 }}>
                   <p className="text-lg font-bold text-gray-800">
-                    Basement Wall Area: <span className="text-[#5BB045]">{calculateWallArea()} ft²</span>
+                    Basement Plaster Area: <span className="text-[#5BB045]">{(() => {
+                      const wallVolume = Number(calculateWallVolume());
+                      return wallVolume ? Math.round((wallVolume / 0.75) * 2) : '0';
+                    })()} ft²</span>
                   </p>
                 </div>
-                <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
-                  <p className="text-lg font-bold text-gray-800">
-                    Basement Wall Volume: <span className="text-[#5BB045]">{calculateWallVolume()} ft³</span>
-                  </p>
-                </div>
-              </div>
+              </>
             )}
             {/* Insulation Radio Button */}
             <div className="grid grid-cols-1">

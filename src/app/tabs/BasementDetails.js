@@ -193,6 +193,7 @@ export default function BasementDetails() {
       wallMaterial: formData.wallMaterial,
       wallArea: calculateWallArea(),
       wallVolume: calculateWallVolume(),
+      plasterArea: ((Number(calculateWallVolume()) ? (Number(calculateWallVolume()) / 0.75) * 2 : 0).toFixed(2)),
       insulationUsed: formData.isInsulationUsed,
       insulationType: formData.insulationType,
       insulationThickness: formData.insulationThickness,

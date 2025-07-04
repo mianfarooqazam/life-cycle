@@ -325,6 +325,14 @@ export const useBasementStore = create(
         }
         return '';
       },
+      calculatePlasterArea: () => {
+        const { formData } = get();
+        const wallVolume = parseFloat(get().calculateWallVolume());
+        if (wallVolume) {
+          return ((wallVolume / 0.75) * 2).toFixed(2);
+        }
+        return '';
+      },
 
       // Retaining Wall helpers
       updateRetainingFormData: (data) => set((state) => ({
