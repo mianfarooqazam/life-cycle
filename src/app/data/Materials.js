@@ -1,9 +1,9 @@
 const WallBrickBlock = [
-    { name: "Clay Brick (Common Brick)", costperitem: "16", brickvolumewithoutmortar: "0.05", brickvolumewithmortar: "0.07" },
-    { name: "Flyash Brick", costperitem: "15", brickvolumewithoutmortar: "0.06", brickvolumewithmortar: "0.08" },
-    { name: "Interlocking Solid Block", costperitem: "85", brickvolumewithoutmortar: "0.33", brickvolumewithmortar: "0.38" },
-    { name: "Interlocking Eco Block", costperitem: "75", brickvolumewithoutmortar: "0.33", brickvolumewithmortar: "0.38" },
-    { name: "Concrete Block", costperitem: "36", brickvolumewithoutmortar: "0.33", brickvolumewithmortar: "0.38" },
+    { name: "Clay Brick (Common Brick)", costperitem: "16", brickvolumewithoutmortar: "0.05448", brickvolumewithmortar: "0.07063" },
+    { name: "Flyash Brick", costperitem: "15", brickvolumewithoutmortar: "0.0634", brickvolumewithmortar: "0.0822" },
+    { name: "Interlocking Solid Block", costperitem: "85", brickvolumewithoutmortar: "0.3333", brickvolumewithmortar: "0.3844" },
+    { name: "Interlocking Eco Block", costperitem: "75", brickvolumewithoutmortar: "0.3333", brickvolumewithmortar: "0.3844" },
+    { name: "Concrete Block", costperitem: "36",brickvolumewithoutmortar: "0.3333", brickvolumewithmortar: "0.3844" }
 ];
 
 const ExteriorFinish = [

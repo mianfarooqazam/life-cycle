@@ -58,3 +58,29 @@ export function calculateWallMaterials(wallVolume, brickBlockType) {
     steps,
   };
 }
+
+/**
+ * Calculate cement (bags) required for plaster area.
+ * Formula: (1 / 5) * ((plasterArea * 0.042 * 1.3 * 1.25) / 1.25)
+ * @param {number} plasterArea - Plaster area in ft²
+ * @returns {number} Cement bags required
+ */
+export function calculatePlasterCementBags(plasterArea) {
+  if (!plasterArea || isNaN(plasterArea)) return 0;
+  const dryVolume = plasterArea * 0.042 * 1.3 * 1.25;
+  const cementVolume = (1 / 5) * (dryVolume / 1.25);
+  return cementVolume;
+}
+
+/**
+ * Calculate sand (ft³) required for plaster area.
+ * Formula: (4 / 5) * (plasterArea * 0.042 * 1.3 * 1.25)
+ * @param {number} plasterArea - Plaster area in ft²
+ * @returns {number} Sand volume required (ft³)
+ */
+export function calculatePlasterSandVolume(plasterArea) {
+  if (!plasterArea || isNaN(plasterArea)) return 0;
+  const dryVolume = plasterArea * 0.042 * 1.3 * 1.25;
+  const sandVolume = (4 / 5) * dryVolume;
+  return sandVolume;
+}
