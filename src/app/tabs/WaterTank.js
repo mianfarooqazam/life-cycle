@@ -46,6 +46,8 @@ export default function WaterTank() {
       return false;
     }
     try {
+      const plasterArea = useWaterTankStore.getState().calculatePlasterArea();
+      const undergroundPlasterArea = useWaterTankStore.getState().calculateUndergroundPlasterArea();
       const newData = {
         id: editingId || Date.now(),
         srNo: editingId ? waterTankData.find(item => item.id === editingId)?.srNo : waterTankData.length + 1,
@@ -58,6 +60,8 @@ export default function WaterTank() {
         undergroundWallVolume: calculateUndergroundWallVolume(),
         undergroundTopSlabVolume: calculateUndergroundTopSlabVolume(),
         undergroundBottomSlabVolume: calculateUndergroundBottomSlabVolume(),
+        plasterArea: plasterArea,
+        undergroundPlasterArea: undergroundPlasterArea,
         timestamp: new Date().toISOString()
       };
       if (editingId) {
@@ -106,6 +110,9 @@ export default function WaterTank() {
         <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
           <p className="text-lg font-bold text-gray-800">
             Water tank wall volume: <span className="text-[#5BB045]">{calculateWallVolume()} ft³</span>
+          </p>
+          <p className="text-lg font-bold text-gray-800 mt-2">
+            Water tank wall plaster area: <span className="text-[#5BB045]">{useWaterTankStore.getState().calculatePlasterArea()} ft²</span>
           </p>
         </div>
       )}
@@ -194,6 +201,9 @@ export default function WaterTank() {
             <div className="p-4 rounded-md" style={{ backgroundColor: "#f7f6fb" }}>
               <p className="text-lg font-bold text-gray-800">
                 Underground water tank wall volume: <span className="text-[#5BB045]">{calculateUndergroundWallVolume()} ft³</span>
+              </p>
+              <p className="text-lg font-bold text-gray-800 mt-2">
+                Underground water tank wall plaster area: <span className="text-[#5BB045]">{useWaterTankStore.getState().calculateUndergroundPlasterArea()} ft²</span>
               </p>
             </div>
           )}

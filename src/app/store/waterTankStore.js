@@ -193,7 +193,23 @@ export const useWaterTankStore = create(
       // Get error message
       getErrorMessage: () => {
         return 'Please fill in at least one section (wall, column, top slab, or bottom slab)';
-      }
+      },
+      // Calculate plaster area for above-ground wall (round figure)
+      calculatePlasterArea: () => {
+        const wallVolume = parseFloat(get().calculateWallVolume());
+        if (wallVolume) {
+          return Math.round((wallVolume / 0.75) * 2).toString();
+        }
+        return '0';
+      },
+      // Calculate plaster area for underground wall (round figure)
+      calculateUndergroundPlasterArea: () => {
+        const wallVolume = parseFloat(get().calculateUndergroundWallVolume());
+        if (wallVolume) {
+          return Math.round((wallVolume / 0.75) * 2).toString();
+        }
+        return '0';
+      },
     }),
     {
       name: 'water-tank-storage'
