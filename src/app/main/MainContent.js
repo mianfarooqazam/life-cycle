@@ -4,7 +4,6 @@ import Materials from "../pages/Materials";
 import LabourCost from "../pages//LabourCost";
 import OtherCost from "../pages/OtherCost";
 import BuildingPlan from "../pages/BuildingPlan";
-import Cad from "../pages/Cad";
 
 export default function MainContent({ activeSection }) {
   const renderContent = () => {
@@ -21,9 +20,6 @@ export default function MainContent({ activeSection }) {
         return <LabourCost />;
       case 'other-cost':
         return <OtherCost />;
-     
-        case 'cad':
-        return <Cad />;
       default:
         return <Dashboard />;
     }

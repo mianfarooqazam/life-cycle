@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import TitleHeader from '@/app/components/header/TitleHeader';
 import { useBuildingPlanStore } from '@/app/store/buildingPlanStore';
-import { useCadStore } from '@/app/store/cadStore';
 import { Button, Box } from '@mui/material';
 
 export default function Rightbar({ activeSection }) {
@@ -20,13 +19,6 @@ export default function Rightbar({ activeSection }) {
     numberOfLounges,
   } = useBuildingPlanStore();
 
-  const {
-    lines,
-    wallDetails,
-    hoveredLineIndex,
-    hoveredLineDetails,
-  } = useCadStore();
-
   const plotDimensions = plotSize && marlaSize ? {
     width: Math.sqrt(plotArea),
     height: Math.sqrt(plotArea),
@@ -35,86 +27,6 @@ export default function Rightbar({ activeSection }) {
 
   const handleHighlight = (element) => {
     setHighlightedElement(element);
-  };
-
-  // Calculate total statistics
-  const calculateStats = () => {
-    const totalLines = lines.length;
-    const totalExternalWalls = wallDetails.filter(details => 
-      details && details.wallType === 'external'
-    ).length;
-    const totalInternalWalls = wallDetails.filter(details => 
-      details && details.wallType === 'internal'
-    ).length;
-    
-    return {
-      totalLines,
-      totalExternalWalls,
-      totalInternalWalls
-    };
-  };
-
-  // CAD-specific render function
-  const renderCadInfo = () => {
-    const stats = calculateStats();
-    
-    return (
-      <div className="space-y-4">
-        {/* CAD Statistics */}
-        <div className="p-4 rounded-md" style={{ backgroundColor: "#f0f8ff" }}>
-          <h3 className="text-lg font-semibold text-gray-800 mb-3">CAD Statistics</h3>
-          <div className="grid grid-cols-1 gap-3">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Total Lines:</span>
-              <span className="font-semibold text-blue-600">{stats.totalLines}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">External Walls:</span>
-              <span className="font-semibold text-green-600">{stats.totalExternalWalls}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Internal Walls:</span>
-              <span className="font-semibold text-orange-600">{stats.totalInternalWalls}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Hovered Line Details */}
-        {hoveredLineDetails && (
-          <div className="p-4 rounded-md border-2 border-blue-200" style={{ backgroundColor: "#f0f8ff" }}>
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">Selected Line Details</h3>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Wall Type:</span>
-                <span className="font-semibold capitalize text-blue-600">
-                  {hoveredLineDetails.wallType === 'external' ? 'External' : 
-                   hoveredLineDetails.wallType === 'internal' ? 'Internal' : 'Unknown'} Wall
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Length:</span>
-                <span className="font-semibold text-green-600">{Number(hoveredLineDetails.length).toFixed(2)} ft</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Height:</span>
-                <span className="font-semibold text-green-600">{hoveredLineDetails.height} ft</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Thickness:</span>
-                <span className="font-semibold text-green-600">{hoveredLineDetails.thickness} in</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Area:</span>
-                <span className="font-semibold text-purple-600">
-                  {hoveredLineDetails.area ? hoveredLineDetails.area.toFixed(2) : 
-                   (parseFloat(hoveredLineDetails.length) * parseFloat(hoveredLineDetails.height)).toFixed(2)} ft²
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    );
   };
 
   const renderArchitecturePlan = () => {
@@ -560,16 +472,6 @@ export default function Rightbar({ activeSection }) {
       </div>
     );
   };
-
-  // Render different content based on active section
-  if (activeSection === 'cad') {
-    return (
-      <div className="col-span-2 rounded-lg p-4" style={{ backgroundColor: '#f7f6fb' }}>
-        <TitleHeader>CAD Panel</TitleHeader>
-        {renderCadInfo()}
-      </div>
-    );
-  }
 
   return (
     <div className="col-span-2 rounded-lg p-4" style={{ backgroundColor: '#f7f6fb' }}>
